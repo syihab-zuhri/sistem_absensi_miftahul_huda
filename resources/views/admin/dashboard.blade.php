@@ -6,7 +6,7 @@
     <!-- Welcome Banner dari kode lama Anda -->
     <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 text-white shadow-lg flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold mb-2">Selamat Datang, Komandan!</h2>
+            <h2 class="text-3xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name }}</h2>
             <p class="text-blue-100 max-w-2xl">Sistem absensi berjalan normal. Anda memiliki akses penuh untuk mengatur data pengguna, siswa, dan jadwal pelajaran.</p>
         </div>
     </div>

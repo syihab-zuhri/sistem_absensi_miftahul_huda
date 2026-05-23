@@ -52,14 +52,14 @@
             @role('admin')
             <a href="/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/dashboard') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-house w-5 text-center"></i>
-                <span class="text-sm font-medium">Dashboard Utama</span>
+                <span class="text-sm font-medium">Dashboard Admin</span>
             </a>
             
             <div class="px-3 pt-4 pb-2"><p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Master Data</p></div>
             
             <a href="/admin/users" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/users*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-user-tie w-5 text-center"></i>
-                <span class="font-medium text-sm">Manajemen Pegawai</span>
+                <span class="font-medium text-sm">Manajemen Guru & Admin</span>
             </a>
             <a href="/admin/students" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/students*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-users w-5 text-center"></i>
@@ -83,7 +83,7 @@
             @role('guru')
             <a href="/guru/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('guru/dashboard') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-home w-5 text-center"></i>
-                <span class="text-sm font-medium">Dashboard</span>
+                <span class="text-sm font-medium">Dashboard Guru</span>
             </a>
             <a href="/scanner" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('scanner') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-camera w-5 text-center"></i>
