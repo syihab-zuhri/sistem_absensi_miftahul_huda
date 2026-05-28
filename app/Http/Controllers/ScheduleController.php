@@ -33,6 +33,11 @@ class ScheduleController extends Controller
 
     public function store(Request $request)
     {
+        // REVISI 1C: Paksa input class_id menjadi UPPERCASE sebelum diproses dan divalidasi
+        $request->merge([
+            'class_id' => strtoupper($request->input('class_id'))
+        ]);
+
         // Validasi Anti Bentrok: Kelas yang sama tidak boleh memiliki jadwal di hari dan jam yang sama persis
         $request->validate([
             'subject_id' => 'required|exists:subjects,id',
@@ -45,8 +50,8 @@ class ScheduleController extends Controller
                 'string',
                 Rule::unique('schedules')->where(function ($query) use ($request) {
                     return $query->where('day', $request->day)
-                                 ->where('start_time', $request->start_time)
-                                 ->where('end_time', $request->end_time);
+                                ->where('start_time', $request->start_time)
+                                ->where('end_time', $request->end_time);
                 })
             ]
         ], [
@@ -60,6 +65,11 @@ class ScheduleController extends Controller
 
     public function update(Request $request, Schedule $schedule)
     {
+        // REVISI 1C: Paksa input class_id menjadi UPPERCASE sebelum diproses dan divalidasi
+        $request->merge([
+            'class_id' => strtoupper($request->input('class_id'))
+        ]);
+
         // Validasi Anti Bentrok (Mengabaikan ID jadwal yang sedang diedit)
         $request->validate([
             'subject_id' => 'required|exists:subjects,id',
@@ -72,8 +82,8 @@ class ScheduleController extends Controller
                 'string',
                 Rule::unique('schedules')->where(function ($query) use ($request) {
                     return $query->where('day', $request->day)
-                                 ->where('start_time', $request->start_time)
-                                 ->where('end_time', $request->end_time);
+                                ->where('start_time', $request->start_time)
+                                ->where('end_time', $request->end_time);
                 })->ignore($schedule->id)
             ]
         ], [

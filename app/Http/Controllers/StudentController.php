@@ -11,24 +11,26 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StudentsImport;
 
-class StudentController extends Controller
-{
+class StudentController extends Controller{
     public function index(Request $request)
     {
-        // Fitur Filter & Paginasi (Roadmap Item 3)
-        $query = Student::with('user')->latest();
+        // REVISI LOGIKA URUTAN: Gabungkan dengan tabel users untuk mengurutkan nama A-Z
+        $query = Student::select('students.*')
+            ->join('users', 'users.id', '=', 'students.user_id')
+            ->with('user')
+            ->orderBy('students.class_id', 'asc') // Urutkan kelas dulu (10, 11, 12)
+            ->orderBy('users.name', 'asc');       // Lalu urutkan nama (A - Z)
 
-        // Jika ada pencarian (nama, nisn, kelas)
+        // Fitur Pencarian 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where('nisn', 'like', "%{$search}%")
-                  ->orWhere('class_id', 'like', "%{$search}%")
-                  ->orWhereHas('user', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
+            $query->where(function($q) use ($search) {
+                $q->where('students.nisn', 'like', "%{$search}%")
+                ->orWhere('students.class_id', 'like', "%{$search}%")
+                ->orWhere('users.name', 'like', "%{$search}%");
+            });
         }
 
-        // Terapkan Paginasi (Misal 15 data per halaman)
         $students = $query->paginate(15)->withQueryString();
 
         return view('admin.students.index', compact('students'));
@@ -150,7 +152,7 @@ class StudentController extends Controller
         ]);
 
         $ids = $request->input('student_ids');
-        $newClass = $request->input('new_class_id');
+        $newClass = strtoupper($request->input('new_class_id'));
 
         // Update semua siswa yang dipilih dengan kelas yang baru
         Student::whereIn('id', $ids)->update(['class_id' => $newClass]);
@@ -174,19 +176,23 @@ class StudentController extends Controller
 
     public function guruIndex(Request $request)
     {
-        $query = Student::with('user')->latest();
+        // REVISI LOGIKA URUTAN: Gabungkan dengan tabel users untuk mengurutkan nama A-Z
+        $query = Student::select('students.*')
+            ->join('users', 'users.id', '=', 'students.user_id')
+            ->with('user')
+            ->orderBy('students.class_id', 'asc') // Urutkan kelas dulu (10, 11, 12)
+            ->orderBy('users.name', 'asc');       // Lalu urutkan nama (A - Z)
 
-        // Fitur Pencarian tetap ada
+        // Fitur Pencarian 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where('nisn', 'like', "%{$search}%")
-                  ->orWhere('class_id', 'like', "%{$search}%")
-                  ->orWhereHas('user', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
+            $query->where(function($q) use ($search) {
+                $q->where('students.nisn', 'like', "%{$search}%")
+                ->orWhere('students.class_id', 'like', "%{$search}%")
+                ->orWhere('users.name', 'like', "%{$search}%");
+            });
         }
 
-        // Paginasi 15 data per halaman
         $students = $query->paginate(15)->withQueryString();
 
         return view('guru.students.index', compact('students'));

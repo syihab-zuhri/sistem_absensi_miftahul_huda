@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Manajemen Pegawai')
+@section('title', 'Manajemen Guru & Admin - Sistem Absensi Sekolah')
 
 @section('content')
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -9,7 +9,7 @@
     <div class="lg:col-span-1">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
             <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-plus text-blue-600"></i> Buat Akun Pegawai
+                <i class="fa-solid fa-user-plus text-blue-600"></i> Buat Akun Guru & Admin
             </h2>
             <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
                 @csrf
@@ -39,12 +39,12 @@
         </div>
     </div>
 
-    <!-- KOLOM KANAN: TABEL DAFTAR PEGAWAI -->
+    <!-- KOLOM KANAN: TABEL DAFTAR GURU & ADMIN -->
     <div class="lg:col-span-2">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-800">Daftar Pegawai Terdaftar</h3>
-                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold">{{ $users->count() }} Total</span>
+                <h3 class="text-lg font-bold text-gray-800">Daftar Guru & Admin Terdaftar</h3>
+                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap">{{ $users->count() }} Total</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-600">
@@ -96,7 +96,7 @@
     // FUNGSI KONFIRMASI HAPUS DENGAN SWEETALERT (SERAGAM DENGAN HALAMAN LAIN)
     function confirmSingleDelete(id) {
         Swal.fire({
-            title: 'Hapus Akun Pegawai?',
+            title: 'Hapus Akun Guru & Admin?',
             text: "Akun ini akan dihapus secara permanen dan tidak bisa mengakses sistem lagi.",
             icon: 'warning',
             showCancelButton: true,

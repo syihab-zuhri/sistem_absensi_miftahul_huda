@@ -91,7 +91,7 @@
                             <div class="text-xs font-normal text-gray-400 mt-0.5 font-mono">NISN: {{ $attendance->student->nisn ?? '-' }}</div>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded font-bold text-xs">{{ $attendance->schedule->class_id ?? '-' }}</span>
+                            <span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded font-bold text-xs whitespace-nowrap">{{ $attendance->schedule->class_id ?? '-' }}</span>
                         </td>
                         <td class="px-6 py-4 font-medium">{{ $attendance->schedule->subject->name ?? '-' }}</td>
                         <td class="px-6 py-4 text-center">

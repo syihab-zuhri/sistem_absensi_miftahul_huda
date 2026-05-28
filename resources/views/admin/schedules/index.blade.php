@@ -147,7 +147,7 @@
                                             <div class="text-xs text-blue-600">{{ $schedule->teacher->name ?? 'Dihapus' }}</div>
                                         </td>
                                         <td class="px-6 py-4 text-center">
-                                            <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs font-bold">{{ $schedule->class_id }}</span>
+                                            <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs font-bold whitespace-nowrap">{{ $schedule->class_id }}</span>
                                         </td>
                                         <td class="px-6 py-4 flex justify-center gap-2">
                                             <!-- Tombol Edit -->
@@ -224,7 +224,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                    <input type="text" name="class_id" x-model="editForm.class_id" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
+                    <input type="text" name="class_id" required placeholder="Cth: 10-A" oninput="this.value = this.value.toUpperCase()" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                 </div>
                 
                 <div class="pt-4 flex justify-end gap-3">

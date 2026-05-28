@@ -32,12 +32,12 @@ class StudentPortalController extends Controller
 
         // Hitung persentase kehadiran (Berdasarkan 30 hari terakhir)
         $totalSessions = Attendance::where('student_id', $student->id)
-                                  ->where('timestamp', '>=', $thirtyDaysAgo)
-                                  ->count();
+                                ->where('timestamp', '>=', $thirtyDaysAgo)
+                                ->count();
         $presentCount = Attendance::where('student_id', $student->id)
-                                 ->where('status', 'hadir')
-                                 ->where('timestamp', '>=', $thirtyDaysAgo)
-                                 ->count();
+                                ->where('status', 'hadir')
+                                ->where('timestamp', '>=', $thirtyDaysAgo)
+                                ->count();
         
         $attendancePercentage = 0;
         if ($totalSessions > 0) {

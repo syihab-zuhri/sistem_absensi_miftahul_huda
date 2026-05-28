@@ -26,15 +26,15 @@
 
     <!-- Overlay Gelap untuk Mobile (Muncul saat sidebar dibuka) -->
     <div x-show="sidebarOpen" 
-         x-transition.opacity 
-         @click="sidebarOpen = false"
-         class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
-         style="display: none;">
+        x-transition.opacity 
+        @click="sidebarOpen = false"
+        class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
+        style="display: none;">
     </div>
 
     <!-- Sidebar Kiri (Responsif: Tersembunyi di Mobile, Muncul di Desktop) -->
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 shadow-sm flex flex-col transition-transform duration-300 lg:static lg:translate-x-0">
+        class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 shadow-sm flex flex-col transition-transform duration-300 lg:static lg:translate-x-0">
         
         <!-- Logo / Header Sidebar -->
         <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200">
@@ -101,7 +101,7 @@
             
             <a href="{{ route('reports.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('reports*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-file-invoice w-5 text-center"></i>
-                <span class="font-medium text-sm">Laporan Filter</span>
+                <span class="font-medium text-sm">Rekapitulasi Absensi</span>
             </a>
 
             <!-- Tombol Keluar -->

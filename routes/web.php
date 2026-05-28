@@ -89,8 +89,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/subjects/import', [\App\Http\Controllers\SubjectController::class, 'import'])->name('admin.subjects.import');
         Route::resource('/admin/subjects', \App\Http\Controllers\SubjectController::class)->except(['create', 'show', 'edit']);
 
-        // TEST QR
-        Route::view('/test-qr', 'test-qr')->name('test.qr');
+        // // TEST QR
+        // Route::view('/test-qr', 'test-qr')->name('test.qr');
     });
 
     // ==========================================
@@ -112,10 +112,9 @@ Route::middleware('auth')->group(function () {
             return view('scanner', compact('activeSchedule'));
         })->name('scanner.index');
 
-        // Modul API / Pemrosesan Absensi
-        Route::post('/absensi/scan', [\App\Http\Controllers\AttendanceController::class, 'scan'])->middleware('throttle:60,1')->name('absensi.scan');
-        Route::get('/absensi/log/{schedule_id}', [\App\Http\Controllers\AttendanceController::class, 'getSessionLog'])->name('absensi.log');
-        Route::post('/absensi/update-status/{id}', [\App\Http\Controllers\AttendanceController::class, 'updateStatus'])->name('absensi.update-status');
+        // Modul API / Pemrosesan Absensi (Diperbarui untuk Batch Save)
+        Route::get('/absensi/session-data/{schedule_id}', [\App\Http\Controllers\AttendanceController::class, 'getSessionData']);
+        Route::post('/absensi/save-session/{schedule_id}', [\App\Http\Controllers\AttendanceController::class, 'saveSession']);
     });
 
     // ==========================================

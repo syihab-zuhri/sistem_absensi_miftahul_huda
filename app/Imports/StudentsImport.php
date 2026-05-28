@@ -51,7 +51,7 @@ class StudentsImport implements ToModel, WithHeadingRow
             ['user_id' => $user->id], // Kriteria Pencarian Utama
             [
                 'nisn' => $row['nisn'],
-                'class_id' => $row['kelas'], // Ini yang akan berubah menjadi kelas baru
+                'class_id' => strtoupper($row['kelas']), // Ini yang akan berubah menjadi kelas baru
             ]
         );
 
