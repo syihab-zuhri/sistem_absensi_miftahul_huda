@@ -36,6 +36,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                        <!-- FITUR AUTO UPPERCASE DI SINI -->
                         <input type="text" name="class_id" required placeholder="Cth: 10-A" oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     </div>
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors">
@@ -67,10 +68,10 @@
         <!-- KOLOM KANAN: TABEL, FILTER, & PAGINASI -->
         <div class="lg:col-span-2 space-y-4">
             
-            <!-- Toolbar Atas: Search, Hapus Massal, & Edit Kelas Massal -->
+            <!-- Toolbar Atas: Search & Hapus Massal -->
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between gap-4 items-center">
                 <!-- Form Pencarian (Filter) -->
-                <form action="{{ route('students.index') }}" method="GET" class="w-full sm:w-1/2 relative">
+                <form action="{{ route('students.index') }}" method="GET" class="w-full sm:w-2/3 relative">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari NISN, Nama, atau Kelas..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
                     @if(request('search'))
@@ -78,19 +79,14 @@
                     @endif
                 </form>
 
-                <!-- Tombol Aksi Massal -->
-                <div class="flex gap-2 w-full sm:w-auto">
-                    <button type="button" onclick="confirmBulkEditClass()" class="flex-1 sm:flex-none bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
-                        <i class="fa-solid fa-people-arrows"></i> Pindah Kelas
-                    </button>
-                    <button type="button" onclick="confirmBulkDelete()" class="flex-1 sm:flex-none bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
-                        <i class="fa-solid fa-trash-can"></i> Hapus Terpilih
-                    </button>
-                </div>
+                <!-- Tombol Eksekusi Hapus Massal (Trigger submit form tabel) -->
+                <button type="button" onclick="confirmBulkDelete()" class="w-full sm:w-auto bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i> Hapus Terpilih
+                </button>
             </div>
 
-            <!-- Tabel Data Siswa dibungkus dalam Form untuk Hapus Massal -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- TARGET AUTO SCROLL -->
+            <div id="tabel-siswa" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <form id="bulkDeleteForm" action="{{ route('students.destroyBulk') }}" method="POST">
                     @csrf
                     @method('DELETE')
@@ -118,11 +114,13 @@
                                     <td class="px-6 py-4 font-bold text-gray-800">{{ $student->user->name ?? 'User Terhapus' }}</td>
                                     <td class="px-6 py-4">
                                         <div class="text-sm font-mono text-gray-600">{{ $student->nisn }}</div>
-                                        <span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded text-xs font-bold">{{ $student->class_id }}</span>
+                                        <!-- whitespace-nowrap agar kelas tidak terpotong ke bawah -->
+                                        <span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{{ $student->class_id }}</span>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         @if($student->qr_code_path)
-                                            <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ $student->user->name ?? '' }}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto">
+                                            <!-- VERSI STABIL -->
+                                            <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? "User Terhapus") }}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto">
                                                 <i class="fa-solid fa-qrcode"></i> Lihat
                                             </button>
                                         @else
@@ -130,8 +128,8 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 flex justify-center gap-2">
-                                        <!-- Tombol Edit (Memanggil Modal Alpine) -->
-                                        <button type="button" @click="editForm = { id: '{{ $student->id }}', name: '{{ addslashes($student->user->name ?? '') }}', nisn: '{{ $student->nisn }}', class_id: '{{ $student->class_id }}' }; editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Siswa">
+                                        <!-- VERSI STABIL -->
+                                        <button type="button" @click="editForm = { id: '{{ $student->id }}', name: '{{ addslashes($student->user->name ?? "User Terhapus") }}', nisn: '{{ $student->nisn }}', class_id: '{{ $student->class_id }}' }; editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Siswa">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
 
@@ -188,7 +186,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                    <input type="text" name="class_id" x-model="editForm.class_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <!-- FITUR AUTO UPPERCASE DI SINI -->
+                    <input type="text" name="class_id" x-model="editForm.class_id" required oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 
                 <div class="pt-4 flex justify-end gap-3">
@@ -203,6 +202,22 @@
 
 @push('scripts')
 <script>
+    // ==========================================
+    // FUNGSI AUTO SCROLL SAAT PINDAH HALAMAN
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cek apakah di URL ada tulisan "?page=" (tanda sedang membuka paginasi)
+        if (window.location.search.includes('page=')) {
+            const tabelSiswa = document.getElementById('tabel-siswa');
+            if (tabelSiswa) {
+                // Beri jeda sedikit agar DOM dirender sempurna, lalu scroll ke atas tabel
+                setTimeout(() => {
+                    tabelSiswa.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+    });
+
     // FUNGSI 1: Tampilkan Popup QR Code beserta Tombol Unduh
     function showQRCode(url, nisn, name) {
         Swal.fire({
@@ -284,57 +299,6 @@
                 form.appendChild(csrf);
                 form.appendChild(method);
                 document.body.appendChild(form);
-                form.submit();
-            }
-        });
-    }
-    
-    // FUNGSI 4: Konfirmasi Edit Kelas Massal
-    function confirmBulkEditClass() {
-        const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-        if (checkboxes.length === 0) {
-            Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Pilih minimal satu siswa yang ingin dipindahkan kelasnya.' });
-            return;
-        }
-
-        Swal.fire({
-            title: 'Pindahkan ' + checkboxes.length + ' Siswa',
-            text: 'Masukkan nama kelas baru untuk siswa yang dipilih:',
-            input: 'text',
-            inputPlaceholder: 'Contoh: 11-A',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#4f46e5', // Indigo tailwind
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Simpan Perubahan',
-            cancelButtonText: 'Batal',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'Nama kelas tidak boleh kosong!'
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Ambil form utama
-                const form = document.getElementById('bulkDeleteForm');
-                
-                // Ubah action menjadi URL Update Kelas
-                form.action = "{{ route('students.updateClassBulk') }}";
-                
-                // REVISI PENTING: Hapus elemen _method (DELETE) agar form kembali menjadi POST murni
-                const methodInput = form.querySelector('input[name="_method"]');
-                if (methodInput) {
-                    methodInput.remove();
-                }
-
-                // Tambahkan input tersembunyi untuk menyimpan nama kelas baru
-                const newClassInput = document.createElement('input');
-                newClassInput.type = 'hidden';
-                newClassInput.name = 'new_class_id';
-                newClassInput.value = result.value;
-                form.appendChild(newClassInput);
-
-                // Kirim form ke server
                 form.submit();
             }
         });

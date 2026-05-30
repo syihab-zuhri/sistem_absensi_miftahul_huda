@@ -135,10 +135,9 @@
         setTimeout(() => oscillator.stop(), type === 'success' ? 150 : 300);
     }
 
+// ==========================================
+    // 2. FUNGSI DATA SISWA & UI (REVISI)
     // ==========================================
-    // 2. FUNGSI DATA SISWA & UI (BARU)
-    // ==========================================
-    // Mengambil daftar seluruh siswa di kelas ini dari server saat halaman pertama dibuka
     function loadSessionData() {
         fetch('/absensi/session-data/{{ $activeSchedule->id }}')
         .then(res => res.json())
@@ -152,23 +151,22 @@
             }
 
             data.forEach((student, index) => {
-                let statusVal = student.status || ''; // Kosong jika belum pernah diabsen
+                let statusVal = student.status || ''; 
                 
                 let row = `
                     <tr class="hover:bg-blue-50 transition student-row" id="row-${student.nisn}">
                         <td class="px-6 py-4 text-center font-medium">${index + 1}</td>
                         <td class="px-6 py-4">
-                            <div class="font-bold text-gray-800">${student.name}</div>
+                            <div class="font-bold text-gray-800 student-name-text">${student.name}</div>
                             <div class="text-xs text-gray-500 font-mono">NISN: ${student.nisn}</div>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <!-- Dropdown Status -->
                             <select data-id="${student.id}" data-nisn="${student.nisn}" onchange="markUnsaved(this)" class="status-dropdown w-full text-xs font-bold rounded-lg px-2 py-2 border outline-none focus:ring-2 focus:ring-blue-500 transition-colors shadow-sm cursor-pointer">
                                 <option value="" class="text-gray-500">-- BELUM ABSEN --</option>
-                                <option value="hadir" ${statusVal === 'hadir' ? 'selected' : ''} class="text-emerald-700">HADIR</option>
-                                <option value="sakit" ${statusVal === 'sakit' ? 'selected' : ''} class="text-blue-700">SAKIT</option>
-                                <option value="izin" ${statusVal === 'izin' ? 'selected' : ''} class="text-yellow-700">IZIN</option>
-                                <option value="alpa" ${statusVal === 'alpa' ? 'selected' : ''} class="text-red-700">ALPA</option>
+                                <option value="hadir" ${statusVal === 'hadir' ? 'selected' : ''} class="text-emerald-700"> HADIR</option>
+                                <option value="sakit" ${statusVal === 'sakit' ? 'selected' : ''} class="text-blue-700"> SAKIT</option>
+                                <option value="izin" ${statusVal === 'izin' ? 'selected' : ''} class="text-yellow-700"> IZIN</option>
+                                <option value="alpa" ${statusVal === 'alpa' ? 'selected' : ''} class="text-red-700"> ALPA</option>
                             </select>
                         </td>
                     </tr>
@@ -176,7 +174,6 @@
                 tbody.insertAdjacentHTML('beforeend', row);
             });
             
-            // Warnai semua select sesuai nilainya saat pertama di-load
             document.querySelectorAll('.status-dropdown').forEach(sel => applySelectColor(sel));
         });
     }
@@ -253,40 +250,57 @@
         });
     }
 
-    // ==========================================
-    // 4. LOGIKA SCANNER MURNI (Merubah UI saja)
+// ==========================================
+    // 4. LOGIKA SCANNER MURNI (REVISI ALERT & OVERRIDE LOGIC)
     // ==========================================
     function handleScan(decodedText) {
         if (isProcessing) return;
         isProcessing = true;
 
-        // Cari Dropdown Siswa berdasarkan NISN di layar (murni HTML, tanpa internet)
+        // Cari Dropdown Siswa berdasarkan NISN di layar 
         let selectElem = document.querySelector(`select[data-nisn="${decodedText}"]`);
         
         if (selectElem) {
+            // Ambil nama siswa dari tabel untuk dimasukkan ke notifikasi
+            let rowElem = document.getElementById('row-' + decodedText);
+            let studentName = rowElem ? rowElem.querySelector('.student-name-text').innerText : 'Siswa';
+
+            // REVISI LOGIKA: Jika status saat ini BUKAN 'hadir' (bisa kosong, sakit, izin, atau alpa), paksa jadi 'hadir'
             if (selectElem.value !== 'hadir') {
-                // Ubah status ke hadir
                 selectElem.value = 'hadir';
-                markUnsaved(selectElem);
+                markUnsaved(selectElem); // Memicu tombol simpan berkedip
                 playBeep('success');
                 
-                // Auto Scroll layar ke nama siswa tersebut
-                document.getElementById('row-' + decodedText).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-                const Toast = Swal.mixin({ toast: true, position: 'bottom-start', showConfirmButton: false, timer: 1500 });
-                Toast.fire({ icon: 'success', title: 'NISN ' + decodedText + ' Hadir!' });
+                // REVISI ALERT: Tampilkan di Pojok Kiri Atas (top-start) & TANPA SCROLLING DOWN
+                const Toast = Swal.mixin({ 
+                    toast: true, 
+                    position: 'top-start', 
+                    showConfirmButton: false, 
+                    timer: 2000,
+                    timerProgressBar: true 
+                });
+                Toast.fire({ 
+                    icon: 'success', 
+                    title: studentName + ' Berhasil Absensi (Hadir)!' 
+                });
             } else {
-                // Bunyi saja jika sudah hadir (mencegah double scan)
+                // Jika sudah hadir, cukup bunyikan bip success tanpa mengubah apa pun (mencegah double scan)
                 playBeep('success'); 
+                
+                const Toast = Swal.mixin({ toast: true, position: 'top-start', showConfirmButton: false, timer: 1500 });
+                Toast.fire({ 
+                    icon: 'info', 
+                    title: studentName + ' sudah berstatus Hadir.' 
+                });
             }
         } else {
-            // Bunyi salah jika QR bukan dari kelas ini
+            // Bunyi salah jika QR Code siswa luar kelas/tidak terdaftar
             playBeep('error');
             Swal.fire({ icon: 'error', title: 'Ditolak', text: 'NISN ' + decodedText + ' tidak terdaftar di kelas ini!', timer: 2000, showConfirmButton: false });
         }
 
-        // Kunci kamera sesaat agar tidak scan dobel dengan cepat
-        setTimeout(() => { isProcessing = false; }, 1000);
+        // Kunci kamera 1 detik agar tidak terjadi double-scan instan
+        setTimeout(() => { isProcessing = false; }, 1500);
     }
 
     // ==========================================

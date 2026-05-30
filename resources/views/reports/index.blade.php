@@ -45,11 +45,25 @@
         </form>
 
         <!-- Tombol Ekspor -->
-        <div class="flex gap-3 mt-6 pt-5 border-t border-gray-100 justify-end">
-            <a href="{{ route('reports.custom.excel', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-2 text-sm shadow-sm">
+        <div class="flex flex-wrap gap-3 mt-6 pt-5 border-t border-gray-100 justify-end items-center">
+            
+            <!-- TOMBOL BARU: Kosongkan Riwayat (HANYA MUNCUL UNTUK ADMIN) -->
+            @role('admin')
+            <div class="mr-auto w-full sm:w-auto mb-3 sm:mb-0">
+                <form id="truncateAbsensiForm" action="{{ route('reports.truncate') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="confirmResetAbsensi()" class="w-full sm:w-auto bg-red-50 hover:bg-red-100 text-red-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm border border-red-200">
+                        <!-- <i class="fa-solid fa-skull-crossbones"></i>--> Reset Semua Absensi 
+                    </button>
+                </form>
+            </div>
+            @endrole
+
+            <a href="{{ route('reports.custom.excel', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                 <i class="fa-solid fa-file-excel"></i> Export CSV
             </a>
-            <a href="{{ route('reports.custom.pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-2 text-sm shadow-sm">
+            <a href="{{ route('reports.custom.pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" target="_blank" class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                 <i class="fa-solid fa-file-pdf"></i> Cetak PDF
             </a>
         </div>
@@ -63,7 +77,7 @@
                 @if($classId) <br class="md:hidden"><span class="hidden md:inline">|</span> Kelas: <span class="text-blue-600">{{ $classId }}</span> @endif
                 @if($subjectId) <br class="md:hidden"><span class="hidden md:inline">|</span> Mapel: <span class="text-blue-600">{{ \App\Models\Subject::find($subjectId)->name ?? '' }}</span> @endif
             </h3>
-            <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full font-bold shadow-inner">Total: {{ $attendances->count() }} Data</span>
+            <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full font-bold shadow-inner w-full md:w-auto text-center">Total: {{ $attendances->count() }} Data</span>
         </div>
         
         <div class="overflow-x-auto">
@@ -82,7 +96,7 @@
                     @forelse($attendances as $index => $attendance)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 font-medium text-center">{{ $index + 1 }}</td>
-                        <td class="px-6 py-4 text-gray-800 font-semibold font-mono text-xs">
+                        <td class="px-6 py-4 text-gray-800 font-semibold font-mono text-xs whitespace-nowrap">
                             <div class="text-gray-500">{{ \Carbon\Carbon::parse($attendance->timestamp)->format('d/m/Y') }}</div>
                             <div class="text-gray-800">{{ \Carbon\Carbon::parse($attendance->timestamp)->format('H:i:s') }} WIB</div>
                         </td>
@@ -91,6 +105,7 @@
                             <div class="text-xs font-normal text-gray-400 mt-0.5 font-mono">NISN: {{ $attendance->student->nisn ?? '-' }}</div>
                         </td>
                         <td class="px-6 py-4 text-center">
+                            <!-- whitespace-nowrap agar kelas tidak terpotong ke bawah di HP -->
                             <span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded font-bold text-xs whitespace-nowrap">{{ $attendance->schedule->class_id ?? '-' }}</span>
                         </td>
                         <td class="px-6 py-4 font-medium">{{ $attendance->schedule->subject->name ?? '-' }}</td>
@@ -105,7 +120,7 @@
                                     default => 'bg-gray-100 text-gray-800 border-gray-200',
                                 };
                             @endphp
-                            <span class="{{ $badgeColor }} border px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                            <span class="{{ $badgeColor }} border px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
                                 {{ $attendance->status }}
                             </span>
                         </td>
@@ -125,3 +140,45 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // FUNGSI ALERT CERDAS: Peringatan Keras Sebelum Hapus Database
+    function confirmResetAbsensi() {
+        Swal.fire({
+            title: 'KOSONGKAN DATABASE?',
+            html: `
+                <div class="text-left text-sm text-gray-600 mt-2">
+                    <p class="mb-3">Anda akan menghapus <b>SELURUH RIWAYAT ABSENSI</b> siswa dari sistem. Data yang dihapus tidak dapat dikembalikan lagi!</p>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-2 rounded">
+                        <p class="font-bold text-yellow-800"><i class="fa-solid fa-triangle-exclamation"></i> PERINGATAN BACKUP!</p>
+                        <p class="text-yellow-700 text-xs mt-1">Pastikan Anda telah mengunduh riwayat menggunakan tombol <b>Export CSV</b> atau <b>Cetak PDF</b> sebelum melakukan tindakan ini untuk arsip sekolah.</p>
+                    </div>
+                </div>
+            `,
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '<i class="fa-solid fa-trash-can"></i> Ya, Saya Sudah Backup & Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Munculkan konfirmasi lapis kedua untuk keamanan ekstra
+                Swal.fire({
+                    title: 'Anda Yakin?',
+                    text: 'Ini adalah konfirmasi terakhir. Hapus sekarang?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Hapus Permanen!'
+                }).then((secondResult) => {
+                    if (secondResult.isConfirmed) {
+                        document.getElementById('truncateAbsensiForm').submit();
+                    }
+                });
+            }
+        });
+    }
+</script>
+@endpush

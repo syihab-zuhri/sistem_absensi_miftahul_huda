@@ -8,7 +8,7 @@
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between gap-4 items-center border-l-4 border-purple-500">
         <div>
             <h2 class="text-xl font-bold text-gray-800">Daftar Siswa Terdaftar</h2>
-            <p class="text-gray-500 text-sm"> Anda dapat mencari dan melihat QR Code siswa.</p>
+            <p class="text-gray-500 text-sm">Mode ini bersifat <span class="font-bold text-gray-700">Read-Only</span>. Anda dapat mencari dan melihat QR Code siswa.</p>
         </div>
         
         <!-- Form Pencarian (Filter) -->
@@ -21,8 +21,8 @@
         </form>
     </div>
 
-    <!-- Tabel Data Siswa -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <!-- ID tabel-siswa DITAMBAHKAN DI SINI UNTUK TARGET SCROLL -->
+    <div id="tabel-siswa" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-600">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
@@ -44,7 +44,7 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             @if($student->qr_code_path)
-                                <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? '') }}')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto shadow-sm whitespace-nowrap">
+                                <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? '') }}')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto shadow-sm">
                                     <i class="fa-solid fa-qrcode"></i> Lihat QR
                                 </button>
                             @else
@@ -74,7 +74,19 @@
 
 @push('scripts')
 <script>
-    // Fitur Popup QR Code yang sama canggihnya dengan milik Admin
+    // FUNGSI BARU: Auto Scroll ke Tabel saat Pindah Halaman
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.search.includes('page=')) {
+            const tabelSiswa = document.getElementById('tabel-siswa');
+            if (tabelSiswa) {
+                setTimeout(() => {
+                    tabelSiswa.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+    });
+
+    // Popup QR Code
     function showQRCode(url, nisn, name) {
         Swal.fire({
             title: name,
@@ -86,7 +98,7 @@
             showCancelButton: true,
             confirmButtonText: '<i class="fa-solid fa-download"></i> Unduh',
             cancelButtonText: 'Tutup',
-            confirmButtonColor: '#9333ea', // Warna purple tailwind
+            confirmButtonColor: '#9333ea', 
         }).then((result) => {
             if (result.isConfirmed) {
                 const link = document.createElement('a');

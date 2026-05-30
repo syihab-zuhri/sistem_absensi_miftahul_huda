@@ -89,8 +89,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/subjects/import', [\App\Http\Controllers\SubjectController::class, 'import'])->name('admin.subjects.import');
         Route::resource('/admin/subjects', \App\Http\Controllers\SubjectController::class)->except(['create', 'show', 'edit']);
 
-        // // TEST QR
-        // Route::view('/test-qr', 'test-qr')->name('test.qr');
+        // ==========================================
+        // RUTE RESET ABSENSI (HANYA ADMIN)
+        // ==========================================
+        Route::delete('/admin/reports/truncate', [\App\Http\Controllers\ReportController::class, 'truncate'])->name('reports.truncate');
+
+        // TEST QR
+        Route::view('/test-qr', 'test-qr')->name('test.qr');
     });
 
     // ==========================================
@@ -112,7 +117,7 @@ Route::middleware('auth')->group(function () {
             return view('scanner', compact('activeSchedule'));
         })->name('scanner.index');
 
-        // Modul API / Pemrosesan Absensi (Diperbarui untuk Batch Save)
+        // Modul API / Pemrosesan Absensi (BATCH SAVE)
         Route::get('/absensi/session-data/{schedule_id}', [\App\Http\Controllers\AttendanceController::class, 'getSessionData']);
         Route::post('/absensi/save-session/{schedule_id}', [\App\Http\Controllers\AttendanceController::class, 'saveSession']);
     });

@@ -31,7 +31,7 @@ class StudentController extends Controller{
             });
         }
 
-        $students = $query->paginate(15)->withQueryString();
+        $students = $query->paginate(50)->withQueryString();
 
         return view('admin.students.index', compact('students'));
     }
@@ -193,7 +193,7 @@ class StudentController extends Controller{
             });
         }
 
-        $students = $query->paginate(15)->withQueryString();
+        $students = $query->paginate(50)->withQueryString();
 
         return view('guru.students.index', compact('students'));
     }

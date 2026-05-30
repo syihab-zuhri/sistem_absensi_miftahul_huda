@@ -2,30 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Attendance;
 use App\Models\Schedule;
 use App\Models\Student;
-use Carbon\Carbon;
+use App\Models\Attendance;
+use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
     /**
      * Mengambil Sesi Jadwal yang Aktif Saat Ini
+     * Hanya mengembalikan jadwal jika jadwal tersebut MILIK GURU YANG SEDANG LOGIN
      */
     public function getActiveSession()
     {
         $now = \Carbon\Carbon::now();
         $day = $now->locale('id')->dayName; 
 
-        // Admin bisa melihat semua sesi yang aktif (opsional, jika admin butuh akses scanner)
-        // Tapi Guru HANYA bisa melihat sesi miliknya sendiri
+        // Admin bisa melihat semua sesi yang aktif
+        // Guru HANYA bisa melihat sesi miliknya sendiri
         $query = Schedule::where('day', $day)
             ->where('start_time', '<=', $now->format('H:i'))
             ->where('end_time', '>=', $now->format('H:i'))
             ->with(['subject', 'teacher']);
 
-        // Jika yang login BUKAN Admin, filter berdasarkan ID Guru
         if (!auth()->user()->hasRole('admin')) {
             $query->where('teacher_id', auth()->id());
         }
@@ -34,25 +33,28 @@ class AttendanceController extends Controller
     }
 
     /**
-     * REVISI LOGIKA: Ambil Semua Siswa di Kelas Tersebut (Pre-load)
+     * Ambil Semua Siswa (Pre-load) KHUSUS HARI INI
      */
     public function getSessionData($schedule_id)
     {
         $schedule = Schedule::findOrFail($schedule_id);
         
-        // Ambil semua siswa yang berada di kelas jadwal tersebut
+        // Ambil semua siswa di kelas
         $students = Student::with('user')->where('class_id', $schedule->class_id)->orderBy('nisn', 'asc')->get();
         
-        // Ambil absensi yang sudah tersimpan (jika ada)
-        $attendances = Attendance::where('schedule_id', $schedule_id)->get()->keyBy('student_id');
+        // Hanya ambil absensi HARI INI agar data minggu lalu tidak bocor
+        $today = \Carbon\Carbon::today();
+        $attendances = Attendance::where('schedule_id', $schedule_id)
+                        ->whereDate('timestamp', $today)
+                        ->get()
+                        ->keyBy('student_id');
 
-        // Gabungkan datanya
         $data = $students->map(function($student) use ($attendances) {
             return [
                 'id' => $student->id,
                 'nisn' => $student->nisn,
                 'name' => $student->user->name ?? 'User Terhapus',
-                'status' => $attendances->has($student->id) ? $attendances[$student->id]->status : '' // Kosong jika belum absen
+                'status' => $attendances->has($student->id) ? $attendances[$student->id]->status : '' 
             ];
         });
 
@@ -60,7 +62,7 @@ class AttendanceController extends Controller
     }
 
     /**
-     * FUNGSI BARU: Simpan Seluruh Sesi Sekaligus (Batch Save)
+     * Simpan Sesi (Batch Save) Mencegah Timpa Data Minggu Lalu
      */
     public function saveSession(Request $request, $schedule_id)
     {
@@ -70,14 +72,28 @@ class AttendanceController extends Controller
             'attendances.*.status' => 'required|in:hadir,sakit,izin,alpa',
         ]);
 
+        $today = \Carbon\Carbon::today();
         $now = \Carbon\Carbon::now();
 
-        // Simpan massal menggunakan updateOrCreate
         foreach($request->attendances as $att) {
-            Attendance::updateOrCreate(
-                ['schedule_id' => $schedule_id, 'student_id' => $att['student_id']],
-                ['status' => $att['status'], 'timestamp' => $now]
-            );
+            // Cek apakah siswa sudah diabsen khusus hari ini
+            $attendance = Attendance::where('schedule_id', $schedule_id)
+                ->where('student_id', $att['student_id'])
+                ->whereDate('timestamp', $today)
+                ->first();
+
+            if ($attendance) {
+                // Jika sudah ada (hari ini), update statusnya
+                $attendance->update(['status' => $att['status']]);
+            } else {
+                // Jika belum ada (hari ini), buat data absensi baru
+                Attendance::create([
+                    'schedule_id' => $schedule_id,
+                    'student_id' => $att['student_id'],
+                    'status' => $att['status'],
+                    'timestamp' => $now
+                ]);
+            }
         }
 
         return response()->json(['success' => true, 'message' => 'Sesi Absensi Berhasil Disimpan!']);
