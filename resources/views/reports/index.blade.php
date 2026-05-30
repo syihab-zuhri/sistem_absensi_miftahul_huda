@@ -54,7 +54,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="button" onclick="confirmResetAbsensi()" class="w-full sm:w-auto bg-red-50 hover:bg-red-100 text-red-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm border border-red-200">
-                        <!-- <i class="fa-solid fa-skull-crossbones"></i>--> Reset Semua Absensi 
+                        <!-- <i class="fa-solid fa-skull-crossbones"></i>--> Hapus Semua Riwayat Absensi
                     </button>
                 </form>
             </div>
