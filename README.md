@@ -1,59 +1,156 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🏫 Sistem Absensi Berbasis QR Code
+## Miftahul Huda
 
-## About Laravel
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Alpine.js](https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=black)](https://alpinejs.dev/)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistem presensi sekolah modern berbasis QR Code yang menggantikan absensi manual — lebih cepat, lebih akurat, dan real-time.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+</div>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📖 Tentang Proyek
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+**Sistem Absensi Miftahul Huda** adalah aplikasi presensi sekolah modern yang dirancang untuk menggantikan presensi manual. Menggunakan teknologi QR Code, aplikasi ini mempercepat proses absensi, meminimalisir kecurangan, dan menyediakan laporan kehadiran secara real-time yang mudah dikelola.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## ✨ Fitur Utama
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Sistem ini membagi hak akses menjadi **3 peran utama**: Admin, Guru, dan Siswa.
 
-### Premium Partners
+### 👨‍💻 Administrator
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Fitur | Deskripsi |
+|---|---|
+| **Manajemen Siswa Cerdas** | Tambah siswa manual atau via Import Excel. Mendukung aksi massal seperti Hapus Massal dan Pindah Kelas Massal. |
+| **QR Code Generator** | Sistem otomatis membuatkan QR Code unik berformat SVG untuk setiap siswa baru. |
+| **Manajemen Jadwal Pintar** | Penjadwalan cerdas yang dipisahkan berdasarkan Semester Ganjil & Genap. Dilengkapi fitur Toggle ON/OFF global menggunakan Cache. |
+| **Laporan & Ekspor** | Filter laporan berdasarkan tanggal, kelas, dan mata pelajaran. Mendukung ekspor ke format PDF dan Excel/CSV. |
+| **Keamanan Database** | Fitur pengosongan database (Truncate) absensi untuk pergantian tahun ajaran, dilindungi dengan konfirmasi ganda via SweetAlert2. |
 
-## Contributing
+### 👨‍🏫 Guru
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Antarmuka Scanner (Kamera):** Guru dapat membuka kamera pemindai langsung dari browser (HP/Laptop) untuk memindai QR Code siswa.
+- **Deteksi Jadwal Otomatis:** Scanner mendeteksi secara otomatis mata pelajaran yang sedang diajarkan berdasarkan Jam, Hari, dan Semester yang aktif.
+- **Batch Save Absensi:** Fitur untuk menyimpan seluruh rekaman absensi dalam satu sesi kelas dengan aman.
 
-## Code of Conduct
+### 🎓 Siswa
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Portal Siswa:** Siswa dapat login menggunakan NISN untuk melihat profil dan persentase kehadiran mereka.
+- **Password Default:** Password bawaan siswa menggunakan NISN masing-masing (di-hash dengan aman).
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🛠️ Teknologi yang Digunakan
 
-## License
+| Kategori | Teknologi |
+|---|---|
+| **Framework** | [Laravel 12.x](https://laravel.com/) |
+| **Frontend** | HTML5, CSS3, [Tailwind CSS](https://tailwindcss.com/) |
+| **State Management** | [Alpine.js](https://alpinejs.dev/) |
+| **Pop-up Alerts** | [SweetAlert2](https://sweetalert2.github.io/) |
+| **QR Scanner** | QR Scanner JS |
+| **Database** | MySQL |
+| **QR Code Generator** | `simplesoftwareio/simple-qrcode` |
+| **Import/Export Excel** | `maatwebsite/excel` |
+| **Manajemen Role** | `spatie/laravel-permission` |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🚀 Cara Instalasi (Local Development)
+
+### 1. Persyaratan Sistem
+
+Pastikan komputer Anda sudah terinstal:
+
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL (XAMPP / Laragon)
+
+### 2. Langkah Instalasi
+
+**Clone repositori:**
+
+```bash
+git clone https://github.com/syihab-zuhri/sistem_absensi_miftahul_huda.git
+cd sistem_absensi_miftahul_huda
+```
+
+**Install dependensi PHP & Node.js:**
+
+```bash
+composer install
+npm install
+npm run build
+```
+
+**Atur Environment Variables:**
+
+Copy file `.env.example` dan ubah namanya menjadi `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Buka file `.env`, lalu atur koneksi database Anda:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sistem_absensi_miftahul_huda
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+**Generate Application Key & Migrasi Database:**
+
+```bash
+php artisan key:generate
+php artisan migrate --seed
+```
+
+**Buat Symlink Storage (⚠️ SANGAT PENTING):**
+
+Langkah ini wajib dilakukan agar QR Code siswa dapat ditampilkan dan diunduh.
+
+```bash
+php artisan storage:link
+```
+
+**Jalankan Server Lokal:**
+
+```bash
+php artisan serve
+```
+
+Aplikasi kini dapat diakses melalui browser di: **[http://localhost:8000](http://localhost:8000)**
+
+---
+
+## 🔐 Info Akses Default (Setelah Seeding)
+
+| Peran | Email / Username | Password |
+|---|---|---|
+| **Admin** | `admin@admin.com` | `password` |
+| **Guru** | Tergantung data seeder | — |
+| **Siswa** | `NISN@siswa.com` | `NISN` |
+
+> **Catatan:** Password siswa menggunakan NISN masing-masing dan disimpan dengan enkripsi hash yang aman.
+
+---
+
+<div align="center">
+
+Dibuat dengan ❤️ untuk kemajuan pendidikan **Miftahul Huda**
+
+Dibuat dengan **[Laravel](http://laravel.com)**
+
+</div>
