@@ -13,13 +13,13 @@ return new class extends Migration
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade');
             $table->string('class_id');
-            $table->string('day'); // 'Senin', 'Selasa', dll.
+            $table->string('day'); 
             $table->time('start_time');
             $table->time('end_time');
+            $table->string('semester')->default('Ganjil'); // TAMBAHAN LANGKAH 3: Simpan status Ganjil/Genap
             $table->timestamps();
 
-            // Indexing untuk mempercepat pencarian (Fase 10)
-            $table->index(['day', 'start_time', 'end_time']);
+            $table->index(['day', 'start_time', 'end_time', 'semester']);
         });
     }
 

@@ -84,32 +84,32 @@
             <table class="w-full text-sm text-left text-gray-600">
                 <thead class="text-xs text-gray-500 uppercase bg-white border-b border-gray-100">
                     <tr>
-                        <th class="px-6 py-4 text-center w-12">No</th>
-                        <th class="px-6 py-4">Waktu Absen</th>
-                        <th class="px-6 py-4">Nama Siswa</th>
-                        <th class="px-6 py-4 text-center">Kelas</th>
-                        <th class="px-6 py-4">Mata Pelajaran</th>
-                        <th class="px-6 py-4 text-center">Status</th>
+                        <th class="px-6 py-4 text-center w-12 whitespace-nowrap">No</th>
+                        <th class="px-6 py-4 whitespace-nowrap">Waktu Absen</th>
+                        <th class="px-6 py-4 whitespace-nowrap">Nama Siswa</th>
+                        <th class="px-6 py-4 text-center whitespace-nowrap">Kelas</th>
+                        <th class="px-6 py-4 whitespace-nowrap">Mata Pelajaran</th>
+                        <th class="px-6 py-4 text-center whitespace-nowrap">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($attendances as $index => $attendance)
                     <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-center">{{ $index + 1 }}</td>
+                        <td class="px-6 py-4 font-medium text-center whitespace-nowrap">{{ $index + 1 }}</td>
                         <td class="px-6 py-4 text-gray-800 font-semibold font-mono text-xs whitespace-nowrap">
-                            <div class="text-gray-500">{{ \Carbon\Carbon::parse($attendance->timestamp)->format('d/m/Y') }}</div>
-                            <div class="text-gray-800">{{ \Carbon\Carbon::parse($attendance->timestamp)->format('H:i:s') }} WIB</div>
+                            <div class="text-gray-500 whitespace-nowrap">{{ \Carbon\Carbon::parse($attendance->timestamp)->format('d/m/Y') }}</div>
+                            <div class="text-gray-800 whitespace-nowrap">{{ \Carbon\Carbon::parse($attendance->timestamp)->format('H:i:s') }} WIB</div>
                         </td>
-                        <td class="px-6 py-4 font-bold text-gray-800">
+                        <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">
                             {{ $attendance->student->user->name ?? 'User Terhapus' }}
-                            <div class="text-xs font-normal text-gray-400 mt-0.5 font-mono">NISN: {{ $attendance->student->nisn ?? '-' }}</div>
+                            <div class="text-xs font-normal text-gray-400 mt-0.5 font-mono whitespace-nowrap">NISN: {{ $attendance->student->nisn ?? '-' }}</div>
                         </td>
-                        <td class="px-6 py-4 text-center">
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
                             <!-- whitespace-nowrap agar kelas tidak terpotong ke bawah di HP -->
                             <span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded font-bold text-xs whitespace-nowrap">{{ $attendance->schedule->class_id ?? '-' }}</span>
                         </td>
-                        <td class="px-6 py-4 font-medium">{{ $attendance->schedule->subject->name ?? '-' }}</td>
-                        <td class="px-6 py-4 text-center">
+                        <td class="px-6 py-4 font-medium whitespace-nowrap">{{ $attendance->schedule->subject->name ?? '-' }}</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
                             @php
                                 $statusStr = strtolower($attendance->status);
                                 $badgeColor = match($statusStr) {
@@ -120,7 +120,7 @@
                                     default => 'bg-gray-100 text-gray-800 border-gray-200',
                                 };
                             @endphp
-                            <span class="{{ $badgeColor }} border px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
+                            <span class="{{ $badgeColor }} border px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block whitespace-nowrap">
                                 {{ $attendance->status }}
                             </span>
                         </td>

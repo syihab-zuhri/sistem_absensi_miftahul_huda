@@ -96,13 +96,22 @@
             </a>
             @endrole
 
+            <!-- MENU SISWA -->
+            @role('siswa')
+            <a href="{{ route('student.portal') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('student.portal') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
+                <i class="fa-solid fa-user-graduate w-5 text-center"></i>
+                <span class="text-sm font-medium">Portal Siswa</span>
+            </a>
+            @endrole
+            
+            @hasanyrole('admin|guru')
             <!-- MENU UMUM (ADMIN & GURU) -->
             <div class="px-3 pt-4 pb-2"><p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Rekapitulasi</p></div>
-            
             <a href="{{ route('reports.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('reports*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-file-invoice w-5 text-center"></i>
                 <span class="font-medium text-sm">Rekapitulasi Absensi</span>
             </a>
+            @endhasanyrole
 
             <!-- Tombol Keluar -->
             <form method="POST" action="{{ route('logout') }}" class="w-full mt-auto pt-4 border-t border-gray-100">

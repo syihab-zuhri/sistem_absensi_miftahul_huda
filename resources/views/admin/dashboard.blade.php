@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Ruang Kendali Admin')
+@section('title', 'Halaman Utama Admin')
 
 @section('content')
     <!-- Welcome Banner dari kode lama Anda -->
@@ -20,7 +20,7 @@
                 <i class="fa-solid fa-user-tie text-2xl"></i>
             </div>
             <div>
-                <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Total Pegawai</div>
+                <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Total Guru</div>
                 <div class="text-3xl font-bold text-gray-800">{{ \App\Models\User::role(['admin', 'guru'])->count() }}</div>
             </div>
         </div>

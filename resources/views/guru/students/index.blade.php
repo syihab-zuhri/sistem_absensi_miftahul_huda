@@ -27,28 +27,28 @@
             <table class="w-full text-sm text-left text-gray-600">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
                     <tr>
-                        <th class="px-6 py-4 w-16 text-center">No</th>
-                        <th class="px-6 py-4">Nama Siswa</th>
-                        <th class="px-6 py-4">NISN & Kelas</th>
-                        <th class="px-6 py-4 text-center">QR Code</th>
+                        <th class="px-6 py-4 w-16 text-center whitespace-nowrap">No</th>
+                        <th class="px-6 py-4 whitespace-nowrap">Nama Siswa</th>
+                        <th class="px-6 py-4 whitespace-nowrap">NISN & Kelas</th>
+                        <th class="px-6 py-4 text-center whitespace-nowrap">QR Code</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($students as $index => $student)
                     <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 text-center font-medium">{{ $students->firstItem() + $index }}</td>
-                        <td class="px-6 py-4 font-bold text-gray-800">{{ $student->user->name ?? 'User Terhapus' }}</td>
-                        <td class="px-6 py-4">
-                            <div class="text-sm font-mono text-gray-600">{{ $student->nisn }}</div>
+                        <td class="px-6 py-4 text-center font-medium whitespace-nowrap">{{ $students->firstItem() + $index }}</td>
+                        <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">{{ $student->user->name ?? 'User Terhapus' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-mono text-gray-600 whitespace-nowrap">{{ $student->nisn }}</div>
                             <span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{{ $student->class_id }}</span>
                         </td>
-                        <td class="px-6 py-4 text-center">
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
                             @if($student->qr_code_path)
-                                <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? '') }}')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto shadow-sm">
+                                <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? '') }}')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto shadow-sm whitespace-nowrap">
                                     <i class="fa-solid fa-qrcode"></i> Lihat QR
                                 </button>
                             @else
-                                <span class="text-red-500 text-xs font-bold">Kosong</span>
+                                <span class="text-red-500 text-xs font-bold whitespace-nowrap">Kosong</span>
                             @endif
                         </td>
                     </tr>

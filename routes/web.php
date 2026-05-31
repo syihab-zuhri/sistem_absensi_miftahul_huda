@@ -76,6 +76,10 @@ Route::middleware('auth')->group(function () {
         // ==========================================
         Route::delete('/admin/schedules/truncate', [\App\Http\Controllers\ScheduleController::class, 'truncate'])->name('schedules.truncate');
         Route::delete('/admin/schedules/bulk-delete', [\App\Http\Controllers\ScheduleController::class, 'destroyBulk'])->name('schedules.destroyBulk');
+        
+        // TAMBAHAN LANGKAH 4: Rute untuk Toggle ON/OFF Semester
+        Route::post('/admin/schedules/toggle', [\App\Http\Controllers\ScheduleController::class, 'toggleSemester'])->name('schedules.toggle');
+        
         Route::resource('/admin/schedules', \App\Http\Controllers\ScheduleController::class)->except(['create', 'show', 'edit']);
 
         // ==========================================
@@ -111,11 +115,13 @@ Route::middleware('auth')->group(function () {
         // Modul Laporan per Sesi (Dari Scanner)
         Route::get('/reports/session/{schedule_id}', [\App\Http\Controllers\ReportController::class, 'exportSessionPDF'])->name('reports.session');
 
+
+        Route::get('/scanner', [\App\Http\Controllers\AttendanceController::class, 'index'])->name('scanner.index');
         // Modul Scanner
-        Route::get('/scanner', function () {
-            $activeSchedule = app(\App\Http\Controllers\AttendanceController::class)->getActiveSession();
-            return view('scanner', compact('activeSchedule'));
-        })->name('scanner.index');
+        // Route::get('/scanner', function () {
+        //     $activeSchedule = app(\App\Http\Controllers\AttendanceController::class)->getActiveSession();
+        //     return view('scanner', compact('activeSchedule'));
+        // })->name('scanner.index');
 
         // Modul API / Pemrosesan Absensi (BATCH SAVE)
         Route::get('/absensi/session-data/{schedule_id}', [\App\Http\Controllers\AttendanceController::class, 'getSessionData']);

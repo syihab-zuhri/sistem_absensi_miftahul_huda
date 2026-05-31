@@ -84,13 +84,13 @@
                 <table class="w-full text-sm text-left text-gray-600">
                     <thead class="text-xs text-gray-400 uppercase bg-white sticky top-0 shadow-sm z-10">
                         <tr>
-                            <th class="px-6 py-3 w-12 text-center">No</th>
-                            <th class="px-6 py-3">Nama Lengkap & NISN</th>
-                            <th class="px-6 py-3 text-center w-40">Status Kehadiran</th>
+                            <th class="px-6 py-3 w-12 text-center whitespace-nowrap">No</th>
+                            <th class="px-6 py-3 whitespace-nowrap">Nama Lengkap & NISN</th>
+                            <th class="px-6 py-3 text-center w-40 whitespace-nowrap">Status Kehadiran</th>
                         </tr>
                     </thead>
                     <tbody id="studentTableBody" class="divide-y divide-gray-100">
-                        <tr><td colspan="3" class="p-8 text-center"><i class="fa-solid fa-spinner fa-spin text-2xl text-blue-500"></i> Memuat data kelas...</td></tr>
+                        <tr><td colspan="3" class="p-8 text-center whitespace-nowrap"><i class="fa-solid fa-spinner fa-spin text-2xl text-blue-500"></i> Memuat data kelas...</td></tr>
                     </tbody>
                 </table>
             </div>

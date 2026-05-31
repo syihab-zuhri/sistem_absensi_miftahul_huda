@@ -61,17 +61,17 @@
                     <table class="w-full text-sm text-left text-gray-600">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
                             <tr>
-                                <th class="px-6 py-4 w-16 text-center">No</th>
-                                <th class="px-6 py-4">Nama Mata Pelajaran</th>
-                                <th class="px-6 py-4 text-center w-32">Aksi</th>
+                                <th class="px-6 py-4 w-16 text-center whitespace-nowrap">No</th>
+                                <th class="px-6 py-4 whitespace-nowrap">Nama Mata Pelajaran</th>
+                                <th class="px-6 py-4 text-center w-32 whitespace-nowrap">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse($subjects as $index => $subject)
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 font-medium text-center">{{ $index + 1 }}</td>
-                                <td class="px-6 py-4 font-bold text-gray-800">{{ $subject->name }}</td>
-                                <td class="px-6 py-4 flex justify-center gap-2">
+                                <td class="px-6 py-4 font-medium text-center whitespace-nowrap">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">{{ $subject->name }}</td>
+                                <td class="px-6 py-4 flex justify-center gap-2 whitespace-nowrap">
                                     <!-- Tombol Edit -->
                                     <button type="button" @click="editForm = { id: '{{ $subject->id }}', name: '{{ addslashes($subject->name) }}' }; editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Nama">
                                         <i class="fa-solid fa-pen-to-square"></i>

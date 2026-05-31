@@ -16,6 +16,7 @@ class Schedule extends Model
         'day',
         'start_time',
         'end_time',
+        'semester', // TAMBAHAN LANGKAH 3: Kolom semester
     ];
 
     public function subject()
@@ -23,7 +24,6 @@ class Schedule extends Model
         return $this->belongsTo(Subject::class);
     }
 
-    // Relasi ke Guru (User)
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');

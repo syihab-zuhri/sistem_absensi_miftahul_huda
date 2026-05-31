@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Manajemen Guru & Admin - Sistem Absensi Sekolah')
+@section('title', 'Manajemen User Guru & Admin')
 
 @section('content')
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -24,8 +24,8 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Role (Hak Akses)</label>
                     <select name="role" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
-                        <option value="guru">Guru Pengajar (Bisa Scan Absen)</option>
-                        <option value="admin">Administrator (Akses Penuh)</option>
+                        <option value="guru">Guru Pengajar </option>
+                        <option value="admin">Administrator </option>
                     </select>
                 </div>
                 <div>
@@ -50,26 +50,26 @@
                 <table class="w-full text-sm text-left text-gray-600">
                     <thead class="text-xs text-gray-500 uppercase bg-white border-b border-gray-100">
                         <tr>
-                            <th class="px-6 py-4">Nama & Email</th>
-                            <th class="px-6 py-4 text-center">Hak Akses</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
+                            <th class="px-6 py-4 whitespace-nowrap">Nama & Email</th>
+                            <th class="px-6 py-4 text-center whitespace-nowrap">Hak Akses</th>
+                            <th class="px-6 py-4 text-center whitespace-nowrap">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach($users as $user)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="font-bold text-gray-800 text-base">{{ $user->name }}</div>
                                 <div class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</div>
                             </td>
-                            <td class="px-6 py-4 text-center">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if($user->hasRole('admin'))
-                                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Admin</span>
+                                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap">Admin</span>
                                 @else
-                                    <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Guru</span>
+                                    <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap">Guru</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 flex justify-center gap-2">
+                            <td class="px-6 py-4 flex justify-center gap-2 whitespace-nowrap">
                                 <!-- Cegah Admin menghapus dirinya sendiri -->
                                 @if($user->id !== auth()->id())
                                     <button type="button" onclick="confirmSingleDelete('{{ $user->id }}')" class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded transition font-bold text-xs flex items-center gap-2" title="Hapus Akun">
