@@ -86,7 +86,7 @@
                         <i class="fa-solid fa-shield-check text-green-500"></i>
                         <span class="text-xs font-medium">Sistem Terenkripsi & Aman</span>
                     </div>
-                    <div class="text-xs font-bold text-gray-300 uppercase tracking-widest">v2.0.4</div>
+                    <div class="text-xs font-bold text-gray-300 uppercase tracking-widest">v1.0.0</div>
                 </div>
             </div>
         </div>
