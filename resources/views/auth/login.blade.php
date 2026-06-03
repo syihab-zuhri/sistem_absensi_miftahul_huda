@@ -59,7 +59,10 @@
                         </div>
                         <input id="password" type="password" name="password" required autocomplete="current-password"
                             placeholder="Masukkan kata sandi Anda"
-                            class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-gray-200 border rounded-2xl text-sm transition-all focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white placeholder:text-gray-400">
+                            class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 border-gray-200 border rounded-2xl text-sm transition-all focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white placeholder:text-gray-400">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600 focus:outline-none transition-colors">
+                            <i id="togglePasswordIcon" class="fa-solid fa-eye text-sm"></i>
+                        </button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
@@ -91,4 +94,21 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </x-guest-layout>
