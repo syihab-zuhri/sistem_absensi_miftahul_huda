@@ -61,7 +61,7 @@
             @endrole
 
             <a href="{{ route('reports.custom.excel', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
-                <i class="fa-solid fa-file-excel"></i> Export CSV
+                <i class="fa-solid fa-file-excel"></i> Export Excel
             </a>
             <a href="{{ route('reports.custom.pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" target="_blank" class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                 <i class="fa-solid fa-file-pdf"></i> Cetak PDF

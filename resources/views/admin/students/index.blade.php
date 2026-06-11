@@ -36,8 +36,12 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                        <!-- FITUR AUTO UPPERCASE DI SINI -->
-                        <input type="text" name="class_id" required placeholder="Cth: 10-A" oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <select name="class_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="">-- Pilih Kelas --</option>
+                            @foreach($classrooms as $classroom)
+                                <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors">
                         Simpan & Buat QR
@@ -62,6 +66,24 @@
                         Upload & Proses
                     </button>
                 </form>
+
+                <!-- Menampilkan Log Error Import -->
+                @if(session('import_errors'))
+                <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 class="text-sm font-bold text-red-800 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Gagal Diimpor (Kelas Tidak Ditemukan)
+                    </h3>
+                    <div class="max-h-40 overflow-y-auto">
+                        <ul class="text-xs text-red-600 space-y-1">
+                            @foreach(session('import_errors') as $error)
+                            <li class="border-b border-red-100 pb-1">
+                                <span class="font-bold">Baris {{ $error['row'] }}:</span> {{ $error['nama'] }} - Kelas: <span class="font-mono bg-red-100 px-1">{{ $error['kelas'] }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
 
@@ -85,7 +107,7 @@
                         <i class="fa-solid fa-people-arrows"></i> Pindah Kelas
                     </button>
                     <button type="button" onclick="confirmBulkDelete()" class="flex-1 sm:flex-none bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
-                        <i class="fa-solid fa-trash-can"></i> Hapus Terpilih
+                        <i class="fa-solid fa-trash-can"></i> Hapus
                     </button>
                 </div>
             </div>
@@ -125,7 +147,7 @@
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         @if($student->qr_code_path)
                                             <!-- VERSI STABIL -->
-                                            <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? "User Terhapus") }}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto whitespace-nowrap">
+                                            <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? "Siswa Terhapus") }}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto whitespace-nowrap">
                                                 <i class="fa-solid fa-qrcode"></i> Lihat
                                             </button>
                                         @else
@@ -134,7 +156,7 @@
                                     </td>
                                     <td class="px-6 py-4 flex justify-center gap-2 whitespace-nowrap">
                                         <!-- VERSI STABIL -->
-                                        <button type="button" @click="editForm = { id: '{{ $student->id }}', name: '{{ addslashes($student->user->name ?? "User Terhapus") }}', nisn: '{{ $student->nisn }}', class_id: '{{ $student->class_id }}' }; editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Siswa">
+                                        <button type="button" @click="editForm = { id: '{{ $student->id }}', name: '{{ addslashes($student->user->name ?? "Siswa Terhapus") }}', nisn: '{{ $student->nisn }}', class_id: '{{ $student->class_id }}' }; editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Siswa">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
 
@@ -155,12 +177,14 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    <!-- Paginasi di Dalam Tabel -->
+                    @if($students->hasPages())
+                    <div class="px-6 py-4 border-t border-gray-100 bg-white">
+                        {{ $students->links() }}
+                    </div>
+                    @endif
                 </form>
-            </div>
-
-            <!-- Paginasi -->
-            <div class="mt-4">
-                {{ $students->links() }}
             </div>
         </div>
     </div>
@@ -191,8 +215,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                    <!-- FITUR AUTO UPPERCASE DI SINI -->
-                    <input type="text" name="class_id" x-model="editForm.class_id" required oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <select name="class_id" x-model="editForm.class_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach($classrooms as $classroom)
+                            <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 
                 <div class="pt-4 flex justify-end gap-3">
@@ -303,9 +331,14 @@
 
         Swal.fire({
             title: 'Pindahkan ' + checkboxes.length + ' Siswa',
-            text: 'Masukkan nama kelas baru untuk siswa yang dipilih:',
-            input: 'text',
-            inputPlaceholder: 'Contoh: 11-A',
+            text: 'Pilih kelas baru untuk siswa yang dipilih:',
+            input: 'select',
+            inputOptions: {
+                @foreach($classrooms as $c)
+                '{{ $c->name }}': '{{ $c->name }}',
+                @endforeach
+            },
+            inputPlaceholder: 'Pilih Kelas',
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#4f46e5', 
@@ -314,7 +347,7 @@
             cancelButtonText: 'Batal',
             inputValidator: (value) => {
                 if (!value) {
-                    return 'Nama kelas tidak boleh kosong!'
+                    return 'Pilih kelas terlebih dahulu!'
                 }
             }
         }).then((result) => {
@@ -334,7 +367,7 @@
                 const newClassInput = document.createElement('input');
                 newClassInput.type = 'hidden';
                 newClassInput.name = 'new_class_id';
-                newClassInput.value = result.value.toUpperCase(); // Paksa Huruf Besar
+                newClassInput.value = result.value;
                 form.appendChild(newClassInput);
 
                 // Eksekusi (Submit)

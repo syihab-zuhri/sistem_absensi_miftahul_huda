@@ -28,7 +28,13 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
                         <select name="day" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
-                            <option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option>
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                            <option value="Minggu">Minggu</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -44,6 +50,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
                         <select name="subject_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Pilih Mata Pelajaran --</option>
                             @foreach($subjects as $subject)
                                 <option value="{{ $subject->id }}">{{ $subject->name }}</option>
                             @endforeach
@@ -52,6 +59,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Guru Pengajar</label>
                         <select name="teacher_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Pilih Guru --</option>
                             @foreach($teachers as $teacher)
                                 <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
                             @endforeach
@@ -59,7 +67,12 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kelas Target</label>
-                        <input type="text" name="class_id" required placeholder="Cth: 10-A" oninput="this.value = this.value.toUpperCase()" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
+                        <select name="class_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Pilih Kelas --</option>
+                            @foreach($classrooms as $classroom)
+                                <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors">
                         Simpan Jadwal
@@ -287,7 +300,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                    <input type="text" name="class_id" x-model="editForm.class_id" required oninput="this.value = this.value.toUpperCase()" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
+                    <select name="class_id" x-model="editForm.class_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach($classrooms as $classroom)
+                            <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 
                 <div class="pt-4 flex justify-end gap-3">

@@ -32,8 +32,9 @@ class StudentController extends Controller{
         }
 
         $students = $query->paginate(50)->withQueryString();
+        $classrooms = \App\Models\Classroom::orderBy('name')->get();
 
-        return view('admin.students.index', compact('students'));
+        return view('admin.students.index', compact('students', 'classrooms'));
     }
 
     public function store(Request $request)
@@ -167,8 +168,18 @@ class StudentController extends Controller{
         ]);
 
         try {
-            Excel::import(new StudentsImport, $request->file('file'));
-            return redirect()->back()->with('success', 'Data siswa berhasil diimport!');
+            $import = new StudentsImport();
+            Excel::import($import, $request->file('file'));
+
+            $errors = $import->getErrors();
+
+            if (count($errors) > 0) {
+                return redirect()->back()
+                    ->with('warning', count($errors) . ' siswa gagal diimpor karena kelas tidak ditemukan di database.')
+                    ->with('import_errors', $errors);
+            }
+
+            return redirect()->back()->with('success', 'Semua data siswa berhasil diimport!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal mengimport file: ' . $e->getMessage());
         }
@@ -194,7 +205,8 @@ class StudentController extends Controller{
         }
 
         $students = $query->paginate(50)->withQueryString();
+        $classrooms = \App\Models\Classroom::orderBy('name')->get();
 
-        return view('guru.students.index', compact('students'));
+        return view('guru.students.index', compact('students', 'classrooms'));
     }
 }

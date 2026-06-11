@@ -94,6 +94,11 @@ Route::middleware('auth')->group(function () {
         Route::resource('/admin/subjects', \App\Http\Controllers\SubjectController::class)->except(['create', 'show', 'edit']);
 
         // ==========================================
+        // CRUD KELAS
+        // ==========================================
+        Route::resource('/admin/classrooms', \App\Http\Controllers\ClassroomController::class)->except(['create', 'show', 'edit']);
+
+        // ==========================================
         // RUTE RESET ABSENSI (HANYA ADMIN)
         // ==========================================
         Route::delete('/admin/reports/truncate', [\App\Http\Controllers\ReportController::class, 'truncate'])->name('reports.truncate');

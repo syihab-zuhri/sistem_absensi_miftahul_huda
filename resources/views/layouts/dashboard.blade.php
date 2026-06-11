@@ -8,6 +8,7 @@
     <!-- Metadata untuk Notifikasi (Menghindari Syntax Error di JS Editor) -->
     <meta name="success-msg" content="{{ session('success') }}">
     <meta name="error-msg" content="{{ session('error') }}">
+    <meta name="warning-msg" content="{{ session('warning') }}">
     <meta name="validation-errors" content="{{ json_encode($errors->all()) }}">
 
     <!-- Tailwind CSS -->
@@ -64,6 +65,10 @@
             <a href="/admin/students" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/students*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-users w-5 text-center"></i>
                 <span class="font-medium text-sm">Data Siswa</span>
+            </a>
+            <a href="/admin/classrooms" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/classrooms*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
+                <i class="fa-solid fa-users-rectangle w-5 text-center"></i>
+                <span class="font-medium text-sm">Kelas</span>
             </a>
             <a href="/admin/subjects" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/subjects*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-book w-5 text-center"></i>
@@ -157,6 +162,7 @@
             // Ini akan 100% menghilangkan "SyntaxError" di browser maupun di VS Code
             let successMsg = document.querySelector('meta[name="success-msg"]').content;
             let errorMsg = document.querySelector('meta[name="error-msg"]').content;
+            let warningMsg = document.querySelector('meta[name="warning-msg"]').content;
             let validationRaw = document.querySelector('meta[name="validation-errors"]').content;
             
             let validationErrors = [];
@@ -166,6 +172,7 @@
 
             if (successMsg) Swal.fire({ icon: 'success', title: 'Berhasil!', text: successMsg, timer: 3000, showConfirmButton: false });
             if (errorMsg) Swal.fire({ icon: 'error', title: 'Oops...', text: errorMsg });
+            if (warningMsg) Swal.fire({ icon: 'warning', title: 'Perhatian', text: warningMsg });
 
             if (validationErrors && validationErrors.length > 0) {
                 let errorHtml = '<ul class="text-left text-sm text-red-600 list-disc pl-5">';

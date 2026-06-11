@@ -37,7 +37,9 @@ class ScheduleController extends Controller
                 })->groupBy('day'),
         ];
 
-        return view('admin.schedules.index', compact('schedules', 'subjects', 'teachers', 'activeSemesterGlobal'));
+        $classrooms = \App\Models\Classroom::orderBy('name')->get();
+
+        return view('admin.schedules.index', compact('schedules', 'subjects', 'teachers', 'activeSemesterGlobal', 'classrooms'));
     }
 
     public function store(Request $request)

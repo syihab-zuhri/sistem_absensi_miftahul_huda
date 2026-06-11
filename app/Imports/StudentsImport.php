@@ -12,26 +12,56 @@ use Illuminate\Support\Facades\Storage;
 
 class StudentsImport implements ToModel, WithHeadingRow
 {
+    private $currentRow = 1; // Mulai dari 1 karena header adalah baris 1
+    private $errors = [];
+    private $classrooms;
+
+    public function __construct()
+    {
+        // Ambil semua nama kelas dan jadikan huruf besar untuk perbandingan
+        $this->classrooms = \App\Models\Classroom::pluck('name')->map(function($name) {
+            return strtoupper(trim($name));
+        })->toArray();
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
     /**
     * Fungsi ini berjalan berulang-ulang untuk setiap baris di file Excel.
     */
     public function model(array $row)
     {
+        $this->currentRow++;
+
         // 1. Lewati jika baris Excel kosong atau header tidak sesuai
         if (!isset($row['nisn']) || !isset($row['nama']) || !isset($row['kelas'])) {
             return null;
         }
 
-        // 2. LOGIKA MENCARI DAN MEMPERBARUI USER (Revisi Anti Error Hash)
+        $kelasExcel = strtoupper(trim($row['kelas']));
+
+        // Validasi Kelas: Jika kelas tidak ada di database, catat sebagai error dan lewati
+        if (!in_array($kelasExcel, $this->classrooms)) {
+            $this->errors[] = [
+                'row' => $this->currentRow,
+                'nama' => $row['nama'],
+                'nisn' => $row['nisn'],
+                'kelas' => $row['kelas'],
+                'keterangan' => 'Kelas tidak terdaftar di database'
+            ];
+            return null; // Skip penyimpanan untuk siswa ini
+        }
+
+        // 2. LOGIKA MENCARI DAN MEMPERBARUI USER
         $email = $row['nisn'] . '@siswa.com';
         $user = User::where('email', $email)->first();
 
         if ($user) {
-            // Jika siswa sudah punya akun login, cukup UPDATE namanya saja.
-            // Password DIBIARKAN UTUH agar password yang pernah diganti oleh siswa tidak kere-set.
             $user->update(['name' => $row['nama']]);
         } else {
-            // Jika ini benar-benar siswa baru, CREATE akun beserta password default (NISN)
             $user = User::create([
                 'name' => $row['nama'],
                 'email' => $email,
@@ -39,25 +69,21 @@ class StudentsImport implements ToModel, WithHeadingRow
             ]);
         }
         
-        // Pastikan role siswa diberikan (terutama untuk user baru)
         if (!$user->hasRole('siswa')) {
             $user->assignRole('siswa');
         }
 
         // 3. LOGIKA UPDATE ATAU CREATE UNTUK TABEL STUDENT
-        // Cari data siswa berdasarkan user_id. 
-        // Jika ketemu (misal: naik kelas), maka kelasnya di-UPDATE. Jika tidak, CREATE baru.
         $student = Student::updateOrCreate(
-            ['user_id' => $user->id], // Kriteria Pencarian Utama
+            ['user_id' => $user->id],
             [
                 'nisn' => $row['nisn'],
-                'class_id' => strtoupper($row['kelas']), // Ini yang akan berubah menjadi kelas baru
+                'class_id' => $kelasExcel, // Gunakan hasil uppercase
             ]
         );
 
-        // 4. GENERATE QR CODE (Hanya jika belum punya QR Code atau file fisiknya hilang)
+        // 4. GENERATE QR CODE
         if (!$student->qr_code_path || !Storage::disk('public')->exists($student->qr_code_path)) {
-            
             if (!Storage::disk('public')->exists('qrcodes')) {
                 Storage::disk('public')->makeDirectory('qrcodes');
             }
@@ -70,7 +96,6 @@ class StudentsImport implements ToModel, WithHeadingRow
             $path = 'qrcodes/' . $student->nisn . '.svg';
             Storage::disk('public')->put($path, $qr);
             
-            // Simpan path ke database
             $student->update(['qr_code_path' => $path]);
         }
 

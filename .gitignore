@@ -1,4 +1,5 @@
 *.log
+.agy-sesion
 .DS_Store
 .env
 .env.backup
@@ -24,3 +25,4 @@ Homestead.yaml
 Thumbs.db
 /ngrok
 cloudflared.exe
+deploy.md

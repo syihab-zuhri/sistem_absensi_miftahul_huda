@@ -18,7 +18,7 @@ class ReportController extends Controller
         $classId = $request->input('class_id');
         $subjectId = $request->input('subject_id');
 
-        $classes = Schedule::select('class_id')->distinct()->pluck('class_id');
+        $classes = \App\Models\Classroom::orderBy('name')->pluck('name');
         $subjects = Subject::orderBy('name')->get();
 
         $query = Attendance::with(['student.user', 'schedule.subject', 'schedule.teacher'])
@@ -60,7 +60,7 @@ class ReportController extends Controller
 
         $pdf = Pdf::loadView('reports.custom_pdf', compact('attendances', 'dateRange', 'printDate', 'subjectName', 'className'));
         
-        return $pdf->download('Laporan_Absensi_'.$startDate.'_sd_'.$endDate.'.pdf');
+        return $pdf->stream('Laporan_Absensi_'.$startDate.'_sd_'.$endDate.'.pdf');
     }
 
     public function exportCustomExcel(Request $request)
@@ -76,37 +76,19 @@ class ReportController extends Controller
         if ($subjectId) $query->whereHas('schedule', function ($q) use ($subjectId) { $q->where('subject_id', $subjectId); });
 
         $attendances = $query->orderBy('timestamp', 'asc')->get();
-        $fileName = 'Rekap_Absensi_'.$startDate.'_sd_'.$endDate.'.csv';
+        
+        $subjectName = $subjectId ? \App\Models\Subject::find($subjectId)->name : 'Semua Mata Pelajaran';
+        $className = $classId ? $classId : 'Semua Kelas';
+        $dateRange = Carbon::parse($startDate)->translatedFormat('d M Y') . ' s/d ' . Carbon::parse($endDate)->translatedFormat('d M Y');
+        $printDate = Carbon::now()->locale('id')->translatedFormat('d F Y - H:i');
+        $printerName = auth()->user()->name;
 
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        ];
+        $fileName = 'Rekap_Absensi_'.$startDate.'_sd_'.$endDate.'.xlsx';
 
-        $columns = ['No', 'Waktu Pemindaian', 'NISN', 'Nama Siswa', 'Kelas', 'Mata Pelajaran', 'Status'];
-
-        $callback = function() use($attendances, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-            $rowNum = 1;
-            foreach ($attendances as $attendance) {
-                fputcsv($file, [
-                    $rowNum++,
-                    Carbon::parse($attendance->timestamp)->format('Y-m-d H:i:s'),
-                    $attendance->student->nisn ?? '-',
-                    $attendance->student->user->name ?? 'User Terhapus',
-                    $attendance->schedule->class_id ?? '-',
-                    $attendance->schedule->subject->name ?? '-',
-                    ucfirst($attendance->status)
-                ]);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\AttendancesExport($attendances, $dateRange, $className, $subjectName, $printDate, $printerName),
+            $fileName
+        );
     }
 
     public function exportSessionPDF($schedule_id)
@@ -117,7 +99,7 @@ class ReportController extends Controller
         $pdf = Pdf::loadView('reports.attendance', compact('schedule', 'attendances', 'date'));
         $safeSubjectName = preg_replace('/[^A-Za-z0-9\-]/', '_', $schedule->subject->name ?? 'Mapel');
         
-        return $pdf->download('Laporan_Sesi_'.$safeSubjectName.'_'.$schedule->class_id.'.pdf');
+        return $pdf->stream('Laporan_Sesi_'.$safeSubjectName.'_'.$schedule->class_id.'.pdf');
     }
 
     /**

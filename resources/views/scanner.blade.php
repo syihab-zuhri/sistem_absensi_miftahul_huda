@@ -73,8 +73,8 @@
                         <i class="fa-solid fa-save"></i> Simpan Sesi
                     </button>
                     <!-- Tombol Cetak PDF -->
-                    <a href="{{ route('reports.session', $activeSchedule->id) }}" id="btnPrintPdf" class="flex-1 sm:flex-none bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
-                        <i class="fa-solid fa-print"></i> Cetak PDF
+                    <a href="{{ route('reports.session', $activeSchedule->id) }}" id="btnPrintPdf" target="_blank" class="flex-1 sm:flex-none bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-print"></i> Cetak/Preview Laporan Sesi Ini
                     </a>
                 </div>
             </div>
