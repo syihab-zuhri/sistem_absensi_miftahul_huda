@@ -66,7 +66,7 @@
                 <td style="text-align: center;">{{ $attendance->student->nisn ?? '-' }}</td>
                 <td>{{ $attendance->student->user->name ?? 'User Terhapus' }}</td>
                 <td style="text-align: center;">{{ $attendance->schedule->class_id ?? '-' }}</td>
-                <td>{{ $attendance->schedule->subject->name ?? '-' }}</td>
+                <td>{{ $attendance->schedule->subject->name ?? 'Mapel Terhapus' }}</td>
                 <td style="text-align: center;" class="status-badge">{{ $attendance->status }}</td>
             </tr>
             @empty

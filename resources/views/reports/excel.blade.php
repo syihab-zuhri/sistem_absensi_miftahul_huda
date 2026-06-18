@@ -27,7 +27,7 @@
         <td style="text-align: center; border: 1px solid #000;">{{ $attendance->student->nisn ?? '-' }}</td>
         <td style="border: 1px solid #000;">{{ $attendance->student->user->name ?? 'Siswa Terhapus' }}</td>
         <td style="text-align: center; border: 1px solid #000;">{{ $attendance->schedule->class_id ?? '-' }}</td>
-        <td style="text-align: center; border: 1px solid #000;">{{ $attendance->schedule->subject->name ?? '-' }}</td>
+        <td style="text-align: center; border: 1px solid #000;">{{ $attendance->schedule->subject->name ?? 'Mapel Terhapus' }}</td>
         <td style="text-align: center; border: 1px solid #000;">{{ ucfirst($attendance->status) }}</td>
     </tr>
     @endforeach

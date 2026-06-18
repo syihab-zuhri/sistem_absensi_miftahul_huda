@@ -84,8 +84,15 @@ class AttendanceController extends Controller
 
         $today = Carbon::today();
         $now = Carbon::now();
+        $schedule = Schedule::findOrFail($schedule_id);
 
         foreach($request->attendances as $att) {
+            // Validasi Server-Side: Pastikan siswa ini berasal dari class_id yang sama dengan jadwal ini
+            $student = \App\Models\Student::find($att['student_id']);
+            if (!$student || $student->class_id !== $schedule->class_id) {
+                continue; // Skip data manipulatif dari luar kelas
+            }
+
             // Cek apakah siswa sudah diabsen khusus hari ini
             $attendance = Attendance::where('schedule_id', $schedule_id)
                 ->where('student_id', $att['student_id'])

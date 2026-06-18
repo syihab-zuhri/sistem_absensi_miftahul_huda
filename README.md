@@ -139,11 +139,11 @@ Aplikasi kini dapat diakses melalui browser di: **[http://localhost:8000](http:/
 
 | Peran | Email / Username | Password |
 |---|---|---|
-| **Admin** | `admin@admin.com` | `password` |
+| **Admin** | `admin@sekolah.com` | `password123` |
 | **Guru** | Tergantung data seeder | — |
-| **Siswa** | `NISN@siswa.com` | `NISN` |
+| **Siswa (Simulasi)** | `siswa@sekolah.com` | `siswa123` |
 
-> **Catatan:** Password siswa menggunakan NISN masing-masing dan disimpan dengan enkripsi hash yang aman.
+> **Catatan:** Password siswa asli (bukan simulasi) menggunakan NISN masing-masing dan disimpan dengan enkripsi hash yang aman.
 
 ---
 

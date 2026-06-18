@@ -149,7 +149,8 @@ class StudentController extends Controller{
     {
         $request->validate([
             'student_ids' => 'required|array',
-            'new_class_id' => 'required|string|max:255',
+            // Validasi Keamanan: Pastikan new_class_id benar-benar ada di database berdasarkan nama kelas
+            'new_class_id' => 'required|string|max:255|exists:classrooms,name',
         ]);
 
         $ids = $request->input('student_ids');

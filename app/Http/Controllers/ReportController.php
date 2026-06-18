@@ -52,7 +52,7 @@ class ReportController extends Controller
         if ($subjectId) $query->whereHas('schedule', function ($q) use ($subjectId) { $q->where('subject_id', $subjectId); });
 
         $attendances = $query->orderBy('timestamp', 'asc')->get();
-        $subjectName = $subjectId ? Subject::find($subjectId)->name : 'Semua Mata Pelajaran';
+        $subjectName = $subjectId ? Subject::find($subjectId)?->name ?? 'Mata Pelajaran Terhapus' : 'Semua Mata Pelajaran';
         $className = $classId ? $classId : 'Semua Kelas';
 
         $dateRange = Carbon::parse($startDate)->translatedFormat('d M Y') . ' s/d ' . Carbon::parse($endDate)->translatedFormat('d M Y');
@@ -76,8 +76,8 @@ class ReportController extends Controller
         if ($subjectId) $query->whereHas('schedule', function ($q) use ($subjectId) { $q->where('subject_id', $subjectId); });
 
         $attendances = $query->orderBy('timestamp', 'asc')->get();
-        
-        $subjectName = $subjectId ? \App\Models\Subject::find($subjectId)->name : 'Semua Mata Pelajaran';
+
+        $subjectName = $subjectId ? \App\Models\Subject::find($subjectId)?->name ?? 'Mata Pelajaran Terhapus' : 'Semua Mata Pelajaran';
         $className = $classId ? $classId : 'Semua Kelas';
         $dateRange = Carbon::parse($startDate)->translatedFormat('d M Y') . ' s/d ' . Carbon::parse($endDate)->translatedFormat('d M Y');
         $printDate = Carbon::now()->locale('id')->translatedFormat('d F Y - H:i');
@@ -94,11 +94,17 @@ class ReportController extends Controller
     public function exportSessionPDF($schedule_id)
     {
         $schedule = Schedule::with(['subject', 'teacher'])->findOrFail($schedule_id);
+
+        // Keamanan (IDOR Fix): Jika yang login adalah guru, pastikan jadwal ini adalah miliknya
+        if (auth()->user()->hasRole('guru') && $schedule->teacher_id != auth()->id()) {
+            abort(403, 'Akses ditolak. Anda tidak berhak mencetak absensi jadwal guru lain.');
+        }
+
         $attendances = Attendance::with(['student.user'])->where('schedule_id', $schedule_id)->orderBy('timestamp', 'asc')->get();
         $date = Carbon::now()->locale('id')->translatedFormat('l, d F Y - H:i');
         $pdf = Pdf::loadView('reports.attendance', compact('schedule', 'attendances', 'date'));
         $safeSubjectName = preg_replace('/[^A-Za-z0-9\-]/', '_', $schedule->subject->name ?? 'Mapel');
-        
+
         return $pdf->stream('Laporan_Sesi_'.$safeSubjectName.'_'.$schedule->class_id.'.pdf');
     }
 

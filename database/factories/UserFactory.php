@@ -42,4 +42,22 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Configure the factory to assign a role after creation.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            // Pastikan role sudah ada (untuk testing)
+            \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+            \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'guru', 'guard_name' => 'web']);
+            \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'siswa', 'guard_name' => 'web']);
+
+            // Assign default role jika user belum punya role sama sekali
+            if (! $user->roles()->exists()) {
+                $user->assignRole('siswa');
+            }
+        });
+    }
 }
