@@ -54,11 +54,7 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     Route::middleware(['role:admin'])->group(function () {
         // Dashboard Admin
-        Route::get('/admin/dashboard', function () {
-            $recentAttendances = \App\Models\Attendance::with(['student.user', 'schedule.subject'])
-                ->orderBy('timestamp', 'desc')->take(5)->get();
-            return view('admin.dashboard', compact('recentAttendances'));
-        })->name('admin.dashboard');
+        Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
 
         // ==========================================
         // CRUD SISWA
