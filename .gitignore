@@ -28,6 +28,10 @@ cloudflared.exe
 deploy.md
 deployv1.md
 
+# Upload temporary files
+upload.md
+upload1.md
+
 # Database lokal
 /database/*.sqlite
 /database/*.sqlite3
