@@ -4,6 +4,8 @@ namespace App\Imports;
 
 use App\Models\User;
 use App\Models\Student;
+use App\Models\AcademicYear;
+use App\Models\StudentClassHistory;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -15,6 +17,7 @@ class StudentsImport implements ToModel, WithHeadingRow
     private $currentRow = 1; // Mulai dari 1 karena header adalah baris 1
     private $errors = [];
     private $classrooms;
+    private $activeYear;
 
     public function __construct()
     {
@@ -22,6 +25,9 @@ class StudentsImport implements ToModel, WithHeadingRow
         $this->classrooms = \App\Models\Classroom::pluck('name')->map(function($name) {
             return strtoupper(trim($name));
         })->toArray();
+
+        // Tahun ajaran aktif dipakai untuk mencatat history kelas siswa
+        $this->activeYear = AcademicYear::active()->first();
     }
 
     public function getErrors()
@@ -79,8 +85,17 @@ class StudentsImport implements ToModel, WithHeadingRow
             [
                 'nisn' => $row['nisn'],
                 'class_id' => $kelasExcel, // Gunakan hasil uppercase
+                'status' => 'aktif',
             ]
         );
+
+        // Update/create history tahun ajaran aktif
+        if ($this->activeYear) {
+            StudentClassHistory::updateOrCreate(
+                ['student_id' => $student->id, 'academic_year_id' => $this->activeYear->id],
+                ['class_id' => $kelasExcel, 'status' => 'aktif']
+            );
+        }
 
         // 4. GENERATE QR CODE
         if (!$student->qr_code_path || !Storage::disk('public')->exists($student->qr_code_path)) {

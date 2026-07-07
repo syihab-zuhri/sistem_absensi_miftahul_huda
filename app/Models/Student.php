@@ -13,8 +13,10 @@ class Student extends Model
     protected $fillable = [
         'user_id',
         'nisn',
+        'personal_email',
         'class_id',
         'qr_code_path',
+        'status',
     ];
 
     /**
@@ -33,5 +35,21 @@ class Student extends Model
     public function attendances()
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Relasi ke riwayat kelas siswa (StudentClassHistory)
+     */
+    public function classHistories()
+    {
+        return $this->hasMany(StudentClassHistory::class);
+    }
+
+    /**
+     * Scope to filter only active students.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('students.status', 'aktif');
     }
 }

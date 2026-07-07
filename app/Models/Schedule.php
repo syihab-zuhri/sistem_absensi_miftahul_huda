@@ -17,6 +17,7 @@ class Schedule extends Model
         'start_time',
         'end_time',
         'semester', // TAMBAHAN LANGKAH 3: Kolom semester
+        'academic_year_id',
     ];
 
     public function subject()
@@ -32,5 +33,10 @@ class Schedule extends Model
     public function attendances()
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class);
     }
 }

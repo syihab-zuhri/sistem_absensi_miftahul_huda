@@ -61,7 +61,8 @@ Route::middleware('auth')->group(function () {
         // ==========================================
         Route::post('/admin/students/import', [\App\Http\Controllers\StudentController::class, 'import'])->name('admin.students.import');
         Route::delete('/admin/students/bulk-delete', [\App\Http\Controllers\StudentController::class, 'destroyBulk'])->name('students.destroyBulk');
-        
+        Route::post('/admin/students/bulk-update-status', [\App\Http\Controllers\StudentController::class, 'updateStatusBulk'])->name('students.updateStatusBulk');
+
         // Rute POST Edit Kelas (Harus di atas resource dan satu-satunya)
         Route::post('/admin/students/bulk-update-class', [\App\Http\Controllers\StudentController::class, 'updateClassBulk'])->name('students.updateClassBulk');
         
@@ -134,7 +135,9 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     Route::middleware(['role:siswa'])->group(function () {
         Route::get('/student/portal', [\App\Http\Controllers\StudentPortalController::class, 'index'])->name('student.portal');
-        Route::post('/student/password', [\App\Http\Controllers\StudentPortalController::class, 'updatePassword'])->name('student.password.update');
+        Route::get('/student/settings', [\App\Http\Controllers\StudentSettingsController::class, 'index'])->name('student.settings');
+        Route::post('/student/password', [\App\Http\Controllers\StudentSettingsController::class, 'updatePassword'])->name('student.password.update');
+        Route::post('/student/email', [\App\Http\Controllers\StudentSettingsController::class, 'updateEmail'])->name('student.email.update');
     });
 });
 

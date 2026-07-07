@@ -8,6 +8,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use App\Models\AcademicYear;
+use App\Models\StudentClassHistory;
 use Illuminate\Support\Facades\Hash;
 
 class RoleSeeder extends Seeder
@@ -38,6 +40,17 @@ class RoleSeeder extends Seeder
         $admin->assignRole($roleAdmin);
 
 
+        // Pastikan ada tahun ajaran aktif sebagai referensi
+        $activeYear = AcademicYear::firstOrCreate(
+            ['is_active' => true],
+            [
+                'name' => '2026/2027',
+                'start_date' => '2026-07-01',
+                'end_date' => '2027-06-30',
+                'is_active' => true,
+            ]
+        );
+
         // Membuat Akun Siswa Simulasi
         $siswaUser = User::firstOrCreate(
             ['email' => 'siswa@sekolah.com'],
@@ -54,7 +67,14 @@ class RoleSeeder extends Seeder
             [
                 'user_id' => $siswaUser->id,
                 'class_id' => '10-A',
+                'status' => 'aktif',
             ]
+        );
+
+        // Catat riwayat kelas siswa untuk tahun ajaran aktif
+        StudentClassHistory::firstOrCreate(
+            ['student_id' => $student->id, 'academic_year_id' => $activeYear->id],
+            ['class_id' => '10-A', 'status' => 'aktif']
         );
 
         // Buat QR Code secara nyata untuk mencegah broken image

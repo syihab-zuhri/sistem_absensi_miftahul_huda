@@ -15,10 +15,10 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- Kolom Kiri: Kartu Pelajar & Keamanan -->
+
+        <!-- Kolom Kiri: Kartu Pelajar -->
         <div class="space-y-8">
-            
+
             <!-- Kartu Pelajar Digital -->
             <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
                 <div class="p-6 border-b border-gray-50 bg-gray-50/50">
@@ -40,15 +40,14 @@
                             </div>
                         @endif
                     </div>
-                    
+
                     <div class="space-y-1">
                         <h4 class="font-bold text-xl text-gray-900">{{ Auth::user()->name }}</h4>
                         <p class="text-sm font-mono text-blue-600 font-bold tracking-wider">NISN: {{ $student->nisn }}</p>
                         <div class="pt-2">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-100 uppercase">
                                 <i class="fa-solid fa-graduation-cap"></i>
-                                Kelas: {{ $student->class_id }}
-                            </span>
+                                Kelas: {{ $student->class_id }}</span>
                         </div>
                     </div>
                 </div>
@@ -56,44 +55,11 @@
                     <p class="text-xs text-gray-500 italic">Gunakan kode QR di atas untuk melakukan absensi harian melalui alat scan di sekolah.</p>
                 </div>
             </div>
-
-            <!-- Keamanan Akun -->
-            <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
-                <div class="p-6 border-b border-gray-50 bg-gray-50/50">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-yellow-500"></i>
-                        Keamanan Akun
-                    </h3>
-                </div>
-                <div class="p-6">
-                    <form action="{{ route('student.password.update') }}" method="POST" class="space-y-4">
-                        @csrf
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sandi Saat Ini</label>
-                            <input type="password" name="current_password" required placeholder="Sandi saat ini (Default: NISN)" 
-                                class="w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sandi Baru</label>
-                            <input type="password" name="new_password" required placeholder="Minimal 8 karakter"
-                                class="w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Konfirmasi Sandi Baru</label>
-                            <input type="password" name="new_password_confirmation" required placeholder="Ulangi sandi baru"
-                                class="w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 transition-all">
-                        </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-sm hover:shadow-md">
-                            Perbarui Kata Sandi
-                        </button>
-                    </form>
-                </div>
-            </div>
         </div>
 
         <!-- Kolom Kanan: Riwayat Absensi -->
         <div class="lg:col-span-2 space-y-8">
-            
+
             <!-- Ringkasan Statistik -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Persentase Kehadiran -->
@@ -132,7 +98,7 @@
                         Riwayat Kehadiran (30 Hari Terakhir)
                     </h3>
                 </div>
-                
+
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead>

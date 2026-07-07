@@ -36,8 +36,8 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
                             <i class="fa-solid fa-envelope text-sm"></i>
                         </div>
-                        <input id="email" type="email" name="email" :value="old('email')" required autofocus 
-                            placeholder="Masukkan Alamat Email atau NISN Anda"
+                        <input id="email" type="text" name="email" :value="old('email')" required autofocus
+                            placeholder="Masukkan email atau NISN Anda"
                             class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-gray-200 border rounded-2xl text-sm transition-all focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white placeholder:text-gray-400">
                     </div>
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />

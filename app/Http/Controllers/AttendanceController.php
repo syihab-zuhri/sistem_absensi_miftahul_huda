@@ -43,15 +43,16 @@ class AttendanceController extends Controller
     public function getSessionData($schedule_id)
     {
         $schedule = Schedule::findOrFail($schedule_id);
-        
-        // Ambil semua siswa di kelas tersebut, urutkan berdasarkan nama
+
+        // Ambil semua siswa aktif di kelas tersebut, urutkan berdasarkan nama
         $students = Student::with('user')
             ->where('class_id', $schedule->class_id)
+            ->where('status', 'aktif')
             ->get()
             ->sortBy(function($student) {
                 return $student->user->name;
             })->values();
-        
+
         // Hanya ambil absensi HARI INI agar data tidak bocor
         $today = Carbon::today();
         $attendances = Attendance::where('schedule_id', $schedule_id)
@@ -64,7 +65,7 @@ class AttendanceController extends Controller
                 'id' => $student->id,
                 'nisn' => $student->nisn,
                 'name' => $student->user->name ?? 'User Terhapus',
-                'status' => $attendances->has($student->id) ? $attendances[$student->id]->status : '' 
+                'status' => $attendances->has($student->id) ? $attendances[$student->id]->status : ''
             ];
         });
 
@@ -87,10 +88,10 @@ class AttendanceController extends Controller
         $schedule = Schedule::findOrFail($schedule_id);
 
         foreach($request->attendances as $att) {
-            // Validasi Server-Side: Pastikan siswa ini berasal dari class_id yang sama dengan jadwal ini
+            // Validasi Server-Side: Pastikan siswa ini aktif dan berasal dari class_id yang sama dengan jadwal ini
             $student = \App\Models\Student::find($att['student_id']);
-            if (!$student || $student->class_id !== $schedule->class_id) {
-                continue; // Skip data manipulatif dari luar kelas
+            if (!$student || $student->status !== 'aktif' || $student->class_id !== $schedule->class_id) {
+                continue; // Skip data manipulatif dari luar kelas / siswa nonaktif
             }
 
             // Cek apakah siswa sudah diabsen khusus hari ini

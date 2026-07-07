@@ -28,7 +28,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,15 +42,39 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        $login = $this->input('email');
+        $password = $this->input('password');
+        $remember = $this->boolean('remember');
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
+        // Cek apakah input adalah email
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            // Coba login dengan email user (admin/guru/siswa)
+            if (Auth::attempt(['email' => $login, 'password' => $password], $remember)) {
+                RateLimiter::clear($this->throttleKey());
+                return;
+            }
+
+            // Jika gagal, coba cari siswa dengan personal_email
+            $student = \App\Models\Student::where('personal_email', $login)->with('user')->first();
+            if ($student && Auth::attempt(['email' => $student->user->email, 'password' => $password], $remember)) {
+                RateLimiter::clear($this->throttleKey());
+                return;
+            }
+        }
+        // Jika bukan email, anggap sebagai NISN
+        else {
+            $student = \App\Models\Student::where('nisn', $login)->with('user')->first();
+            if ($student && Auth::attempt(['email' => $student->user->email, 'password' => $password], $remember)) {
+                RateLimiter::clear($this->throttleKey());
+                return;
+            }
         }
 
-        RateLimiter::clear($this->throttleKey());
+        RateLimiter::hit($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
     }
 
     /**

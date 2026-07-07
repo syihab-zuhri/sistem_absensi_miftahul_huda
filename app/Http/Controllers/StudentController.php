@@ -21,7 +21,13 @@ class StudentController extends Controller{
             ->orderBy('students.class_id', 'asc') // Urutkan kelas dulu (10, 11, 12)
             ->orderBy('users.name', 'asc');       // Lalu urutkan nama (A - Z)
 
-        // Fitur Pencarian 
+        // Filter Status: Default hanya aktif, bisa filter all/lulus/pindah/keluar
+        $status = $request->input('status', 'aktif');
+        if ($status !== 'all') {
+            $query->where('students.status', $status);
+        }
+
+        // Fitur Pencarian
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -45,28 +51,43 @@ class StudentController extends Controller{
             'class_id' => 'required|string',
         ]);
 
+        // Cek tahun ajaran aktif
+        $activeYear = \App\Models\AcademicYear::active()->first();
+        if (!$activeYear) {
+            return redirect()->back()->with('error', 'Tidak ada tahun ajaran aktif. Silakan hubungi admin untuk mengaktifkan tahun ajaran.');
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->nisn . '@siswa.com',
             'password' => Hash::make($request->nisn),
         ]);
-        
+
         $user->assignRole('siswa');
 
         $student = Student::create([
             'user_id' => $user->id,
             'nisn' => $request->nisn,
             'class_id' => $request->class_id,
+            'status' => 'aktif',
+        ]);
+
+        // Buat history kelas siswa untuk tahun ajaran aktif
+        \App\Models\StudentClassHistory::create([
+            'student_id' => $student->id,
+            'academic_year_id' => $activeYear->id,
+            'class_id' => $request->class_id,
+            'status' => 'aktif',
         ]);
 
         if (!Storage::disk('public')->exists('qrcodes')) {
             Storage::disk('public')->makeDirectory('qrcodes');
         }
-        
+
         $qr = QrCode::format('svg')->size(300)->margin(2)->generate($student->nisn);
         $path = 'qrcodes/' . $student->nisn . '.svg';
         Storage::disk('public')->put($path, $qr);
-        
+
         $student->update(['qr_code_path' => $path]);
 
         return redirect()->back()->with('success', 'Siswa berhasil ditambahkan dan QR Code telah dibuat.');
@@ -79,11 +100,12 @@ class StudentController extends Controller{
             'name' => 'required|string|max:255',
             'class_id' => 'required|string',
             // Pastikan NISN unik, KECUALI untuk siswa ini sendiri
-            'nisn' => 'required|string|unique:students,nisn,' . $student->id, 
+            'nisn' => 'required|string|unique:students,nisn,' . $student->id,
         ]);
 
         // Cek apakah NISN berubah (karena mempengaruhi QR dan Email)
         $nisnChanged = $student->nisn !== $request->nisn;
+        $classChanged = $student->class_id !== $request->class_id;
 
         // 1. Update User
         $student->user->update([
@@ -97,7 +119,18 @@ class StudentController extends Controller{
             'class_id' => $request->class_id,
         ]);
 
-        // 3. Generate Ulang QR Code jika NISN berubah
+        // 3. Update history tahun ajaran aktif jika kelas berubah
+        if ($classChanged) {
+            $activeYear = \App\Models\AcademicYear::active()->first();
+            if ($activeYear) {
+                \App\Models\StudentClassHistory::updateOrCreate(
+                    ['student_id' => $student->id, 'academic_year_id' => $activeYear->id],
+                    ['class_id' => $request->class_id, 'status' => $student->status]
+                );
+            }
+        }
+
+        // 4. Generate Ulang QR Code jika NISN berubah
         if ($nisnChanged) {
             // Hapus QR lama
             if ($student->qr_code_path && Storage::disk('public')->exists($student->qr_code_path)) {
@@ -156,10 +189,72 @@ class StudentController extends Controller{
         $ids = $request->input('student_ids');
         $newClass = strtoupper($request->input('new_class_id'));
 
-        // Update semua siswa yang dipilih dengan kelas yang baru
-        Student::whereIn('id', $ids)->update(['class_id' => $newClass]);
+        // Hanya pindahkan siswa yang statusnya aktif
+        $students = Student::whereIn('id', $ids)->where('status', 'aktif')->get();
 
-        return redirect()->back()->with('success', count($ids) . ' siswa berhasil dipindahkan ke kelas ' . $newClass . '.');
+        if ($students->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada siswa aktif yang dipilih untuk dipindahkan.');
+        }
+
+        // Ambil tahun ajaran aktif
+        $activeYear = \App\Models\AcademicYear::active()->first();
+
+        // Update semua siswa yang dipilih dengan kelas yang baru
+        foreach ($students as $student) {
+            $student->update(['class_id' => $newClass]);
+
+            // Update/insert history tahun ajaran aktif
+            if ($activeYear) {
+                \App\Models\StudentClassHistory::updateOrCreate(
+                    ['student_id' => $student->id, 'academic_year_id' => $activeYear->id],
+                    ['class_id' => $newClass, 'status' => 'aktif']
+                );
+            }
+        }
+
+        return redirect()->back()->with('success', count($students) . ' siswa berhasil dipindahkan ke kelas ' . $newClass . '.');
+    }
+
+    public function updateStatusBulk(Request $request)
+    {
+        $request->validate([
+            'student_ids' => 'required|array',
+            'status' => 'required|in:aktif,lulus,pindah,keluar',
+        ]);
+
+        $ids = $request->input('student_ids');
+        $newStatus = $request->input('status');
+
+        $students = Student::whereIn('id', $ids)->get();
+
+        if ($students->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada siswa yang dipilih.');
+        }
+
+        // Ambil tahun ajaran aktif
+        $activeYear = \App\Models\AcademicYear::active()->first();
+
+        foreach ($students as $student) {
+            // Update status siswa
+            $student->update(['status' => $newStatus]);
+
+            // Update status di history tahun ajaran aktif
+            if ($activeYear) {
+                \App\Models\StudentClassHistory::updateOrCreate(
+                    ['student_id' => $student->id, 'academic_year_id' => $activeYear->id],
+                    ['status' => $newStatus]
+                );
+            }
+        }
+
+        $statusLabel = [
+            'aktif' => 'diaktifkan kembali',
+            'lulus' => 'diluluskan',
+            'pindah' => 'dipindahkan',
+            'keluar' => 'dikeluarkan',
+        ];
+
+        return redirect()->back()->with('success', count($students) . ' siswa berhasil ' . ($statusLabel[$newStatus] ?? 'diubah statusnya') . '.');
     }
 
     public function import(Request $request)
@@ -189,13 +284,15 @@ class StudentController extends Controller{
     public function guruIndex(Request $request)
     {
         // REVISI LOGIKA URUTAN: Gabungkan dengan tabel users untuk mengurutkan nama A-Z
+        // Guru hanya melihat siswa aktif
         $query = Student::select('students.*')
             ->join('users', 'users.id', '=', 'students.user_id')
             ->with('user')
+            ->where('students.status', 'aktif')
             ->orderBy('students.class_id', 'asc') // Urutkan kelas dulu (10, 11, 12)
             ->orderBy('users.name', 'asc');       // Lalu urutkan nama (A - Z)
 
-        // Fitur Pencarian 
+        // Fitur Pencarian
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function($q) use ($search) {

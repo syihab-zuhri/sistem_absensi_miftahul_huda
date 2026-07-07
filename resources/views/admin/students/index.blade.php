@@ -93,16 +93,27 @@
             <!-- Toolbar Atas: Search & Aksi Massal -->
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between gap-4 items-center">
                 <!-- Form Pencarian (Filter) -->
-                <form action="{{ route('students.index') }}" method="GET" class="w-full sm:w-1/2 relative">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari NISN, Nama, atau Kelas..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
-                    @if(request('search'))
-                        <a href="{{ route('students.index') }}" class="absolute right-3 top-2.5 text-red-500 text-sm font-bold hover:underline">Clear</a>
-                    @endif
+                <form action="{{ route('students.index') }}" method="GET" class="w-full sm:w-1/2 flex gap-2">
+                    <select name="status" class="w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white" onchange="this.form.submit()">
+                        <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Semua</option>
+                        <option value="aktif" {{ request('status', 'aktif') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="lulus" {{ request('status') == 'lulus' ? 'selected' : '' }}>Lulus</option>
+                    </select>
+
+                    <div class="relative w-2/3">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari NISN, Nama, atau Kelas..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                        @if(request('search'))
+                            <a href="{{ route('students.index', ['status' => request('status')]) }}" class="absolute right-3 top-2.5 text-red-500 text-sm font-bold hover:underline">Clear</a>
+                        @endif
+                    </div>
                 </form>
 
                 <!-- KEMBALI: Tombol Eksekusi Aksi Massal (Pindah Kelas & Hapus) -->
                 <div class="flex gap-2 w-full sm:w-auto">
+                    <button type="button" onclick="confirmBulkStatus('lulus')" class="flex-1 sm:flex-none bg-green-100 hover:bg-green-200 text-green-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm" title="Jadikan Alumni">
+                        <i class="fa-solid fa-graduation-cap"></i> Luluskan
+                    </button>
                     <button type="button" onclick="confirmBulkEditClass()" class="flex-1 sm:flex-none bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                         <i class="fa-solid fa-people-arrows"></i> Pindah Kelas
                     </button>
@@ -143,6 +154,9 @@
                                         <div class="text-sm font-mono text-gray-600">{{ $student->nisn }}</div>
                                         <!-- whitespace-nowrap agar kelas tidak terpotong ke bawah -->
                                         <span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{{ $student->class_id }}</span>
+                                        @if($student->status === 'lulus')
+                                            <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap ml-1">Lulus</span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         @if($student->qr_code_path)
@@ -274,6 +288,21 @@
         });
     }
 
+    // Reset form helper untuk memastikan form bersih sebelum aksi baru
+    function resetBulkForm(defaultAction) {
+        const form = document.getElementById('bulkDeleteForm');
+        form.action = defaultAction;
+
+        // Hapus input dinamis (metode & input ekstra)
+        const methodInput = form.querySelector('input[name="_method"]');
+        if (methodInput) methodInput.remove();
+
+        const extraInputs = form.querySelectorAll('input[data-dynamic="true"]');
+        extraInputs.forEach(el => el.remove());
+
+        return form;
+    }
+
     // FUNGSI 2: Konfirmasi Hapus Massal
     function confirmBulkDelete() {
         const checkboxes = document.querySelectorAll('.student-checkbox:checked');
@@ -293,7 +322,13 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('bulkDeleteForm').submit();
+                const form = resetBulkForm("{{ route('students.destroyBulk') }}");
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+                form.appendChild(methodInput);
+                form.submit();
             }
         });
     }
@@ -341,7 +376,7 @@
             inputPlaceholder: 'Pilih Kelas',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#4f46e5', 
+            confirmButtonColor: '#4f46e5',
             cancelButtonColor: '#6b7280',
             confirmButtonText: 'Simpan Perubahan',
             cancelButtonText: 'Batal',
@@ -352,25 +387,50 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                const form = document.getElementById('bulkDeleteForm');
-                
-                // Ubah action form ke rute Pindah Kelas Massal
-                form.action = "{{ route('students.updateClassBulk') }}";
-                
-                // Hapus _method DELETE agar form menjadi form POST biasa
-                const methodInput = form.querySelector('input[name="_method"]');
-                if (methodInput) {
-                    methodInput.remove();
-                }
+                const form = resetBulkForm("{{ route('students.updateClassBulk') }}");
 
                 // Buat input hidden untuk kelas baru dan tambahkan ke form
                 const newClassInput = document.createElement('input');
                 newClassInput.type = 'hidden';
                 newClassInput.name = 'new_class_id';
                 newClassInput.value = result.value;
+                newClassInput.setAttribute('data-dynamic', 'true');
                 form.appendChild(newClassInput);
 
                 // Eksekusi (Submit)
+                form.submit();
+            }
+        });
+    }
+
+    // FUNGSI BARU: Konfirmasi Ubah Status Massal (Lulus)
+    function confirmBulkStatus(statusName) {
+        const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+        if (checkboxes.length === 0) {
+            Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Pilih minimal satu siswa.' });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Luluskan ' + checkboxes.length + ' Siswa?',
+            text: "Siswa akan menjadi alumni dan tidak tampil di daftar kelas aktif maupun aplikasi scanner.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Luluskan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = resetBulkForm("{{ route('students.updateStatusBulk') }}");
+
+                const statusInput = document.createElement('input');
+                statusInput.type = 'hidden';
+                statusInput.name = 'status';
+                statusInput.value = statusName;
+                statusInput.setAttribute('data-dynamic', 'true');
+                form.appendChild(statusInput);
+
                 form.submit();
             }
         });

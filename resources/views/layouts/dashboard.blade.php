@@ -107,6 +107,10 @@
                 <i class="fa-solid fa-user-graduate w-5 text-center"></i>
                 <span class="text-sm font-medium">Portal Siswa</span>
             </a>
+            <a href="{{ route('student.settings') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('student.settings') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
+                <i class="fa-solid fa-cog w-5 text-center"></i>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
             @endrole
             
             @hasanyrole('admin|guru')
