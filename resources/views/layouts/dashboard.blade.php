@@ -74,8 +74,12 @@
                 <i class="fa-solid fa-book w-5 text-center"></i>
                 <span class="font-medium text-sm">Mata Pelajaran</span>
             </a>
-            <a href="/admin/schedules" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/schedules*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
+            <a href="/admin/academic-years" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/academic-years*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-calendar-alt w-5 text-center"></i>
+                <span class="font-medium text-sm">Tahun Ajaran</span>
+            </a>
+            <a href="/admin/schedules" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/schedules*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
+                <i class="fa-solid fa-clock w-5 text-center"></i>
                 <span class="font-medium text-sm">Jadwal Pelajaran</span>
             </a>
             <a href="/scanner" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('scanner') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">

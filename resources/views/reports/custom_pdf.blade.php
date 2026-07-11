@@ -41,8 +41,14 @@
         <tr>
             <td class="label">Total Kehadiran</td>
             <td>: {{ $attendances->count() }} Data</td>
+            <td class="label">Tahun Ajaran</td>
+            <td>: {{ $academicYearName }}</td>
+        </tr>
+        <tr>
             <td class="label">Dicetak Oleh</td>
             <td>: Administrator / Guru</td>
+            <td></td>
+            <td></td>
         </tr>
     </table>
 

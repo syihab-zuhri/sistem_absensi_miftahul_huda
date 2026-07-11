@@ -14,8 +14,9 @@ class AttendancesExport implements FromView, ShouldAutoSize
     protected $subjectName;
     protected $printDate;
     protected $printerName;
+    protected $academicYearName;
 
-    public function __construct($attendances, $dateRange, $className, $subjectName, $printDate, $printerName)
+    public function __construct($attendances, $dateRange, $className, $subjectName, $printDate, $printerName, $academicYearName)
     {
         $this->attendances = $attendances;
         $this->dateRange = $dateRange;
@@ -23,6 +24,7 @@ class AttendancesExport implements FromView, ShouldAutoSize
         $this->subjectName = $subjectName;
         $this->printDate = $printDate;
         $this->printerName = $printerName;
+        $this->academicYearName = $academicYearName;
     }
 
     public function view(): View
@@ -34,6 +36,7 @@ class AttendancesExport implements FromView, ShouldAutoSize
             'subjectName' => $this->subjectName,
             'printDate' => $this->printDate,
             'printerName' => $this->printerName,
+            'academicYearName' => $this->academicYearName,
         ]);
     }
 }

@@ -11,8 +11,40 @@
         </div>
     </div>
 
+    <!-- Widget Tahun Ajaran Aktif -->
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 text-white shadow-lg mb-6 flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="p-3 bg-white/20 rounded-xl">
+                <i class="fa-solid fa-calendar-day text-3xl"></i>
+            </div>
+            <div>
+                <p class="text-emerald-100 text-sm font-medium uppercase tracking-wider">Tahun Ajaran Aktif</p>
+                <h3 class="text-2xl font-bold">{{ $academicYearStats['name'] ?? '-' }}</h3>
+            </div>
+        </div>
+        <div class="flex items-center gap-6 mt-4 md:mt-0">
+            @if($academicYearStats)
+                <div class="text-center">
+                    <div class="text-2xl font-bold">{{ $academicYearStats['total_students_in_history'] }}</div>
+                    <div class="text-emerald-100 text-xs">Siswa Terdaftar</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold">{{ $academicYearStats['schedules_count'] }}</div>
+                    <div class="text-emerald-100 text-xs">Jadwal</div>
+                </div>
+            @else
+                <a href="{{ route('admin.academic-years.index') }}" class="bg-white text-emerald-700 px-4 py-2 rounded-lg font-medium text-sm hover:bg-emerald-50 transition">
+                    <i class="fa-solid fa-plus mr-1"></i> Atur Tahun Ajaran
+                </a>
+            @endif
+            <a href="{{ route('admin.academic-years.index') }}" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-gear mr-1"></i> Kelola
+            </a>
+        </div>
+    </div>
+
     <!-- Widget Statistik Real-time -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <!-- Total Pegawai -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition">
             <div class="p-4 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -20,7 +52,7 @@
             </div>
             <div>
                 <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Total Guru</div>
-                <div class="text-3xl font-bold text-gray-800">{{ \App\Models\User::role(['admin', 'guru'])->count() }}</div>
+                <div class="text-3xl font-bold text-gray-800">{{ $totalTeachers }}</div>
             </div>
         </div>
 
@@ -31,18 +63,29 @@
             </div>
             <div>
                 <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Total Siswa</div>
-                <div class="text-3xl font-bold text-gray-800">{{ \App\Models\Student::count() }}</div>
+                <div class="text-3xl font-bold text-gray-800">{{ $totalStudents }}</div>
             </div>
         </div>
 
-        <!-- Total Sesi Jadwal -->
+        <!-- Sesi Jadwal -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition">
             <div class="p-4 bg-purple-50 text-purple-600 rounded-xl">
                 <i class="fa-solid fa-calendar-check text-2xl"></i>
             </div>
             <div>
                 <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Sesi Jadwal</div>
-                <div class="text-3xl font-bold text-gray-800">{{ \App\Models\Schedule::count() }}</div>
+                <div class="text-3xl font-bold text-gray-800">{{ $totalSchedules }}</div>
+            </div>
+        </div>
+
+        <!-- Siswa Aktif -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition">
+            <div class="p-4 bg-emerald-50 text-emerald-600 rounded-xl">
+                <i class="fa-solid fa-user-check text-2xl"></i>
+            </div>
+            <div>
+                <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-1">Siswa Aktif</div>
+                <div class="text-3xl font-bold text-gray-800">{{ \App\Models\Student::where('status', 'aktif')->count() }}</div>
             </div>
         </div>
     </div>

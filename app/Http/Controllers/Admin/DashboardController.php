@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
+use App\Models\AcademicYear;
+use App\Models\Student;
+use App\Models\Schedule;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -47,11 +50,34 @@ class DashboardController extends Controller
             $weeklyStats['alfa'][] = Attendance::whereDate('timestamp', $date)->where('status', 'alfa')->count();
         }
 
+        // 4. Tahun Ajaran Aktif
+        $activeAcademicYear = AcademicYear::active()->first();
+        $academicYearStats = null;
+
+        if ($activeAcademicYear) {
+            $academicYearStats = [
+                'name' => $activeAcademicYear->name,
+                'students_count' => Student::where('status', 'aktif')->count(),
+                'schedules_count' => Schedule::where('academic_year_id', $activeAcademicYear->id)->count(),
+                'total_students_in_history' => $activeAcademicYear->studentClassHistories()->count(),
+            ];
+        }
+
+        // 5. Total Data
+        $totalStudents = Student::count();
+        $totalTeachers = \App\Models\User::role('guru')->count();
+        $totalSchedules = Schedule::count();
+
         return view('admin.dashboard', compact(
             'recentAttendances',
             'todayStats',
             'last7Days',
-            'weeklyStats'
+            'weeklyStats',
+            'activeAcademicYear',
+            'academicYearStats',
+            'totalStudents',
+            'totalTeachers',
+            'totalSchedules'
         ));
     }
 }

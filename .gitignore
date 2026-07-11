@@ -50,3 +50,6 @@ skills-lock.json
 # Cache & Coverage
 /.php-cs-fixer.cache
 /coverage/
+
+arsip/
+tugas/

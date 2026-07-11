@@ -65,19 +65,24 @@ Route::middleware('auth')->group(function () {
 
         // Rute POST Edit Kelas (Harus di atas resource dan satu-satunya)
         Route::post('/admin/students/bulk-update-class', [\App\Http\Controllers\StudentController::class, 'updateClassBulk'])->name('students.updateClassBulk');
-        
+
+        // Download Kartu Pelajar (PDF)
+        Route::get('/admin/students/{student}/card', [\App\Http\Controllers\StudentController::class, 'downloadCard'])->name('admin.students.card');
+
         Route::resource('/admin/students', \App\Http\Controllers\StudentController::class)->except(['create', 'show', 'edit']);
 
         // ==========================================
         // CRUD JADWAL
         // ==========================================
-        Route::delete('/admin/schedules/truncate', [\App\Http\Controllers\ScheduleController::class, 'truncate'])->name('schedules.truncate');
-        Route::delete('/admin/schedules/bulk-delete', [\App\Http\Controllers\ScheduleController::class, 'destroyBulk'])->name('schedules.destroyBulk');
-        
+        Route::delete('/admin/schedules/truncate', [\App\Http\Controllers\ScheduleController::class, 'truncate'])->name('admin.schedules.truncate');
+        Route::delete('/admin/schedules/bulk-delete', [\App\Http\Controllers\ScheduleController::class, 'destroyBulk'])->name('admin.schedules.destroyBulk');
+
         // TAMBAHAN LANGKAH 4: Rute untuk Toggle ON/OFF Semester
-        Route::post('/admin/schedules/toggle', [\App\Http\Controllers\ScheduleController::class, 'toggleSemester'])->name('schedules.toggle');
-        
-        Route::resource('/admin/schedules', \App\Http\Controllers\ScheduleController::class)->except(['create', 'show', 'edit']);
+        Route::post('/admin/schedules/toggle', [\App\Http\Controllers\ScheduleController::class, 'toggleSemester'])->name('admin.schedules.toggle');
+
+        Route::resource('/admin/schedules', \App\Http\Controllers\ScheduleController::class)
+            ->except(['create', 'show', 'edit'])
+            ->names('admin.schedules');
 
         // ==========================================
         // CRUD USER
@@ -94,6 +99,15 @@ Route::middleware('auth')->group(function () {
         // CRUD KELAS
         // ==========================================
         Route::resource('/admin/classrooms', \App\Http\Controllers\ClassroomController::class)->except(['create', 'show', 'edit']);
+
+        // ==========================================
+        // CRUD TAHUN AJARAN
+        // ==========================================
+        Route::resource('/admin/academic-years', \App\Http\Controllers\AcademicYearController::class)
+            ->except(['show'])
+            ->names('admin.academic-years');
+        Route::post('/admin/academic-years/{academicYear}/activate', [\App\Http\Controllers\AcademicYearController::class, 'activate'])->name('admin.academic-years.activate');
+        Route::delete('/admin/schedules/truncate-by-year', [\App\Http\Controllers\ScheduleController::class, 'truncateByYear'])->name('admin.schedules.truncateByYear');
 
         // ==========================================
         // RUTE RESET ABSENSI (HANYA ADMIN)

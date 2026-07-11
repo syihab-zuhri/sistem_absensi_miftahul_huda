@@ -6,7 +6,7 @@
         <td colspan="7" style="text-align: center;">Periode: {{ $dateRange }}</td>
     </tr>
     <tr>
-        <td colspan="7" style="text-align: center;">Kelas: {{ $className }} | Mata Pelajaran: {{ $subjectName }}</td>
+        <td colspan="7" style="text-align: center;">Kelas: {{ $className }} | Mata Pelajaran: {{ $subjectName }} | Tahun Ajaran: {{ $academicYearName }}</td>
     </tr>
     <tr>
         <td colspan="7"></td>

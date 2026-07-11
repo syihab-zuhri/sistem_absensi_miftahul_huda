@@ -161,7 +161,7 @@
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         @if($student->qr_code_path)
                                             <!-- VERSI STABIL -->
-                                            <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? "Siswa Terhapus") }}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto whitespace-nowrap">
+                                            <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? "Siswa Terhapus") }}', '{{ $student->id }}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto whitespace-nowrap">
                                                 <i class="fa-solid fa-qrcode"></i> Lihat
                                             </button>
                                         @else
@@ -263,8 +263,8 @@
         }
     });
 
-    // FUNGSI 1: Tampilkan Popup QR Code beserta Tombol Unduh
-    function showQRCode(url, nisn, name) {
+    // FUNGSI 1: Tampilkan Popup QR Code beserta Tombol Cetak Kartu
+    function showQRCode(url, nisn, name, studentId) {
         Swal.fire({
             title: name,
             text: 'NISN: ' + nisn,
@@ -273,17 +273,12 @@
             imageHeight: 250,
             imageAlt: 'QR Code ' + nisn,
             showCancelButton: true,
-            confirmButtonText: '<i class="fa-solid fa-download"></i> Unduh QR',
+            confirmButtonText: '<i class="fa-solid fa-id-card"></i> Cetak Kartu Pelajar',
             cancelButtonText: 'Tutup',
-            confirmButtonColor: '#10b981', 
+            confirmButtonColor: '#4f46e5',
         }).then((result) => {
             if (result.isConfirmed) {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'QR_' + nisn + '_' + name.replace(/\s+/g, '_') + '.svg';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                window.open('/admin/students/' + studentId + '/card', '_blank');
             }
         });
     }

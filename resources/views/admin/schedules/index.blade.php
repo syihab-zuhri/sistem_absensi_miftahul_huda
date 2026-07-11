@@ -17,7 +17,7 @@
                 <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-calendar-plus text-blue-600"></i> Tambah Jadwal Baru
                 </h2>
-                <form action="{{ route('schedules.store') }}" method="POST" class="space-y-4">
+                <form action="{{ route('admin.schedules.store') }}" method="POST" class="space-y-4">
                     @csrf
                     <input type="hidden" name="semester" x-model="activeSemester">
                     
@@ -83,7 +83,22 @@
 
         <!-- KOLOM KANAN: TABEL DAFTAR JADWAL -->
         <div class="lg:col-span-2 space-y-4">
-            
+
+            <!-- Filter Tahun Ajaran -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+                <form action="{{ route('admin.schedules.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4 items-center">
+                    <label class="font-bold text-gray-700 whitespace-nowrap"><i class="fa-solid fa-filter text-blue-500 mr-1"></i> Filter Tahun Ajaran:</label>
+                    <select name="academic_year_id" class="flex-1 rounded-lg border-gray-300 border p-2 focus:ring-2 focus:ring-blue-500" onchange="this.form.submit()">
+                        <option value="">Semua Tahun Ajaran</option>
+                        @foreach($academicYears as $year)
+                            <option value="{{ $year->id }}" {{ $selectedYearId == $year->id ? 'selected' : '' }}>
+                                {{ $year->name }} {{ $year->is_active ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+
             <!-- Selector Tab Semester (dari kode 1: dengan badge ON) -->
             <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-200 flex gap-2">
                 <button @click="activeSemester = 'Ganjil'" 
@@ -124,7 +139,7 @@
                 </div>
 
                 <div class="flex flex-wrap gap-2 w-full xl:w-auto">
-                    <form action="{{ route('schedules.toggle') }}" method="POST" x-show="activeSemester !== '{{ $activeSemesterGlobal }}'" class="w-full xl:w-auto">
+                    <form action="{{ route('admin.schedules.toggle') }}" method="POST" x-show="activeSemester !== '{{ $activeSemesterGlobal }}'" class="w-full xl:w-auto">
                         @csrf
                         <input type="hidden" name="semester" x-model="activeSemester">
                         <button type="submit" class="w-full xl:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition shadow-sm flex items-center justify-center gap-2">
@@ -356,7 +371,7 @@
             if (result.isConfirmed) {
                 const form = document.createElement('form'); 
                 form.method = 'POST'; 
-                form.action = '{{ route("schedules.truncate") }}';
+                form.action = '{{ route("admin.schedules.truncate") }}';
                 const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = '_token'; csrf.value = '{{ csrf_token() }}';
                 const method = document.createElement('input'); method.type = 'hidden'; method.name = '_method'; method.value = 'DELETE';
                 const semInput = document.createElement('input'); semInput.type = 'hidden'; semInput.name = 'semester'; semInput.value = semester;

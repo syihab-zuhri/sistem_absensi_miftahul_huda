@@ -38,6 +38,17 @@
                 </select>
             </div>
             <div class="w-full lg:w-1/5">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tahun Ajaran</label>
+                <select name="academic_year_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
+                    <option value="">-- Semua Tahun Ajaran --</option>
+                    @foreach($academicYears as $year)
+                        <option value="{{ $year->id }}" {{ $selectedYearId == $year->id ? 'selected' : '' }}>
+                            {{ $year->name }} {{ $year->is_active ? '(Aktif)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="w-full lg:w-1/5">
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
                     <i class="fa-solid fa-magnifying-glass"></i> Terapkan Filter
                 </button>
@@ -60,10 +71,10 @@
             </div>
             @endrole
 
-            <a href="{{ route('reports.custom.excel', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
+            <a href="{{ route('reports.custom.excel', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId, 'academic_year_id' => $selectedYearId]) }}" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                 <i class="fa-solid fa-file-excel"></i> Export Excel
             </a>
-            <a href="{{ route('reports.custom.pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId]) }}" target="_blank" class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
+            <a href="{{ route('reports.custom.pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId, 'academic_year_id' => $selectedYearId]) }}" target="_blank" class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                 <i class="fa-solid fa-file-pdf"></i> Cetak PDF
             </a>
         </div>
@@ -76,6 +87,7 @@
                 <i class="fa-regular fa-calendar-check text-blue-500 mr-1"></i> Hasil: <span class="text-blue-600">{{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') }}</span>
                 @if($classId) <br class="md:hidden"><span class="hidden md:inline">|</span> Kelas: <span class="text-blue-600">{{ $classId }}</span> @endif
                 @if($subjectId) <br class="md:hidden"><span class="hidden md:inline">|</span> Mapel: <span class="text-blue-600">{{ \App\Models\Subject::find($subjectId)->name ?? '' }}</span> @endif
+                @if($selectedYearId) <br class="md:hidden"><span class="hidden md:inline">|</span> Tahun Ajaran: <span class="text-blue-600">{{ \App\Models\AcademicYear::find($selectedYearId)?->name ?? '' }}</span> @endif
             </h3>
             <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full font-bold shadow-inner w-full md:w-auto text-center">Total: {{ $attendances->count() }} Data</span>
         </div>
@@ -89,6 +101,7 @@
                         <th class="px-6 py-4 whitespace-nowrap">Nama Siswa</th>
                         <th class="px-6 py-4 text-center whitespace-nowrap">Kelas</th>
                         <th class="px-6 py-4 whitespace-nowrap">Mata Pelajaran</th>
+                        <th class="px-6 py-4 text-center whitespace-nowrap">Tahun Ajaran</th>
                         <th class="px-6 py-4 text-center whitespace-nowrap">Status</th>
                     </tr>
                 </thead>
@@ -109,6 +122,9 @@
                             <span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded font-bold text-xs whitespace-nowrap">{{ $attendance->schedule->class_id ?? '-' }}</span>
                         </td>
                         <td class="px-6 py-4 font-medium whitespace-nowrap">{{ $attendance->schedule->subject->name ?? '-' }}</td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <span class="bg-gray-100 text-gray-800 border border-gray-200 px-2 py-1 rounded font-bold text-xs whitespace-nowrap">{{ $attendance->schedule->academicYear->name ?? '-' }}</span>
+                        </td>
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             @php
                                 $statusStr = strtolower($attendance->status);

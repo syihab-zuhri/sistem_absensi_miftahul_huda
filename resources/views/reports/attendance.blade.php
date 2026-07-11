@@ -43,8 +43,14 @@
         <tr>
             <td class="label">Guru Pengajar</td>
             <td>: {{ $schedule->teacher->name ?? 'Tidak Terdaftar' }}</td>
+            <td class="label">Tahun Ajaran</td>
+            <td>: {{ $schedule->academicYear->name ?? '-' }}</td>
+        </tr>
+        <tr>
             <td class="label">Total Hadir</td>
             <td>: {{ $attendances->count() }} Siswa</td>
+            <td></td>
+            <td></td>
         </tr>
     </table>
 

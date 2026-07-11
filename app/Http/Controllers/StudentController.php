@@ -154,8 +154,27 @@ class StudentController extends Controller{
             Storage::disk('public')->delete($student->qr_code_path);
         }
         $student->user->delete();
-        
+
         return redirect()->back()->with('success', 'Data siswa dan akun berhasil dihapus.');
+    }
+
+    public function downloadCard(Student $student)
+    {
+        $student->load('user');
+
+        $qrBase64 = null;
+        if ($student->qr_code_path && Storage::disk('public')->exists($student->qr_code_path)) {
+            $svgContent = Storage::disk('public')->get($student->qr_code_path);
+            $qrBase64 = 'data:image/svg+xml;base64,' . base64_encode($svgContent);
+        }
+
+        $printDate = \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y - H:i');
+
+        // A4 landscape, kita atur margin dan konten via CSS di dalam PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.students.card', compact('student', 'qrBase64', 'printDate'))
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->stream('QR_Siswa_' . $student->nisn . '.pdf');
     }
 
     // Fitur Baru: Hapus Massal (Roadmap Item 3)
