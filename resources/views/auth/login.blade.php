@@ -36,7 +36,7 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
                             <i class="fa-solid fa-envelope text-sm"></i>
                         </div>
-                        <input id="email" type="text" name="email" :value="old('email')" required autofocus
+                        <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus
                             placeholder="Masukkan email atau NISN Anda"
                             class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-gray-200 border rounded-2xl text-sm transition-all focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white placeholder:text-gray-400">
                     </div>
@@ -60,7 +60,7 @@
                         <input id="password" type="password" name="password" required autocomplete="current-password"
                             placeholder="Masukkan kata sandi Anda"
                             class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 border-gray-200 border rounded-2xl text-sm transition-all focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white placeholder:text-gray-400">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600 focus:outline-none transition-colors">
+                        <button type="button" aria-label="Tampilkan atau sembunyikan sandi" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600 focus:outline-none transition-colors">
                             <i id="togglePasswordIcon" class="fa-solid fa-eye text-sm"></i>
                         </button>
                     </div>
@@ -86,7 +86,7 @@
             <div class="mt-10 pt-8 border-t border-gray-100">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="flex items-center gap-3 text-gray-400 italic">
-                        <i class="fa-solid fa-shield-check text-green-500"></i>
+                        <i class="fa-solid fa-shield-halved text-green-500"></i>
                         <span class="text-xs font-medium">Sistem Terenkripsi & Aman</span>
                     </div>
                     <div class="text-xs font-bold text-gray-300 uppercase tracking-widest">v1.0.0</div>

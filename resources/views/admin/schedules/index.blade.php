@@ -20,14 +20,15 @@
                 <form action="{{ route('admin.schedules.store') }}" method="POST" class="space-y-4">
                     @csrf
                     <input type="hidden" name="semester" x-model="activeSemester">
+                    <input type="hidden" name="academic_year_id" value="{{ $selectedYearId }}">
                     
                     <div class="bg-blue-50 text-blue-700 text-xs px-3 py-2 rounded border border-blue-100 font-medium">
                         Jadwal akan ditambahkan ke: <span class="font-bold uppercase" x-text="'Semester ' + activeSemester"></span>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
-                        <select name="day" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-schedules-index-1" class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
+                        <select id="field-admin-schedules-index-1" name="day" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                             <option value="Senin">Senin</option>
                             <option value="Selasa">Selasa</option>
                             <option value="Rabu">Rabu</option>
@@ -39,17 +40,17 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Jam Mulai</label>
-                            <input type="time" name="start_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
+                            <label for="field-admin-schedules-index-2" class="block text-sm font-medium text-gray-700 mb-1">Jam Mulai</label>
+                            <input id="field-admin-schedules-index-2" type="time" name="start_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Jam Selesai</label>
-                            <input type="time" name="end_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
+                            <label for="field-admin-schedules-index-3" class="block text-sm font-medium text-gray-700 mb-1">Jam Selesai</label>
+                            <input id="field-admin-schedules-index-3" type="time" name="end_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
-                        <select name="subject_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-schedules-index-4" class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
+                        <select id="field-admin-schedules-index-4" name="subject_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                             <option value="">-- Pilih Mata Pelajaran --</option>
                             @foreach($subjects as $subject)
                                 <option value="{{ $subject->id }}">{{ $subject->name }}</option>
@@ -57,8 +58,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Guru Pengajar</label>
-                        <select name="teacher_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-schedules-index-5" class="block text-sm font-medium text-gray-700 mb-1">Guru Pengajar</label>
+                        <select id="field-admin-schedules-index-5" name="teacher_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                             <option value="">-- Pilih Guru --</option>
                             @foreach($teachers as $teacher)
                                 <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
@@ -66,8 +67,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kelas Target</label>
-                        <select name="class_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-schedules-index-6" class="block text-sm font-medium text-gray-700 mb-1">Kelas Target</label>
+                        <select id="field-admin-schedules-index-6" name="class_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($classrooms as $classroom)
                                 <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
@@ -87,8 +88,8 @@
             <!-- Filter Tahun Ajaran -->
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
                 <form action="{{ route('admin.schedules.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4 items-center">
-                    <label class="font-bold text-gray-700 whitespace-nowrap"><i class="fa-solid fa-filter text-blue-500 mr-1"></i> Filter Tahun Ajaran:</label>
-                    <select name="academic_year_id" class="flex-1 rounded-lg border-gray-300 border p-2 focus:ring-2 focus:ring-blue-500" onchange="this.form.submit()">
+                    <label for="field-admin-schedules-index-7" class="font-bold text-gray-700 whitespace-nowrap"><i class="fa-solid fa-filter text-blue-500 mr-1"></i> Filter Tahun Ajaran:</label>
+                    <select id="field-admin-schedules-index-7" name="academic_year_id" class="flex-1 rounded-lg border-gray-300 border p-2 focus:ring-2 focus:ring-blue-500" onchange="this.form.submit()">
                         <option value="">Semua Tahun Ajaran</option>
                         @foreach($academicYears as $year)
                             <option value="{{ $year->id }}" {{ $selectedYearId == $year->id ? 'selected' : '' }}>
@@ -142,6 +143,7 @@
                     <form action="{{ route('admin.schedules.toggle') }}" method="POST" x-show="activeSemester !== '{{ $activeSemesterGlobal }}'" class="w-full xl:w-auto">
                         @csrf
                         <input type="hidden" name="semester" x-model="activeSemester">
+                    <input type="hidden" name="academic_year_id" value="{{ $selectedYearId }}">
                         <button type="submit" class="w-full xl:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition shadow-sm flex items-center justify-center gap-2">
                             <i class="fa-solid fa-power-off"></i> Aktifkan Semester
                         </button>
@@ -192,7 +194,7 @@
                                     </td>
                                     <td class="px-6 py-4 flex justify-center gap-2 whitespace-nowrap">
                                         <button type="button" 
-                                            @click="editForm = { id: '{{ $schedule->id }}', subject_id: '{{ $schedule->subject_id }}', teacher_id: '{{ $schedule->teacher_id }}', class_id: '{{ $schedule->class_id }}', day: '{{ $schedule->day }}', start_time: '{{ $schedule->start_time }}', end_time: '{{ $schedule->end_time }}', semester: '{{ $schedule->semester }}' }; editModalOpen = true" 
+                                            @click="editForm = @js($schedule->only(['id', 'subject_id', 'teacher_id', 'class_id', 'day', 'start_time', 'end_time', 'semester'])); editModalOpen = true"
                                             class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition whitespace-nowrap" title="Edit Jadwal">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
@@ -236,7 +238,7 @@
                                     </td>
                                     <td class="px-6 py-4 flex justify-center gap-2 whitespace-nowrap">
                                         <button type="button" 
-                                            @click="editForm = { id: '{{ $schedule->id }}', subject_id: '{{ $schedule->subject_id }}', teacher_id: '{{ $schedule->teacher_id }}', class_id: '{{ $schedule->class_id }}', day: '{{ $schedule->day }}', start_time: '{{ $schedule->start_time }}', end_time: '{{ $schedule->end_time }}', semester: '{{ $schedule->semester }}' }; editModalOpen = true" 
+                                            @click="editForm = @js($schedule->only(['id', 'subject_id', 'teacher_id', 'class_id', 'day', 'start_time', 'end_time', 'semester'])); editModalOpen = true"
                                             class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition whitespace-nowrap" title="Edit Jadwal">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
@@ -267,7 +269,7 @@
         <div @click.away="editModalOpen = false" class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
             <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
                 <h3 class="text-lg font-bold text-gray-800">Edit Jadwal Pelajaran</h3>
-                <button @click="editModalOpen = false" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
+                <button aria-label="Tutup dialog edit" @click="editModalOpen = false" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
             
             <form :action="'/admin/schedules/' + editForm.id" method="POST" class="p-6 space-y-4">
@@ -275,47 +277,47 @@
                 @method('PUT')
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Semester</label>
-                    <select name="semester" x-model="editForm.semester" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-schedules-index-8" class="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+                    <select id="field-admin-schedules-index-8" name="semester" x-model="editForm.semester" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                         <option value="Ganjil">Semester Ganjil</option>
                         <option value="Genap">Semester Genap</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
-                    <select name="day" x-model="editForm.day" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-schedules-index-9" class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
+                    <select id="field-admin-schedules-index-9" name="day" x-model="editForm.day" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                         <option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Jam Mulai</label>
-                        <input type="time" name="start_time" x-model="editForm.start_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-schedules-index-10" class="block text-sm font-medium text-gray-700 mb-1">Jam Mulai</label>
+                        <input id="field-admin-schedules-index-10" type="time" name="start_time" x-model="editForm.start_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Jam Selesai</label>
-                        <input type="time" name="end_time" x-model="editForm.end_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-schedules-index-11" class="block text-sm font-medium text-gray-700 mb-1">Jam Selesai</label>
+                        <input id="field-admin-schedules-index-11" type="time" name="end_time" x-model="editForm.end_time" required class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
-                    <select name="subject_id" x-model="editForm.subject_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-schedules-index-12" class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
+                    <select id="field-admin-schedules-index-12" name="subject_id" x-model="editForm.subject_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                         @foreach($subjects as $subject)
                             <option value="{{ $subject->id }}">{{ $subject->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Guru</label>
-                    <select name="teacher_id" x-model="editForm.teacher_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-schedules-index-13" class="block text-sm font-medium text-gray-700 mb-1">Guru</label>
+                    <select id="field-admin-schedules-index-13" name="teacher_id" x-model="editForm.teacher_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                         @foreach($teachers as $teacher)
                             <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                    <select name="class_id" x-model="editForm.class_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-schedules-index-14" class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                    <select id="field-admin-schedules-index-14" name="class_id" x-model="editForm.class_id" required class="w-full rounded-lg border-gray-300 border p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
                         <option value="">-- Pilih Kelas --</option>
                         @foreach($classrooms as $classroom)
                             <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
@@ -361,7 +363,7 @@
     function confirmTruncateSemester(semester) {
         Swal.fire({ 
             title: 'Kosongkan Semester ' + semester + '?', 
-            text: 'Seluruh jadwal di semester ini akan dihapus permanen!',
+            text: 'Jadwal pada semester dan tahun terpilih akan dihapus. Jadwal dengan absensi tetap dilindungi.',
             icon: 'error', 
             showCancelButton: true, 
             confirmButtonColor: '#d33', 
@@ -375,6 +377,7 @@
                 const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = '_token'; csrf.value = '{{ csrf_token() }}';
                 const method = document.createElement('input'); method.type = 'hidden'; method.name = '_method'; method.value = 'DELETE';
                 const semInput = document.createElement('input'); semInput.type = 'hidden'; semInput.name = 'semester'; semInput.value = semester;
+                const yearInput = document.createElement('input'); yearInput.type = 'hidden'; yearInput.name = 'academic_year_id'; yearInput.value = @js($selectedYearId); form.appendChild(yearInput);
                 form.appendChild(csrf); form.appendChild(method); form.appendChild(semInput); 
                 document.body.appendChild(form); form.submit();
             }

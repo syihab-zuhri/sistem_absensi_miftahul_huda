@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SubjectsImport;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\SubjectsImport;
 
 class SubjectController extends Controller
 {
     public function index()
     {
         $subjects = Subject::latest()->get();
+
         return view('admin.subjects.index', compact('subjects'));
     }
 
@@ -31,7 +33,7 @@ class SubjectController extends Controller
     {
         $request->validate([
             // Pengecualian unique untuk ID yang sedang diedit agar tidak error jika namanya tidak diganti
-            'name' => 'required|string|max:255|unique:subjects,name,' . $subject->id, 
+            'name' => 'required|string|max:255|unique:subjects,name,'.$subject->id,
         ]);
 
         $subject->update(['name' => $request->name]);
@@ -41,22 +43,28 @@ class SubjectController extends Controller
 
     public function destroy(Subject $subject)
     {
-        // PENTING: Karena relasi database (cascade), menghapus mapel juga akan menghapus jadwal yang terkait!
+        if ($subject->schedules()->exists()) {
+            throw ValidationException::withMessages(['subject' => 'Mata pelajaran masih digunakan pada jadwal.']);
+        }
         $subject->delete();
+
         return redirect()->back()->with('success', 'Mata Pelajaran berhasil dihapus.');
     }
 
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:csv,xls,xlsx'
+            'file' => 'required|file|mimes:csv,xls,xlsx|max:5120',
         ]);
 
         try {
             Excel::import(new SubjectsImport, $request->file('file'));
+
             return redirect()->back()->with('success', 'Data Mata Pelajaran berhasil diimport!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal mengimport: Pastikan format header adalah (nama_mapel). Error: ' . $e->getMessage());
+            report($e);
+
+            return back()->with('error', 'Impor gagal. Gunakan header nama_mapel dan periksa isi file.');
         }
     }
 }

@@ -1,0 +1,20 @@
+{
+    "backup_file": "absensi-before-fixes-20261025-135647.sqlite",
+    "backup_exists": true,
+    "before": {
+        "users": 2,
+        "students": 1,
+        "schedules": 1,
+        "student_class_histories": 1,
+        "attendances": 0
+    },
+    "after": {
+        "users": 2,
+        "students": 1,
+        "schedules": 1,
+        "student_class_histories": 1,
+        "attendances": 0
+    },
+    "archived_duplicates": 0,
+    "migrations_applied": true
+}

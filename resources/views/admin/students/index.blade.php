@@ -3,6 +3,17 @@
 @section('title', 'Manajemen Data Siswa')
 
 @section('content')
+@if(session('initial_credentials'))
+<details open class="mb-6 rounded-xl border border-blue-300 bg-blue-50 p-4 text-blue-950">
+    <summary class="font-bold cursor-pointer">Sandi awal siswa baru</summary>
+    <p class="text-sm my-3">Bagikan kepada masing-masing siswa secara pribadi. Daftar ini ditampilkan satu kali; siswa wajib mengganti sandi setelah login.</p>
+    <div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead><tr><th class="p-2">Nama</th><th class="p-2">NISN</th><th class="p-2">Sandi Awal</th></tr></thead><tbody>
+    @foreach(session('initial_credentials') as $credential)
+    <tr><td class="p-2">{{ $credential['name'] }}</td><td class="p-2 font-mono">{{ $credential['nisn'] }}</td><td class="p-2 font-mono select-all">{{ $credential['password'] }}</td></tr>
+    @endforeach
+    </tbody></table></div>
+</details>
+@endif
 <!-- Bungkus utama menggunakan Alpine.js untuk state Modal Edit & Checkbox -->
 <div x-data="{ 
         editModalOpen: false, 
@@ -27,16 +38,16 @@
                 <form action="{{ route('students.store') }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                        <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-students-index-1" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                        <input id="field-admin-students-index-1" type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">NISN</label>
-                        <input type="text" name="nisn" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <label for="field-admin-students-index-2" class="block text-sm font-medium text-gray-700 mb-1">NISN</label>
+                        <input id="field-admin-students-index-2" type="text" name="nisn" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                        <select name="class_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
+                        <label for="field-admin-students-index-3" class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                        <select id="field-admin-students-index-3" name="class_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($classrooms as $classroom)
                                 <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
@@ -57,12 +68,12 @@
                 <form action="{{ route('admin.students.import') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
                     <div>
-                        <input type="file" name="file" accept=".xlsx,.xls,.csv" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg cursor-pointer">
-                        <div class="mt-2 text-xs text-gray-500">
+                        <input aria-label="Berkas impor" type="file" name="file" accept=".xlsx,.xls,.csv" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg cursor-pointer">
+                        <div class="mt-2 text-xs text-gray-600">
                             Header (Baris 1): <code class="bg-gray-100 px-1 rounded font-bold">nama</code>, <code class="bg-gray-100 px-1 rounded font-bold">nisn</code>, <code class="bg-gray-100 px-1 rounded font-bold">kelas</code>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors">
+                    <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2.5 px-4 rounded-lg transition-colors">
                         Upload & Proses
                     </button>
                 </form>
@@ -71,13 +82,13 @@
                 @if(session('import_errors'))
                 <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
                     <h3 class="text-sm font-bold text-red-800 mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Gagal Diimpor (Kelas Tidak Ditemukan)
+                        <i class="fa-solid fa-triangle-exclamation"></i> Baris yang Tidak Diimpor
                     </h3>
                     <div class="max-h-40 overflow-y-auto">
                         <ul class="text-xs text-red-600 space-y-1">
                             @foreach(session('import_errors') as $error)
                             <li class="border-b border-red-100 pb-1">
-                                <span class="font-bold">Baris {{ $error['row'] }}:</span> {{ $error['nama'] }} - Kelas: <span class="font-mono bg-red-100 px-1">{{ $error['kelas'] }}</span>
+                                <span class="font-bold">Baris {{ $error['row'] }}:</span> {{ $error['nama'] }} - Kelas: <span class="font-mono bg-red-100 px-1">{{ $error['kelas'] }}</span> — {{ $error['keterangan'] }}
                             </li>
                             @endforeach
                         </ul>
@@ -94,10 +105,12 @@
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between gap-4 items-center">
                 <!-- Form Pencarian (Filter) -->
                 <form action="{{ route('students.index') }}" method="GET" class="w-full sm:w-1/2 flex gap-2">
-                    <select name="status" class="w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white" onchange="this.form.submit()">
+                    <select aria-label="Filter status siswa" name="status" class="w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white" onchange="this.form.submit()">
                         <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Semua</option>
                         <option value="aktif" {{ request('status', 'aktif') == 'aktif' ? 'selected' : '' }}>Aktif</option>
                         <option value="lulus" {{ request('status') == 'lulus' ? 'selected' : '' }}>Lulus</option>
+                        <option value="pindah" {{ request('status') == 'pindah' ? 'selected' : '' }}>Pindah</option>
+                        <option value="keluar" {{ request('status') == 'keluar' ? 'selected' : '' }}>Keluar</option>
                     </select>
 
                     <div class="relative w-2/3">
@@ -134,7 +147,7 @@
                             <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
                                 <tr>
                                     <th class="px-4 py-3 text-center w-12 whitespace-nowrap">
-                                        <input type="checkbox" x-model="selectAll" @change="toggleAll()" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
+                                        <input type="checkbox" aria-label="Pilih semua siswa pada halaman ini" x-model="selectAll" @change="toggleAll()" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
                                     </th>
                                     <th class="px-6 py-3 whitespace-nowrap">Nama Siswa</th>
                                     <th class="px-6 py-3 whitespace-nowrap">NISN & Kelas</th>
@@ -147,7 +160,7 @@
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <!-- Checkbox Aksi Massal -->
                                     <td class="px-4 py-4 text-center whitespace-nowrap">
-                                        <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
+                                        <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" aria-label="Pilih siswa {{ $student->user?->name }}" class="student-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
                                     </td>
                                     <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">{{ $student->user->name ?? 'User Terhapus' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -161,7 +174,7 @@
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         @if($student->qr_code_path)
                                             <!-- VERSI STABIL -->
-                                            <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? "Siswa Terhapus") }}', '{{ $student->id }}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto whitespace-nowrap">
+                                            <button type="button" onclick="showQRCode(@js(Storage::url($student->qr_code_path)), @js($student->nisn), @js($student->user?->name ?? 'Siswa Terhapus'), @js($student->id))" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto whitespace-nowrap">
                                                 <i class="fa-solid fa-qrcode"></i> Lihat
                                             </button>
                                         @else
@@ -170,10 +183,11 @@
                                     </td>
                                     <td class="px-6 py-4 flex justify-center gap-2 whitespace-nowrap">
                                         <!-- VERSI STABIL -->
-                                        <button type="button" @click="editForm = { id: '{{ $student->id }}', name: '{{ addslashes($student->user->name ?? "Siswa Terhapus") }}', nisn: '{{ $student->nisn }}', class_id: '{{ $student->class_id }}' }; editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Siswa">
+                                        <button type="button" @click="editForm = @js(['id' => $student->id, 'name' => $student->user?->name ?? 'Siswa Terhapus', 'nisn' => $student->nisn, 'class_id' => $student->class_id]); editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Siswa">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
 
+                                        <button type="button" onclick="confirmResetPassword(@js($student->id))" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-2 py-1.5 rounded" aria-label="Buat sandi awal baru" title="Buat sandi awal baru"><i class="fa-solid fa-key" aria-hidden="true"></i></button>
                                         <!-- Tombol Hapus Satuan -->
                                         <button type="button" onclick="confirmSingleDelete('{{ $student->id }}')" class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1.5 rounded transition" title="Hapus Siswa">
                                             <i class="fa-solid fa-trash"></i>
@@ -212,7 +226,7 @@
         <div @click.away="editModalOpen = false" class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                 <h3 class="text-lg font-bold text-gray-800">Edit Data Siswa</h3>
-                <button @click="editModalOpen = false" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
+                <button aria-label="Tutup dialog edit" @click="editModalOpen = false" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
             
             <form :action="'/admin/students/' + editForm.id" method="POST" class="p-6 space-y-4">
@@ -220,16 +234,16 @@
                 @method('PUT')
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" name="name" x-model="editForm.name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-students-index-4" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input id="field-admin-students-index-4" type="text" name="name" x-model="editForm.name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">NISN <span class="text-xs text-red-500 font-normal">(QR Code akan otomatis berubah jika diganti)</span></label>
-                    <input type="text" name="nisn" x-model="editForm.nisn" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-students-index-5" class="block text-sm font-medium text-gray-700 mb-1">NISN <span class="text-xs text-red-700 font-normal">(QR Code akan otomatis berubah jika diganti)</span></label>
+                    <input id="field-admin-students-index-5" type="text" name="nisn" x-model="editForm.nisn" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-                    <select name="class_id" x-model="editForm.class_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
+                    <label for="field-admin-students-index-6" class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                    <select id="field-admin-students-index-6" name="class_id" x-model="editForm.class_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white">
                         <option value="">-- Pilih Kelas --</option>
                         @foreach($classrooms as $classroom)
                             <option value="{{ $classroom->name }}">{{ $classroom->name }}</option>
@@ -263,10 +277,20 @@
         }
     });
 
+    function confirmResetPassword(id) {
+        Swal.fire({ titleText: 'Buat sandi awal baru?', text: 'Sandi lama siswa akan diganti. Sandi baru ditampilkan sekali untuk dibagikan secara pribadi.', icon: 'question', showCancelButton: true, confirmButtonText: 'Buat Sandi', cancelButtonText: 'Batal' }).then(result => {
+            if (!result.isConfirmed) return;
+            const form = document.createElement('form');
+            form.method = 'POST'; form.action = '/admin/students/' + id + '/reset-password';
+            const token = document.createElement('input'); token.type = 'hidden'; token.name = '_token'; token.value = @js(csrf_token());
+            form.append(token); document.body.append(form); form.submit();
+        });
+    }
+
     // FUNGSI 1: Tampilkan Popup QR Code beserta Tombol Cetak Kartu
     function showQRCode(url, nisn, name, studentId) {
         Swal.fire({
-            title: name,
+            titleText: name,
             text: 'NISN: ' + nisn,
             imageUrl: url,
             imageWidth: 250,
@@ -363,11 +387,7 @@
             title: 'Pindahkan ' + checkboxes.length + ' Siswa',
             text: 'Pilih kelas baru untuk siswa yang dipilih:',
             input: 'select',
-            inputOptions: {
-                @foreach($classrooms as $c)
-                '{{ $c->name }}': '{{ $c->name }}',
-                @endforeach
-            },
+            inputOptions: @js($classrooms->pluck('name', 'name')),
             inputPlaceholder: 'Pilih Kelas',
             icon: 'question',
             showCancelButton: true,

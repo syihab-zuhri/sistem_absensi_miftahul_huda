@@ -2,121 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveAttendanceRequest;
+use App\Models\AcademicYear;
+use App\Models\Attendance;
+use App\Models\AttendanceSession;
 use App\Models\Schedule;
 use App\Models\Student;
-use App\Models\Attendance;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+use App\Services\AttendanceRecorder;
+use App\Services\AttendanceSessions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Menampilkan Halaman Antarmuka Scanner Utama (UI)
-     */
     public function index()
     {
-        $hariIni = Carbon::now()->locale('id')->dayName; // Senin, Selasa, dst...
-        $waktuSekarang = Carbon::now()->format('H:i:s');
-        
-        // MENGAMBIL STATUS SEMESTER YANG SEDANG AKTIF (Diatur oleh Admin)
-        $activeSemester = Cache::get('active_semester', 'Ganjil');
+        $year = AcademicYear::active()->first();
+        $activeSemester = $year?->active_semester ?? 'Ganjil';
+        $activeSession = AttendanceSession::with('schedule.subject')->visibleTo(auth()->user())->whereDate('lesson_date', today())
+            ->where('status', 'open')->get()->first(fn ($session) => Gate::allows('record', $session));
+        $activeSchedule = $activeSession?->schedule ?? ($year ? Schedule::with(['subject', 'academicYear'])
+            ->where('academic_year_id', $year->id)->where('teacher_id', auth()->id())
+            ->where('day', now()->locale('id')->dayName)->where('start_time', '<=', now()->format('H:i:s'))
+            ->where('end_time', '>', now()->format('H:i:s'))->where('semester', $activeSemester)
+            ->get()->first(fn ($schedule) => Gate::allows('record', $schedule)) : null);
 
-        // MENCARI JADWAL CERDAS:
-        // Harus milik guru ini, pada hari ini, rentang jam saat ini, DAN di semester yang AKTIF
-        $activeSchedule = Schedule::with('subject')
-            ->where('teacher_id', Auth::id())
-            ->where('day', $hariIni)
-            ->where('start_time', '<=', $waktuSekarang)
-            ->where('end_time', '>=', $waktuSekarang)
-            ->where('semester', $activeSemester) // <--- KUNCI UTAMA FILTER SEMESTER
-            ->first();
-
-        // Mengirim data jadwal yang ditemukan ke halaman view scanner
-        return view('scanner', compact('activeSchedule', 'activeSemester'));
+        return view('scanner', compact('activeSchedule', 'activeSemester', 'activeSession'));
     }
 
-    /**
-     * API: Mengambil daftar seluruh siswa di kelas yang sedang aktif (Pre-load)
-     */
     public function getSessionData($schedule_id)
     {
         $schedule = Schedule::findOrFail($schedule_id);
+        $session = AttendanceSession::where('schedule_id', $schedule->id)->whereDate('lesson_date', today())->first();
+        if ($session) {
+            return app(AttendanceSessionController::class)->roster($session);
+        }
+        Gate::authorize('view', $schedule);
+        $attendances = Attendance::where('schedule_id', $schedule->id)->where('attendance_date', today()->toDateString())->get()->keyBy('student_id');
+        $students = Student::with('user')->where('class_id', $schedule->class_id)->where('status', 'aktif')->get()->sortBy('user.name')->values();
 
-        // Ambil semua siswa aktif di kelas tersebut, urutkan berdasarkan nama
-        $students = Student::with('user')
-            ->where('class_id', $schedule->class_id)
-            ->where('status', 'aktif')
-            ->get()
-            ->sortBy(function($student) {
-                return $student->user->name;
-            })->values();
-
-        // Hanya ambil absensi HARI INI agar data tidak bocor
-        $today = Carbon::today();
-        $attendances = Attendance::where('schedule_id', $schedule_id)
-                        ->whereDate('timestamp', $today)
-                        ->get()
-                        ->keyBy('student_id');
-
-        $data = $students->map(function($student) use ($attendances) {
-            return [
-                'id' => $student->id,
-                'nisn' => $student->nisn,
-                'name' => $student->user->name ?? 'User Terhapus',
-                'status' => $attendances->has($student->id) ? $attendances[$student->id]->status : ''
-            ];
-        });
-
-        return response()->json($data);
+        return response()->json($students->map(fn ($student) => [
+            'id' => $student->id, 'nisn' => $student->nisn, 'name' => $student->user?->name ?? 'User Terhapus',
+            'status' => $attendances->get($student->id)?->status ?? '',
+        ]));
     }
 
-    /**
-     * API: Menyimpan absensi massal (Batch Save) dari Scanner UI
-     */
-    public function saveSession(Request $request, $schedule_id)
+    public function saveSession(SaveAttendanceRequest $request, $schedule_id, AttendanceSessions $sessions)
     {
-        $request->validate([
-            'attendances' => 'required|array',
-            'attendances.*.student_id' => 'required|exists:students,id',
-            'attendances.*.status' => 'required|in:hadir,sakit,izin,alpa',
-        ]);
+        $schedule = Schedule::with('academicYear')->findOrFail($schedule_id);
+        Gate::authorize('record', $schedule);
 
-        $today = Carbon::today();
-        $now = Carbon::now();
-        $schedule = Schedule::findOrFail($schedule_id);
-
-        foreach($request->attendances as $att) {
-            // Validasi Server-Side: Pastikan siswa ini aktif dan berasal dari class_id yang sama dengan jadwal ini
-            $student = \App\Models\Student::find($att['student_id']);
-            if (!$student || $student->status !== 'aktif' || $student->class_id !== $schedule->class_id) {
-                continue; // Skip data manipulatif dari luar kelas / siswa nonaktif
+        return DB::transaction(function () use ($request, $schedule, $sessions) {
+            AcademicYear::whereKey($schedule->academic_year_id)->lockForUpdate()->firstOrFail();
+            $locked = Schedule::with('academicYear')->lockForUpdate()->findOrFail($schedule->id);
+            Gate::authorize('record', $locked);
+            $session = AttendanceSession::where('schedule_id', $locked->id)->whereDate('lesson_date', today())->first()
+                ?? $sessions->create($locked, ['lesson_date' => today()->toDateString()], $request->user());
+            if ($session->status === 'planned') {
+                $session = $sessions->open($session, $request->user());
             }
 
-            // Cek apakah siswa sudah diabsen khusus hari ini
-            $attendance = Attendance::where('schedule_id', $schedule_id)
-                ->where('student_id', $att['student_id'])
-                ->whereDate('timestamp', $today)
-                ->first();
-
-            if ($attendance) {
-                // Jika sudah ada (hari ini), update status & waktunya
-                $attendance->update([
-                    'status' => $att['status'],
-                    'timestamp' => $now
-                ]);
-            } else {
-                // Jika belum ada (hari ini), buat data absensi baru
-                Attendance::create([
-                    'schedule_id' => $schedule_id,
-                    'student_id' => $att['student_id'],
-                    'status' => $att['status'],
-                    'timestamp' => $now
-                ]);
-            }
-        }
-
-        return response()->json(['success' => true, 'message' => 'Sesi Absensi Berhasil Disimpan!']);
+            return app(AttendanceSessionController::class)->save($request, $session, app(AttendanceRecorder::class));
+        }, 3);
     }
 }

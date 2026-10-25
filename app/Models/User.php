@@ -10,7 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles; // <-- Tambahkan HasRoles di sini
+    use HasFactory, HasRoles, Notifiable; // <-- Tambahkan HasRoles di sini
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email', // Kita biarkan email untuk bawaan Breeze, meski nanti bisa disesuaikan pakai username/NISN
         'password',
+        'must_change_password',
     ];
 
     /**
@@ -43,9 +44,20 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'must_change_password' => 'boolean',
         ];
     }
-    
+
+    public function getEmailForPasswordReset(): string
+    {
+        return $this->student?->personal_email ?: $this->email;
+    }
+
+    public function routeNotificationForMail($notification): string
+    {
+        return $this->getEmailForPasswordReset();
+    }
+
     public function student()
     {
         return $this->hasOne(Student::class);

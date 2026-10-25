@@ -14,23 +14,23 @@
             <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
+                    <label for="field-admin-users-index-1" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input id="field-admin-users-index-1" type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Login</label>
-                    <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
+                    <label for="field-admin-users-index-2" class="block text-sm font-medium text-gray-700 mb-1">Email Login</label>
+                    <input id="field-admin-users-index-2" type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Role (Hak Akses)</label>
-                    <select name="role" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
+                    <label for="field-admin-users-index-3" class="block text-sm font-medium text-gray-700 mb-1">Role (Hak Akses)</label>
+                    <select id="field-admin-users-index-3" name="role" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
                         <option value="guru">Guru Pengajar </option>
                         <option value="admin">Administrator </option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" name="password" required placeholder="Minimal 6 Karakter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
+                    <label for="field-admin-users-index-4" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input id="field-admin-users-index-4" type="password" name="password" required placeholder="Minimal 6 Karakter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition-colors">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors mt-2">
                     Buat Akun Baru

@@ -30,20 +30,24 @@ Sistem ini membagi hak akses menjadi **3 peran utama**: Admin, Guru, dan Siswa.
 |---|---|
 | **Manajemen Siswa Cerdas** | Tambah siswa manual atau via Import Excel. Mendukung aksi massal seperti Hapus Massal dan Pindah Kelas Massal. |
 | **QR Code Generator** | Sistem otomatis membuatkan QR Code unik berformat SVG untuk setiap siswa baru. |
-| **Manajemen Jadwal Pintar** | Penjadwalan cerdas yang dipisahkan berdasarkan Semester Ganjil & Genap. Dilengkapi fitur Toggle ON/OFF global menggunakan Cache. |
+| **Manajemen Jadwal** | Jadwal per tahun ajaran dan semester; semester aktif tersimpan di database. |
+| **Sesi Pertemuan** | Pertemuan bertanggal dengan pengajar, jam, peserta tetap, pembukaan/penutupan, pemindahan waktu, dan pembatalan. |
+| **Audit & Persetujuan Izin** | Riwayat perubahan presensi, koreksi dengan alasan, dan pemeriksaan pengajuan izin/sakit beserta lampiran privat. |
 | **Laporan & Ekspor** | Filter laporan berdasarkan tanggal, kelas, dan mata pelajaran. Mendukung ekspor ke format PDF dan Excel/CSV. |
-| **Keamanan Database** | Fitur pengosongan database (Truncate) absensi untuk pergantian tahun ajaran, dilindungi dengan konfirmasi ganda via SweetAlert2. |
+| **Perlindungan Riwayat** | Presensi yang terhubung sesi dipertahankan. Data akademik bersejarah tidak dihapus melalui fitur pengosongan. |
 
 ### 👨‍🏫 Guru
 
 - **Antarmuka Scanner (Kamera):** Guru dapat membuka kamera pemindai langsung dari browser (HP/Laptop) untuk memindai QR Code siswa.
 - **Deteksi Jadwal Otomatis:** Scanner mendeteksi secara otomatis mata pelajaran yang sedang diajarkan berdasarkan Jam, Hari, dan Semester yang aktif.
 - **Batch Save Absensi:** Fitur untuk menyimpan seluruh rekaman absensi dalam satu sesi kelas dengan aman.
+- **Kelola Pertemuan & Izin:** Buka/tutup sesi, periksa izin/sakit peserta, serta koreksi presensi dengan alasan yang tercatat.
 
 ### 🎓 Siswa
 
 - **Portal Siswa:** Siswa dapat login menggunakan NISN untuk melihat profil dan persentase kehadiran mereka.
-- **Password Default:** Password bawaan siswa menggunakan NISN masing-masing (di-hash dengan aman).
+- **Sandi Awal:** Sandi acak dibuat saat menambah atau mengimpor siswa, ditampilkan satu kali kepada admin, dan wajib diganti saat login pertama.
+- **Izin/Sakit:** Ajukan permohonan untuk pertemuan kelas, unggah lampiran privat, dan lihat catatan keputusan pengajar.
 
 ---
 
@@ -69,9 +73,9 @@ Sistem ini membagi hak akses menjadi **3 peran utama**: Admin, Guru, dan Siswa.
 
 Pastikan komputer Anda sudah terinstal:
 
-- PHP >= 8.2
+- PHP 8.2–8.4 dengan ekstensi GD, fileinfo, mbstring, XML, ZIP, dan PDO sesuai database
 - Composer
-- Node.js & NPM
+- Node.js 20.19+ atau 22.12+ dan NPM
 - MySQL (XAMPP / Laragon)
 
 ### 2. Langkah Instalasi
@@ -135,15 +139,15 @@ Aplikasi kini dapat diakses melalui browser di: **[http://localhost:8000](http:/
 
 ---
 
-## 🔐 Info Akses Default (Setelah Seeding)
+## 🔐 Akun dan Sandi Awal
 
-| Peran | Email / Username | Password |
-|---|---|---|
-| **Admin** | `admin@sekolah.com` | `password123` |
-| **Guru** | Tergantung data seeder | — |
-| **Siswa (Simulasi)** | `siswa@sekolah.com` | `siswa123` |
+Seeder hanya menyiapkan role dan tahun ajaran, tanpa akun atau sandi bawaan. Buat administrator dengan:
 
-> **Catatan:** Password siswa asli (bukan simulasi) menggunakan NISN masing-masing dan disimpan dengan enkripsi hash yang aman.
+```bash
+php artisan school:create-admin
+```
+
+Sandi awal dimasukkan melalui prompt tersembunyi (minimal 12 karakter). Untuk siswa baru, admin menerima daftar sandi acak satu kali setelah tambah/import. Tombol kunci pada Data Siswa dapat membuat sandi awal baru jika diperlukan. Siswa wajib mengganti sandi sebelum mengakses portal.
 
 ---
 
@@ -154,3 +158,12 @@ Dibuat dengan ❤️ untuk kemajuan pendidikan **Miftahul Huda**
 Dibuat dengan **[Laravel](http://laravel.com)**
 
 </div>
+
+
+## Perbaikan keamanan dan migrasi
+
+Lihat [catatan perbaikan 25 Oktober 2026](docs/remediation-2026-10-25/README.md) untuk perubahan perilaku, migrasi data, dan hasil pengujian. Setelah memperbarui kode dan dependensi, jalankan `php artisan migrate` dan `npm run build`. Gunakan PHP 8.2–8.4; dependency Excel saat ini belum mendukung PHP 8.5.
+
+## Sesi presensi, riwayat perubahan, dan izin/sakit
+
+Lihat [panduan fitur dan pemasangan](docs/attendance-workflows-2026-10-25/README.md) untuk alur pengguna, aturan akses, migrasi, serta bukti pengujian. Menu **Sesi Presensi**, **Riwayat Perubahan**, dan **Pengajuan Izin/Sakit** tersedia sesuai peran pengguna.

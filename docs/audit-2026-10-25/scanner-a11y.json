@@ -1,0 +1,159 @@
+{
+  "success": true,
+  "data": {
+    "axeVersion": "4.12.1",
+    "counts": {
+      "inapplicable": 45,
+      "incomplete": 1,
+      "passes": 14,
+      "violations": 2
+    },
+    "incomplete": [
+      {
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodeCount": 2,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+            "html": "<h3 class=\"text-sm font-bold text-gray-800 uppercase tracking-wider text-center\">Kamera Pemindai</h3>",
+            "target": [
+              ".py-3.border-b.border-gray-100 > h3"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+            "html": "<span class=\"text-sm font-medium text-gray-500\" id=\"kamera-info\">Mencari Kamera...</span>",
+            "target": [
+              "#kamera-info"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ]
+      }
+    ],
+    "lifecycle": {
+      "effectiveLaunch": {
+        "browserLaunched": true,
+        "engine": "chrome",
+        "launchHash": 11677035664275012000
+      },
+      "launched": false,
+      "relaunchedBrowser": false,
+      "restartedBackground": false,
+      "restoreStatus": "not_configured",
+      "reused": true,
+      "saveStatus": "not_attempted"
+    },
+    "url": "http://127.0.0.1:8125/scanner",
+    "violations": [
+      {
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodeCount": 6,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.53 (foreground color: #9ca3af, background color: #ffffff, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1",
+            "html": "<p class=\"text-xs font-bold text-gray-400 uppercase tracking-wider\">Rekapitulasi</p>",
+            "target": [
+              ".pb-2 > p"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.14 (foreground color: #fcfdfd, background color: #8faff3, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1",
+            "html": "<button type=\"button\" onclick=\"saveSession()\" id=\"btnSaveSession\" class=\"flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-sm opacity-50 cursor-not-allowed\">",
+            "target": [
+              "#btnSaveSession"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.41 (foreground color: #dc2626, background color: #fef2f2, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1",
+            "html": "<a href=\"http://127.0.0.1:8125/reports/session/1\" id=\"btnPrintPdf\" target=\"_blank\" class=\"flex-1 sm:flex-none bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm\">",
+            "target": [
+              "#btnPrintPdf"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.53 (foreground color: #9ca3af, background color: #ffffff, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1",
+            "html": "<th class=\"px-6 py-3 w-12 text-center whitespace-nowrap\">No</th>",
+            "target": [
+              ".w-12"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.53 (foreground color: #9ca3af, background color: #ffffff, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1",
+            "html": "<th class=\"px-6 py-3 whitespace-nowrap\">Nama Lengkap &amp; NISN</th>",
+            "target": [
+              "th:nth-child(2)"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.53 (foreground color: #9ca3af, background color: #ffffff, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1",
+            "html": "<th class=\"px-6 py-3 text-center w-40 whitespace-nowrap\">Status Kehadiran</th>",
+            "target": [
+              ".w-40"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ]
+      },
+      {
+        "help": "Select element must have an accessible name",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/select-name?application=axeAPI",
+        "id": "select-name",
+        "impact": "critical",
+        "nodeCount": 1,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
+            "html": "<select data-id=\"1\" data-nisn=\"1234567890\" onchange=\"markUnsaved(this)\" class=\"status-dropdown w-full text-xs font-bold rounded-lg px-2 py-2 border outline-none focus:ring-2 focus:ring-blue-500 transition-colors shadow-sm cursor-pointer bg-red-50 text-red-700 border-red-200\">",
+            "target": [
+              "select"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.forms",
+          "wcag2a",
+          "wcag412",
+          "section508",
+          "section508.22.n",
+          "TTv5",
+          "TT5.c",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "ACT",
+          "RGAAv4",
+          "RGAA-11.1.1"
+        ]
+      }
+    ]
+  },
+  "error": null
+}

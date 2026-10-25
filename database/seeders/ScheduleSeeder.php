@@ -2,30 +2,34 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Subject;
-use App\Models\Schedule;
-use App\Models\User;
 use App\Models\AcademicYear;
+use App\Models\Schedule;
+use App\Models\Subject;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class ScheduleSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            throw new \RuntimeException('Seeder simulasi hanya untuk pengembangan.');
+        }
         // 1. Pastikan ada mata pelajaran
         $subject = Subject::firstOrCreate(['name' => 'Pemrograman Web']);
 
         // 2. Pastikan ada akun guru (atau pakai akun admin)
         $teacher = User::role(['admin', 'guru'])->first();
 
-        if (!$teacher) {
+        if (! $teacher) {
             // Fallback: cari user admin berdasarkan email
             $teacher = User::where('email', 'admin@sekolah.com')->first();
         }
 
-        if (!$teacher) {
+        if (! $teacher) {
             $this->command->error('Akun guru/admin tidak ditemukan. Jalankan RoleSeeder dulu.');
+
             return;
         }
 
@@ -34,7 +38,7 @@ class ScheduleSeeder extends Seeder
 
         // 4. Pastikan ada tahun ajaran aktif
         $activeYear = AcademicYear::active()->first();
-        if (!$activeYear) {
+        if (! $activeYear) {
             $activeYear = AcademicYear::firstOrCreate(
                 ['is_active' => true],
                 ['name' => '2026/2027', 'start_date' => '2026-07-01', 'end_date' => '2027-06-30', 'is_active' => true]
@@ -47,6 +51,7 @@ class ScheduleSeeder extends Seeder
                 'subject_id' => $subject->id,
                 'class_id' => '10-A',
                 'day' => $hariIni,
+                'academic_year_id' => $activeYear->id,
             ],
             [
                 'teacher_id' => $teacher->id,

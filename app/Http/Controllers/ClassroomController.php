@@ -2,42 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AttendanceSession;
 use App\Models\Classroom;
+use App\Models\Schedule;
+use App\Models\Student;
+use App\Models\StudentClassHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ClassroomController extends Controller
 {
     public function index()
     {
-        $classrooms = Classroom::latest()->get();
-        return view('admin.classrooms.index', compact('classrooms'));
+        return view('admin.classrooms.index', ['classrooms' => Classroom::orderBy('name')->get()]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:classrooms,name',
-        ]);
+        $request->merge(['name' => strtoupper(trim((string) $request->name))]);
+        $data = $request->validate(['name' => 'required|string|max:255|unique:classrooms,name']);
+        Classroom::create($data);
 
-        Classroom::create(['name' => $request->name]);
-
-        return redirect()->back()->with('success', 'Kelas berhasil ditambahkan.');
+        return back()->with('success', 'Kelas berhasil ditambahkan.');
     }
 
     public function update(Request $request, Classroom $classroom)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:classrooms,name,' . $classroom->id, 
-        ]);
+        $request->merge(['name' => strtoupper(trim((string) $request->name))]);
+        $data = $request->validate(['name' => ['required', 'string', 'max:255', Rule::unique('classrooms', 'name')->ignore($classroom->id)]]);
+        DB::transaction(function () use ($classroom, $data) {
+            $locked = Classroom::lockForUpdate()->findOrFail($classroom->id);
+            $old = $locked->name;
+            $locked->update($data);
+            foreach ([Student::class, Schedule::class, StudentClassHistory::class] as $model) {
+                $model::where('class_id', $old)->update(['class_id' => $data['name']]);
+            }
+            AttendanceSession::where('class_id', $old)->where('status', 'planned')->update(['class_id' => $data['name']]);
+        });
 
-        $classroom->update(['name' => $request->name]);
-
-        return redirect()->back()->with('success', 'Nama Kelas berhasil diperbarui.');
+        return back()->with('success', 'Nama kelas dan data terkait berhasil diperbarui.');
     }
 
     public function destroy(Classroom $classroom)
     {
+        foreach ([Student::class, Schedule::class, StudentClassHistory::class] as $model) {
+            if ($model::where('class_id', $classroom->name)->exists()) {
+                throw ValidationException::withMessages(['classroom' => 'Kelas masih digunakan oleh data akademik.']);
+            }
+        }
         $classroom->delete();
-        return redirect()->back()->with('success', 'Kelas berhasil dihapus.');
+
+        return back()->with('success', 'Kelas berhasil dihapus.');
     }
 }

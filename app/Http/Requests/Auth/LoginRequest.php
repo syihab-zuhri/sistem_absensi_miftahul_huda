@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Services\LoginIdentity;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,7 +29,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string'],
+            'email' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,32 +43,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $login = $this->input('email');
-        $password = $this->input('password');
-        $remember = $this->boolean('remember');
+        $user = LoginIdentity::resolve($this->string('email')->toString());
+        if ($user && Auth::attempt(['id' => $user->id, 'password' => $this->input('password')], $this->boolean('remember'))) {
+            RateLimiter::clear($this->throttleKey());
 
-        // Cek apakah input adalah email
-        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
-            // Coba login dengan email user (admin/guru/siswa)
-            if (Auth::attempt(['email' => $login, 'password' => $password], $remember)) {
-                RateLimiter::clear($this->throttleKey());
-                return;
-            }
-
-            // Jika gagal, coba cari siswa dengan personal_email
-            $student = \App\Models\Student::where('personal_email', $login)->with('user')->first();
-            if ($student && Auth::attempt(['email' => $student->user->email, 'password' => $password], $remember)) {
-                RateLimiter::clear($this->throttleKey());
-                return;
-            }
-        }
-        // Jika bukan email, anggap sebagai NISN
-        else {
-            $student = \App\Models\Student::where('nisn', $login)->with('user')->first();
-            if ($student && Auth::attempt(['email' => $student->user->email, 'password' => $password], $remember)) {
-                RateLimiter::clear($this->throttleKey());
-                return;
-            }
+            return;
         }
 
         RateLimiter::hit($this->throttleKey());
@@ -105,6 +85,8 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $user = LoginIdentity::resolve($this->string('email')->toString());
+
+        return ($user ? 'user:'.$user->id : Str::transliterate(Str::lower($this->string('email')))).'|'.$this->ip();
     }
 }

@@ -45,6 +45,21 @@ class Student extends Model
         return $this->hasMany(StudentClassHistory::class);
     }
 
+    public function archivedAttendances()
+    {
+        return $this->hasMany(AttendanceDuplicateArchive::class);
+    }
+
+    public function attendanceSessions()
+    {
+        return $this->belongsToMany(AttendanceSession::class, 'attendance_session_students');
+    }
+
+    public function leaveRequests()
+    {
+        return $this->hasMany(LeaveRequest::class);
+    }
+
     /**
      * Scope to filter only active students.
      */

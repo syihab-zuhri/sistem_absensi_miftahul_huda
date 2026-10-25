@@ -12,8 +12,8 @@
             @csrf
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Tahun Ajaran <span class="text-red-500">*</span></label>
-                <input type="text" name="name" value="{{ old('name') }}" required
+                <label for="field-admin-academic-years-create-1" class="block text-sm font-medium text-gray-700 mb-1">Nama Tahun Ajaran <span class="text-red-500">*</span></label>
+                <input id="field-admin-academic-years-create-1" type="text" name="name" value="{{ old('name') }}" required
                     placeholder="Contoh: 2026/2027"
                     class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                 <p class="mt-1 text-xs text-gray-500">Format: YYYY/YYYY (contoh: <strong>2026/2027</strong>)</p>
@@ -22,14 +22,14 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai (Opsional)</label>
-                    <input type="date" name="start_date" value="{{ old('start_date') }}"
+                    <label for="field-admin-academic-years-create-2" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai (Opsional)</label>
+                    <input id="field-admin-academic-years-create-2" type="date" name="start_date" value="{{ old('start_date') }}"
                         class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                     @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai (Opsional)</label>
-                    <input type="date" name="end_date" value="{{ old('end_date') }}"
+                    <label for="field-admin-academic-years-create-3" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai (Opsional)</label>
+                    <input id="field-admin-academic-years-create-3" type="date" name="end_date" value="{{ old('end_date') }}"
                         class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500">
                     @error('end_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>

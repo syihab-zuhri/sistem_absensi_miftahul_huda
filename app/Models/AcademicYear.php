@@ -11,7 +11,13 @@ class AcademicYear extends Model
         'start_date',
         'end_date',
         'is_active',
+        'active_semester',
     ];
+
+    protected function casts(): array
+    {
+        return ['is_active' => 'boolean', 'start_date' => 'date', 'end_date' => 'date'];
+    }
 
     /**
      * Scope to get the active academic year.

@@ -102,7 +102,7 @@
                 <div class="bg-green-50 p-2 rounded text-green-700">Hadir: <span class="font-bold">{{ $todayStats['hadir'] }}</span></div>
                 <div class="bg-blue-50 p-2 rounded text-blue-700">Sakit: <span class="font-bold">{{ $todayStats['sakit'] }}</span></div>
                 <div class="bg-yellow-50 p-2 rounded text-yellow-700">Izin: <span class="font-bold">{{ $todayStats['izin'] }}</span></div>
-                <div class="bg-red-50 p-2 rounded text-red-700">Alfa: <span class="font-bold">{{ $todayStats['alfa'] }}</span></div>
+                <div class="bg-red-50 p-2 rounded text-red-700">Alpa: <span class="font-bold">{{ $todayStats['alpa'] }}</span></div>
             </div>
         </div>
 
@@ -151,7 +151,7 @@
                                 @elseif($attendance->status === 'izin')
                                     <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Izin</span>
                                 @else
-                                    <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Alfa</span>
+                                    <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Alpa</span>
                                 @endif
                             </td>
                         </tr>
@@ -170,9 +170,8 @@
 
 @push('scripts')
 <!-- Masukkan Chart.js via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('charts-ready', function() {
         // --- 1. Pie Chart untuk Hari Ini ---
         const todayCtx = document.getElementById('todayChart').getContext('2d');
         const todayData = @json(array_values($todayStats));
@@ -183,7 +182,7 @@
         new Chart(todayCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Hadir', 'Sakit', 'Izin', 'Alfa'],
+                labels: ['Hadir', 'Sakit', 'Izin', 'Alpa'],
                 datasets: [{
                     data: hasDataToday ? todayData : [1], // Tampilkan placeholder abu-abu jika kosong
                     backgroundColor: hasDataToday
@@ -238,8 +237,8 @@
                         borderRadius: 4,
                     },
                     {
-                        label: 'Alfa',
-                        data: @json($weeklyStats['alfa']),
+                        label: 'Alpa',
+                        data: @json($weeklyStats['alpa']),
                         backgroundColor: '#ef4444',
                         borderRadius: 4,
                     }

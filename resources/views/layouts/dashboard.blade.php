@@ -11,43 +11,37 @@
     <meta name="warning-msg" content="{{ session('warning') }}">
     <meta name="validation-errors" content="{{ json_encode($errors->all()) }}">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Alpine.js (Untuk Menu Mobile) -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Font Awesome (Opsional untuk icon) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Aset lokal dibangun dengan Vite. -->
     
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
 <!-- Alpine x-data untuk mengontrol state sidebar di mobile -->
-<body class="bg-gray-50 font-sans antialiased flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
+<body class="bg-gray-50 font-sans antialiased flex h-screen overflow-hidden" x-data="{ sidebarOpen: false, desktop: window.innerWidth >= 1024 }" @resize.window="desktop = window.innerWidth >= 1024" @keydown.escape.window="if (!desktop) { sidebarOpen = false; $nextTick(() => requestAnimationFrame(() => $refs.menuTrigger.focus())); }">
 
     <!-- Overlay Gelap untuk Mobile (Muncul saat sidebar dibuka) -->
     <div x-show="sidebarOpen" 
         x-transition.opacity 
-        @click="sidebarOpen = false"
+        @click="sidebarOpen = false; $nextTick(() => requestAnimationFrame(() => $refs.menuTrigger.focus()))"
         class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
         style="display: none;">
     </div>
 
     <!-- Sidebar Kiri (Responsif: Tersembunyi di Mobile, Muncul di Desktop) -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+    <aside id="dashboard-sidebar" :inert="!desktop && !sidebarOpen" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
         class="fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 shadow-sm flex flex-col transition-transform duration-300 lg:static lg:translate-x-0">
         
         <!-- Logo / Header Sidebar -->
         <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200">
             <span class="text-xl font-bold text-blue-600">Absensi<span class="text-gray-800">Sekolah</span></span>
             <!-- Tombol Tutup (Hanya di Mobile) -->
-            <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-red-500 focus:outline-none">
+            <button aria-label="Tutup menu" x-ref="sidebarClose" @click="sidebarOpen = false; $nextTick(() => requestAnimationFrame(() => $refs.menuTrigger.focus()))" class="lg:hidden min-h-11 min-w-11 text-gray-500 hover:text-red-500 focus:outline-none">
                 <i class="fa-solid fa-times text-xl"></i>
             </button>
         </div>
 
         <!-- Menu Navigasi Global -->
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <nav aria-label="Navigasi utama" class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             
             <!-- MENU ADMIN -->
             @role('admin')
@@ -56,7 +50,7 @@
                 <span class="text-sm font-medium">Dashboard Admin</span>
             </a>
             
-            <div class="px-3 pt-4 pb-2"><p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Master Data</p></div>
+            <div class="px-3 pt-4 pb-2"><p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Master Data</p></div>
             
             <a href="/admin/users" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('admin/users*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-user-tie w-5 text-center"></i>
@@ -118,8 +112,15 @@
             @endrole
             
             @hasanyrole('admin|guru')
+            <a href="{{ route('attendance-sessions.index') }}" class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 {{ request()->routeIs('attendance-sessions.*') ? 'bg-blue-50 font-bold text-blue-700' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700' }}"><i aria-hidden="true" class="fa-solid fa-calendar-check w-5 text-center"></i><span class="text-sm font-medium">Sesi Presensi</span></a>
+            <a href="{{ route('attendance-audits.index') }}" class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 {{ request()->routeIs('attendance-audits.*') ? 'bg-blue-50 font-bold text-blue-700' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700' }}"><i aria-hidden="true" class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span class="text-sm font-medium">Riwayat Perubahan</span></a>
+            @endhasanyrole
+            @hasanyrole('admin|guru|siswa')
+            <a href="{{ route('leave-requests.index') }}" class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 {{ request()->routeIs('leave-requests.*') ? 'bg-blue-50 font-bold text-blue-700' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700' }}"><i aria-hidden="true" class="fa-solid fa-envelope-open-text w-5 text-center"></i><span class="text-sm font-medium">Pengajuan Izin/Sakit</span></a>
+            @endhasanyrole
+            @hasanyrole('admin|guru')
             <!-- MENU UMUM (ADMIN & GURU) -->
-            <div class="px-3 pt-4 pb-2"><p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Rekapitulasi</p></div>
+            <div class="px-3 pt-4 pb-2"><p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Rekapitulasi</p></div>
             <a href="{{ route('reports.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->is('reports*') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50' }} transition-colors">
                 <i class="fa-solid fa-file-invoice w-5 text-center"></i>
                 <span class="font-medium text-sm">Rekapitulasi Absensi</span>
@@ -138,12 +139,12 @@
     </aside>
 
     <!-- Konten Utama Kanan -->
-    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    <div :inert="sidebarOpen && !desktop" class="min-w-0 flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Header Atas -->
         <header class="h-16 flex items-center justify-between px-4 lg:px-8 bg-white border-b border-gray-200 shrink-0">
             <!-- Hamburger Menu (Mobile Only) -->
-            <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button aria-label="Buka menu" aria-controls="dashboard-sidebar" :aria-expanded="sidebarOpen" x-ref="menuTrigger" @click="sidebarOpen = true; $nextTick(() => requestAnimationFrame(() => $refs.sidebarClose.focus()))" class="lg:hidden min-h-11 min-w-11 p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>
 
@@ -183,31 +184,22 @@
             if (warningMsg) Swal.fire({ icon: 'warning', title: 'Perhatian', text: warningMsg });
 
             if (validationErrors && validationErrors.length > 0) {
-                let errorHtml = '<ul class="text-left text-sm text-red-600 list-disc pl-5">';
-                validationErrors.forEach(error => { errorHtml += '<li>' + error + '</li>'; });
-                errorHtml += '</ul>';
-                Swal.fire({ icon: 'error', title: 'Terjadi Kesalahan', html: errorHtml });
+                Swal.fire({ icon: 'error', titleText: 'Terjadi Kesalahan', text: validationErrors.join('\n') });
             }
         });
     </script>
 
     <script>
     function showAdminProfile() {
-        Swal.fire({
-            title: 'Profil {{ Auth::user()->name }}',
-            html: `
-                <div class="text-left bg-gray-50 p-4 rounded-lg mt-4 border border-gray-200">
-                    <p class="mb-2"><strong>Nama Lengkap:</strong> {{ Auth::user()->name }}</p>
-                    <p class="mb-2"><strong>Alamat Email:</strong> {{ Auth::user()->email }}</p>
-                    <p><strong>Hak Akses:</strong> <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-sm font-bold uppercase">{{ Auth::user()->roles->first()->name ?? 'Pengguna' }}</span></p>
-                </div>
-            `,
-            icon: 'info',
-            confirmButtonText: 'Tutup Panel',
-            confirmButtonColor: '#3b82f6',
-            showClass: { popup: 'animate__animated animate__fadeInDown' },
-            hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-        });
+        const profile = @js(['name' => Auth::user()->name, 'email' => Auth::user()->email, 'role' => Auth::user()->roles->first()->name ?? 'Pengguna']);
+        const details = document.createElement('div');
+        details.className = 'text-left space-y-2';
+        for (const [label, value] of [['Nama Lengkap', profile.name], ['Alamat Email', profile.email], ['Hak Akses', profile.role]]) {
+            const line = document.createElement('p');
+            line.textContent = label + ': ' + value;
+            details.append(line);
+        }
+        Swal.fire({ titleText: 'Profil ' + profile.name, html: details, icon: 'info', confirmButtonText: 'Tutup' });
     }
     </script>
     

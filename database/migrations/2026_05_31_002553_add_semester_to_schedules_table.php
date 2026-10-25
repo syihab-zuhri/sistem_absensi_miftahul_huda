@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('schedules', function (Blueprint $table) {
             // Menambahkan kolom semester setelah kolom end_time
-            if (!Schema::hasColumn('schedules', 'semester')) {
+            if (! Schema::hasColumn('schedules', 'semester')) {
                 $table->string('semester')->default('Ganjil')->after('end_time');
             }
         });
@@ -24,10 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('schedules', function (Blueprint $table) {
-            if (Schema::hasColumn('schedules', 'semester')) {
-                $table->dropColumn('semester');
-            }
-        });
+        // The original schedules migration owns this column and its composite index.
+        // This compatibility migration must not drop a column it did not create.
     }
 };

@@ -12,16 +12,16 @@
         </h2>
         <form action="{{ route('reports.index') }}" method="GET" class="flex flex-col lg:flex-row gap-4 items-end">
             <div class="w-full lg:w-1/5">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Dari Tanggal</label>
-                <input type="date" name="start_date" value="{{ $startDate }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
+                <label for="field-reports-index-1" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Dari Tanggal</label>
+                <input id="field-reports-index-1" type="date" name="start_date" value="{{ $startDate }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
             </div>
             <div class="w-full lg:w-1/5">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Sampai Tanggal</label>
-                <input type="date" name="end_date" value="{{ $endDate }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
+                <label for="field-reports-index-2" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Sampai Tanggal</label>
+                <input id="field-reports-index-2" type="date" name="end_date" value="{{ $endDate }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
             </div>
             <div class="w-full lg:w-1/5">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Filter Kelas</label>
-                <select name="class_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
+                <label for="field-reports-index-3" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Filter Kelas</label>
+                <select id="field-reports-index-3" name="class_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
                     <option value="">-- Semua Kelas --</option>
                     @foreach($classes as $cls)
                         <option value="{{ $cls }}" {{ $classId == $cls ? 'selected' : '' }}>Kelas {{ $cls }}</option>
@@ -29,8 +29,8 @@
                 </select>
             </div>
             <div class="w-full lg:w-1/5">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Mata Pelajaran</label>
-                <select name="subject_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
+                <label for="field-reports-index-4" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Mata Pelajaran</label>
+                <select id="field-reports-index-4" name="subject_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
                     <option value="">-- Semua Mapel --</option>
                     @foreach($subjects as $sub)
                         <option value="{{ $sub->id }}" {{ $subjectId == $sub->id ? 'selected' : '' }}>{{ $sub->name }}</option>
@@ -38,8 +38,8 @@
                 </select>
             </div>
             <div class="w-full lg:w-1/5">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tahun Ajaran</label>
-                <select name="academic_year_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
+                <label for="field-reports-index-5" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tahun Ajaran</label>
+                <select id="field-reports-index-5" name="academic_year_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors">
                     <option value="">-- Semua Tahun Ajaran --</option>
                     @foreach($academicYears as $year)
                         <option value="{{ $year->id }}" {{ $selectedYearId == $year->id ? 'selected' : '' }}>
@@ -64,6 +64,11 @@
                 <form id="truncateAbsensiForm" action="{{ route('reports.truncate') }}" method="POST">
                     @csrf
                     @method('DELETE')
+                    <input type="hidden" name="academic_year_id" value="{{ $selectedYearId }}">
+                    <input type="hidden" name="start_date" value="{{ $startDate }}">
+                    <input type="hidden" name="end_date" value="{{ $endDate }}">
+                    <input type="hidden" name="class_id" value="{{ $classId }}">
+                    <input type="hidden" name="subject_id" value="{{ $subjectId }}">
                     <button type="button" onclick="confirmResetAbsensi()" class="w-full sm:w-auto bg-red-50 hover:bg-red-100 text-red-700 font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm border border-red-200">
                         <!-- <i class="fa-solid fa-skull-crossbones"></i>--> Hapus Semua Riwayat Absensi
                     </button>
@@ -71,10 +76,10 @@
             </div>
             @endrole
 
-            <a href="{{ route('reports.custom.excel', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId, 'academic_year_id' => $selectedYearId]) }}" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
+            <a href="{{ route('reports.custom.excel', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId, 'academic_year_id' => $selectedYearId ?? '']) }}" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                 <i class="fa-solid fa-file-excel"></i> Export Excel
             </a>
-            <a href="{{ route('reports.custom.pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId, 'academic_year_id' => $selectedYearId]) }}" target="_blank" class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
+            <a href="{{ route('reports.custom.pdf', ['start_date' => $startDate, 'end_date' => $endDate, 'class_id' => $classId, 'subject_id' => $subjectId, 'academic_year_id' => $selectedYearId ?? '']) }}" target="_blank" class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
                 <i class="fa-solid fa-file-pdf"></i> Cetak PDF
             </a>
         </div>
@@ -89,7 +94,7 @@
                 @if($subjectId) <br class="md:hidden"><span class="hidden md:inline">|</span> Mapel: <span class="text-blue-600">{{ \App\Models\Subject::find($subjectId)->name ?? '' }}</span> @endif
                 @if($selectedYearId) <br class="md:hidden"><span class="hidden md:inline">|</span> Tahun Ajaran: <span class="text-blue-600">{{ \App\Models\AcademicYear::find($selectedYearId)?->name ?? '' }}</span> @endif
             </h3>
-            <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full font-bold shadow-inner w-full md:w-auto text-center">Total: {{ $attendances->count() }} Data</span>
+            <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full font-bold shadow-inner w-full md:w-auto text-center">Total: {{ $attendances->total() }} Data</span>
         </div>
         
         <div class="overflow-x-auto">
@@ -155,6 +160,7 @@
         </div>
     </div>
 </div>
+    <div class="mt-4">{{ $attendances->links() }}</div>
 @endsection
 
 @push('scripts')
@@ -165,7 +171,7 @@
             title: 'KOSONGKAN DATABASE?',
             html: `
                 <div class="text-left text-sm text-gray-600 mt-2">
-                    <p class="mb-3">Anda akan menghapus <b>SELURUH RIWAYAT ABSENSI</b> siswa dari sistem. Data yang dihapus tidak dapat dikembalikan lagi!</p>
+                    <p class="mb-3">Anda akan menghapus <b>RIWAYAT ABSENSI SESUAI FILTER</b> siswa dari sistem. Data yang dihapus tidak dapat dikembalikan lagi!</p>
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-2 rounded">
                         <p class="font-bold text-yellow-800"><i class="fa-solid fa-triangle-exclamation"></i> PERINGATAN BACKUP!</p>
                         <p class="text-yellow-700 text-xs mt-1">Pastikan Anda telah mengunduh riwayat menggunakan tombol <b>Export CSV</b> atau <b>Cetak PDF</b> sebelum melakukan tindakan ini untuk arsip sekolah.</p>

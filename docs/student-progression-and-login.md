@@ -162,3 +162,10 @@ Kemudian uji manual:
 5. Login admin/guru dengan email utama untuk memastikan tetap normal.
 6. Luluskan siswa kelas akhir dari halaman admin.
 7. Pastikan siswa lulus tidak muncul di daftar aktif/scanner.
+
+
+## Pembaruan keamanan 25 Oktober 2026
+
+Sandi awal siswa berupa nilai acak yang ditampilkan sekali kepada admin setelah tambah/import. Sandi tersebut wajib diganti melalui Pengaturan. Admin dapat membuat sandi awal baru melalui tombol kunci di Data Siswa. Email pribadi yang didaftarkan dapat digunakan untuk meminta tautan reset sandi. Impor siswa lama memakai NISN sebagai identitas dan tidak mengaktifkan kembali alumni. Saat tahun ajaran diaktifkan, riwayat kelas awal disiapkan otomatis; perpindahan kelas dan kelulusan disimpan dalam transaksi.
+
+Jadwal dan data induk yang terhubung dengan absensi tidak dapat dihapus melalui penghapusan biasa. Reset jadwal dibatasi tahun dan semester; penghapusan riwayat absensi melalui laporan mengikuti rentang tanggal dan tahun yang dipilih administrator.

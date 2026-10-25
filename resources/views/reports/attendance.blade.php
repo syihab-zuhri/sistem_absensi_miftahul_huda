@@ -15,7 +15,10 @@
         .data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         .data-table th { background-color: #f4f4f4; font-weight: bold; text-transform: uppercase; font-size: 11px; }
         .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; }
-        .bg-hadir { background-color: #10b981; }
+        .bg-hadir { background-color: #047857; }
+        .bg-sakit { background-color: #1d4ed8; }
+        .bg-izin { background-color: #a16207; }
+        .bg-alpa { background-color: #b91c1c; }
         .footer { margin-top: 40px; text-align: right; font-size: 11px; }
         .signature { margin-top: 60px; font-weight: bold; text-decoration: underline; }
     </style>
@@ -32,7 +35,7 @@
             <td class="label">Mata Pelajaran</td>
             <td>: {{ $schedule->subject->name }}</td>
             <td class="label">Tanggal Cetak</td>
-            <td>: {{ $date }}</td>
+            <td>: {{ $sessionDate }} (dicetak {{ $date }})</td>
         </tr>
         <tr>
             <td class="label">Kelas</td>
@@ -48,7 +51,7 @@
         </tr>
         <tr>
             <td class="label">Total Hadir</td>
-            <td>: {{ $attendances->count() }} Siswa</td>
+            <td>: {{ $presentCount }} Siswa</td>
             <td></td>
             <td></td>
         </tr>
@@ -72,7 +75,7 @@
                 <td>{{ $attendance->student->user->name ?? 'User Terhapus' }}</td>
                 <td>{{ \Carbon\Carbon::parse($attendance->timestamp)->format('H:i:s') }}</td>
                 <td style="text-align: center;">
-                    <span class="status-badge bg-hadir">Hadir</span>
+                    <span class="status-badge bg-{{ $attendance->status }}">{{ ucfirst($attendance->status) }}</span>
                 </td>
             </tr>
             @empty

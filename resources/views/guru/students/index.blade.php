@@ -44,7 +44,7 @@
                         </td>
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             @if($student->qr_code_path)
-                                <button type="button" onclick="showQRCode('{{ Storage::url($student->qr_code_path) }}', '{{ $student->nisn }}', '{{ addslashes($student->user->name ?? '') }}')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto shadow-sm whitespace-nowrap">
+                                <button type="button" onclick="showQRCode(@js(Storage::url($student->qr_code_path)), @js($student->nisn), @js($student->user?->name ?? 'Siswa Terhapus'))" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 mx-auto shadow-sm whitespace-nowrap">
                                     <i class="fa-solid fa-qrcode"></i> Lihat QR
                                 </button>
                             @else
@@ -91,7 +91,7 @@
     // Popup QR Code
     function showQRCode(url, nisn, name) {
         Swal.fire({
-            title: name,
+            titleText: name,
             text: 'NISN: ' + nisn,
             imageUrl: url,
             imageWidth: 250,

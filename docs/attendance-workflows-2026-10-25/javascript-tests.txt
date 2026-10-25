@@ -1,0 +1,15 @@
+
+> test
+> node --test tests/js/*.test.js
+
+✔ student names and NISN are literal text, including executable HTML (84.667029ms)
+✔ saving sends only changed students together with their previous saved status (13.738928ms)
+✔ manual changes identify the student and trigger the unsaved-state callback (8.368488ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17424.556118

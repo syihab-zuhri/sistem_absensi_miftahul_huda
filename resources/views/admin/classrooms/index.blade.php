@@ -21,8 +21,8 @@
                 <form action="{{ route('classrooms.store') }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kelas</label>
-                        <input type="text" name="name" required placeholder="Contoh: X IPA 1" oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <label for="field-admin-classrooms-index-1" class="block text-sm font-medium text-gray-700 mb-1">Nama Kelas</label>
+                        <input id="field-admin-classrooms-index-1" type="text" name="name" required placeholder="Contoh: X IPA 1" oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors">
                         Simpan Kelas
@@ -54,7 +54,7 @@
                                 <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">{{ $classroom->name }}</td>
                                 <td class="px-6 py-4 flex justify-center gap-2 whitespace-nowrap">
                                     <!-- Tombol Edit -->
-                                    <button type="button" @click="editForm = { id: '{{ $classroom->id }}', name: '{{ addslashes($classroom->name) }}' }; editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Nama">
+                                    <button type="button" @click="editForm = @js($classroom->only(['id', 'name'])); editModalOpen = true" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100 px-2 py-1.5 rounded transition" title="Edit Nama">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
 
@@ -84,7 +84,7 @@
         <div @click.away="editModalOpen = false" class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
             <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
                 <h3 class="text-lg font-bold text-gray-800">Edit Kelas</h3>
-                <button @click="editModalOpen = false" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
+                <button aria-label="Tutup dialog edit" @click="editModalOpen = false" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
             
             <form :action="'/admin/classrooms/' + editForm.id" method="POST" class="p-6 space-y-4">
@@ -92,8 +92,8 @@
                 @method('PUT')
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kelas</label>
-                    <input type="text" name="name" x-model="editForm.name" required oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <label for="field-admin-classrooms-index-2" class="block text-sm font-medium text-gray-700 mb-1">Nama Kelas</label>
+                    <input id="field-admin-classrooms-index-2" type="text" name="name" x-model="editForm.name" required oninput="this.value = this.value.toUpperCase()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 
                 <div class="pt-4 flex justify-end gap-3">

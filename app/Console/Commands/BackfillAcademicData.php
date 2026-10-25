@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\AcademicYear;
-use App\Models\Student;
 use App\Models\Schedule;
+use App\Models\Student;
 use App\Models\StudentClassHistory;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class BackfillAcademicData extends Command
 {
-    protected $signature = 'academic:backfill';
+    protected $signature = 'academic:backfill {--year= : Nama tahun ajaran tujuan}';
+
     protected $description = 'Backfill data lama untuk sistem tahun ajaran baru (membuat tahun ajaran default, set status siswa, isi history kelas)';
 
     public function handle()
@@ -22,15 +23,18 @@ class BackfillAcademicData extends Command
 
         try {
             // 1. Buat tahun ajaran default
-            $academicYear = AcademicYear::firstOrCreate(
-                ['name' => '2026/2027'],
-                [
-                    'is_active' => true,
-                    'start_date' => '2026-07-01',
-                    'end_date' => '2027-06-30',
-                ]
-            );
-            $this->info("[1/4] Tahun ajaran '{$academicYear->name}' dibuat/ditemukan (is_active: " . ($academicYear->is_active ? 'Ya' : 'Tidak') . ").");
+            $name = $this->option('year');
+            if ($name && ! preg_match('/^\d{4}\/\d{4}$/', $name)) {
+                throw new \InvalidArgumentException('Format tahun ajaran harus YYYY/YYYY.');
+            }
+            $academicYear = $name ? AcademicYear::where('name', $name)->first() : AcademicYear::active()->first();
+            if (! $academicYear) {
+                $start = now()->month >= 7 ? now()->year : now()->year - 1;
+                $name ??= $start.'/'.($start + 1);
+                $start = (int) explode('/', $name)[0];
+                $academicYear = AcademicYear::firstOrCreate(['name' => $name], ['is_active' => ! AcademicYear::active()->exists(), 'start_date' => $start.'-07-01', 'end_date' => ($start + 1).'-06-30']);
+            }
+            $this->info("[1/4] Tahun ajaran '{$academicYear->name}' dibuat/ditemukan (is_active: ".($academicYear->is_active ? 'Ya' : 'Tidak').').');
 
             // 2. Set semua siswa lama menjadi status 'aktif' jika statusnya masih default kosong
             $updatedStudents = Student::where('status', 'aktif')
@@ -76,7 +80,8 @@ class BackfillAcademicData extends Command
 
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->error('Terjadi kesalahan: ' . $e->getMessage());
+            $this->error('Terjadi kesalahan: '.$e->getMessage());
+
             return 1;
         }
 

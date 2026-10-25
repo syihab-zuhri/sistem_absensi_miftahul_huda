@@ -2,118 +2,90 @@
 
 namespace App\Imports;
 
-use App\Models\User;
-use App\Models\Student;
 use App\Models\AcademicYear;
+use App\Models\Classroom;
+use App\Models\Student;
 use App\Models\StudentClassHistory;
-use Illuminate\Support\Facades\Hash;
+use App\Services\StudentProvisioner;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Facades\Storage;
 
 class StudentsImport implements ToModel, WithHeadingRow
 {
-    private $currentRow = 1; // Mulai dari 1 karena header adalah baris 1
-    private $errors = [];
-    private $classrooms;
-    private $activeYear;
+    private int $currentRow = 1;
+
+    private array $errors = [];
+
+    private array $credentials = [];
+
+    private array $createdPaths = [];
+
+    private AcademicYear $activeYear;
 
     public function __construct()
     {
-        // Ambil semua nama kelas dan jadikan huruf besar untuk perbandingan
-        $this->classrooms = \App\Models\Classroom::pluck('name')->map(function($name) {
-            return strtoupper(trim($name));
-        })->toArray();
-
-        // Tahun ajaran aktif dipakai untuk mencatat history kelas siswa
-        $this->activeYear = AcademicYear::active()->first();
+        $this->activeYear = AcademicYear::active()->first() ?? throw ValidationException::withMessages(['file' => 'Aktifkan tahun ajaran sebelum impor.']);
     }
 
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
-    /**
-    * Fungsi ini berjalan berulang-ulang untuk setiap baris di file Excel.
-    */
+    public function getInitialCredentials(): array
+    {
+        return $this->credentials;
+    }
+
+    public function cleanupRolledBackFiles(): void
+    {
+        foreach ($this->createdPaths as $path) {
+            if (! Student::where('qr_code_path', $path)->exists()) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+    }
+
     public function model(array $row)
     {
         $this->currentRow++;
-
-        // 1. Lewati jika baris Excel kosong atau header tidak sesuai
-        if (!isset($row['nisn']) || !isset($row['nama']) || !isset($row['kelas'])) {
+        if ($this->currentRow > 1001) {
+            throw ValidationException::withMessages(['file' => 'Maksimal 1000 siswa dalam satu file impor.']);
+        }
+        if (! array_filter($row, fn ($value) => $value !== null && $value !== '')) {
             return null;
         }
+        $data = ['nisn' => trim((string) ($row['nisn'] ?? '')), 'nama' => trim((string) ($row['nama'] ?? '')), 'kelas' => trim((string) ($row['kelas'] ?? ''))];
+        $validator = Validator::make($data, ['nisn' => ['required', 'regex:/^\d{1,20}$/'], 'nama' => 'required|string|max:255', 'kelas' => 'required|string|max:255']);
+        $classroom = Classroom::whereRaw('LOWER(name) = ?', [strtolower($data['kelas'])])->first();
+        if ($validator->fails() || ! $classroom) {
+            $this->errors[] = ['row' => $this->currentRow, 'nama' => $data['nama'], 'nisn' => $data['nisn'], 'kelas' => $data['kelas'], 'keterangan' => $validator->fails() ? $validator->errors()->first() : 'Kelas tidak terdaftar'];
 
-        $kelasExcel = strtoupper(trim($row['kelas']));
-
-        // Validasi Kelas: Jika kelas tidak ada di database, catat sebagai error dan lewati
-        if (!in_array($kelasExcel, $this->classrooms)) {
-            $this->errors[] = [
-                'row' => $this->currentRow,
-                'nama' => $row['nama'],
-                'nisn' => $row['nisn'],
-                'kelas' => $row['kelas'],
-                'keterangan' => 'Kelas tidak terdaftar di database'
-            ];
-            return null; // Skip penyimpanan untuk siswa ini
+            return null;
         }
-
-        // 2. LOGIKA MENCARI DAN MEMPERBARUI USER
-        $email = $row['nisn'] . '@siswa.com';
-        $user = User::where('email', $email)->first();
-
-        if ($user) {
-            $user->update(['name' => $row['nama']]);
-        } else {
-            $user = User::create([
-                'name' => $row['nama'],
-                'email' => $email,
-                'password' => Hash::make($row['nisn']),
-            ]);
-        }
-        
-        if (!$user->hasRole('siswa')) {
-            $user->assignRole('siswa');
-        }
-
-        // 3. LOGIKA UPDATE ATAU CREATE UNTUK TABEL STUDENT
-        $student = Student::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'nisn' => $row['nisn'],
-                'class_id' => $kelasExcel, // Gunakan hasil uppercase
-                'status' => 'aktif',
-            ]
-        );
-
-        // Update/create history tahun ajaran aktif
-        if ($this->activeYear) {
-            StudentClassHistory::updateOrCreate(
-                ['student_id' => $student->id, 'academic_year_id' => $this->activeYear->id],
-                ['class_id' => $kelasExcel, 'status' => 'aktif']
-            );
-        }
-
-        // 4. GENERATE QR CODE
-        if (!$student->qr_code_path || !Storage::disk('public')->exists($student->qr_code_path)) {
-            if (!Storage::disk('public')->exists('qrcodes')) {
-                Storage::disk('public')->makeDirectory('qrcodes');
+        $student = Student::where('nisn', $data['nisn'])->first();
+        if ($student) {
+            // Import is not an enrollment/reenrollment action and must not reactivate alumni.
+            if ($student->status !== 'aktif') {
+                return $student;
             }
-            
-            $qr = QrCode::format('svg')
-                        ->size(300)
-                        ->margin(2)
-                        ->generate($student->nisn);
-                        
-            $path = 'qrcodes/' . $student->nisn . '.svg';
-            Storage::disk('public')->put($path, $qr);
-            
-            $student->update(['qr_code_path' => $path]);
-        }
+            DB::transaction(function () use ($student, $data, $classroom) {
+                $student->user->update(['name' => $data['nama']]);
+                $student->update(['class_id' => $classroom->name]);
+                StudentClassHistory::updateOrCreate(['student_id' => $student->id, 'academic_year_id' => $this->activeYear->id], ['class_id' => $classroom->name, 'status' => $student->status]);
+            });
 
-        return $student;
+            return $student;
+        }
+        $data['class_id'] = $classroom->name;
+        $result = app(StudentProvisioner::class)->create(['nisn' => $data['nisn'], 'name' => $data['nama'], 'class_id' => $classroom->name]);
+        $this->credentials[] = $result['credential'];
+        $this->createdPaths[] = $result['student']->qr_code_path;
+
+        return $result['student'];
     }
 }

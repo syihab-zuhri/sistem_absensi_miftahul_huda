@@ -39,4 +39,19 @@ class Schedule extends Model
     {
         return $this->belongsTo(AcademicYear::class);
     }
+
+    public function archivedAttendances()
+    {
+        return $this->hasMany(AttendanceDuplicateArchive::class);
+    }
+
+    public function sessions()
+    {
+        return $this->hasMany(AttendanceSession::class);
+    }
+
+    public function sessionMoves()
+    {
+        return $this->hasMany(AttendanceSessionMove::class);
+    }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\AvailableLoginEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class StudentSettingsController extends Controller
 {
@@ -15,8 +17,8 @@ class StudentSettingsController extends Controller
         $student = $user->student;
 
         // Jika user ini ternyata belum punya data di tabel students
-        if (!$student) {
-            return redirect()->route('dashboard')->with('error', 'Data siswa Anda belum lengkap. Silakan hubungi Admin.');
+        if (! $student) {
+            abort(403, 'Data siswa belum tersedia. Hubungi administrator sekolah.');
         }
 
         return view('student.settings', compact('student'));
@@ -27,20 +29,23 @@ class StudentSettingsController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed', // Pastikan input new_password_confirmation ada di HTML
+            'new_password' => ['required', 'string', 'max:255', Password::defaults(), 'confirmed'], // Pastikan input new_password_confirmation ada di HTML
         ]);
 
         $user = Auth::user();
 
         // Cek apakah password lama sesuai
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return back()->with('error', 'Sandi saat ini yang Anda masukkan salah.');
         }
 
         // Simpan password baru
         $user->update([
-            'password' => Hash::make($request->new_password)
+            'password' => Hash::make($request->new_password),
+            'must_change_password' => false,
         ]);
+
+        $request->session()->put('password_hash_web', $user->password);
 
         return back()->with('success', 'Kata sandi berhasil diperbarui! Silakan gunakan sandi baru untuk login selanjutnya.');
     }
@@ -50,16 +55,17 @@ class StudentSettingsController extends Controller
         $user = Auth::user();
         $student = $user->student;
 
-        if (!$student) {
+        if (! $student) {
             return back()->with('error', 'Data siswa tidak ditemukan.');
         }
 
+        $request->merge(['personal_email' => mb_strtolower(trim((string) $request->personal_email))]);
         $request->validate([
-            'personal_email' => 'required|email|max:255|unique:users,email|unique:students,personal_email,' . $student->id,
+            'personal_email' => ['required', 'email', 'max:255', new AvailableLoginEmail($user->id, $student->id)],
         ]);
 
         $student->update([
-            'personal_email' => $request->personal_email
+            'personal_email' => $request->personal_email,
         ]);
 
         return back()->with('success', 'Email pribadi berhasil disimpan! Sekarang Anda bisa login menggunakan email ini.');

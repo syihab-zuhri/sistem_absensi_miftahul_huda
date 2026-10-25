@@ -3,6 +3,7 @@
 @section('title', 'Portal Siswa')
 
 @section('content')
+    <div class="mb-5"><a href="{{ route('leave-requests.index') }}" class="workflow-button">Ajukan izin/sakit dan lihat keputusan</a></div>
     <!-- Welcome Banner -->
     <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-lg flex justify-between items-center mb-8">
         <div>

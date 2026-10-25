@@ -2,166 +2,96 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Schedule;
-use App\Models\Attendance;
-use App\Models\Subject;
+use App\Exports\AttendancesExport;
+use App\Http\Requests\ReportFilterRequest;
 use App\Models\AcademicYear;
-use Illuminate\Http\Request;
+use App\Models\Attendance;
+use App\Models\AttendanceSession;
+use App\Models\Classroom;
+use App\Models\Schedule;
+use App\Models\Subject;
+use App\Services\AttendanceReport;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
-    public function index(Request $request)
+    public function index(ReportFilterRequest $request)
     {
-        $startDate = $request->input('start_date', Carbon::today()->toDateString());
-        $endDate = $request->input('end_date', Carbon::today()->toDateString());
-        $classId = $request->input('class_id');
-        $subjectId = $request->input('subject_id');
-
-        // Academic Year filter
-        $academicYears = AcademicYear::orderBy('is_active', 'desc')->orderBy('name', 'desc')->get();
-        $activeYear = AcademicYear::active()->first();
-        $selectedYearId = $request->input('academic_year_id', $activeYear?->id);
-
-        $classes = \App\Models\Classroom::orderBy('name')->pluck('name');
+        $filters = $request->validated();
+        $startDate = $filters['start_date'];
+        $endDate = $filters['end_date'];
+        $classId = $filters['class_id'] ?? null;
+        $subjectId = $filters['subject_id'] ?? null;
+        $selectedYearId = $filters['academic_year_id'] ?? null;
+        $academicYears = AcademicYear::orderByDesc('is_active')->orderByDesc('name')->get();
+        $classes = Classroom::orderBy('name')->pluck('name');
         $subjects = Subject::orderBy('name')->get();
-
-        $query = Attendance::with(['student.user', 'schedule.subject', 'schedule.teacher', 'schedule.academicYear'])
-            ->whereDate('timestamp', '>=', $startDate)
-            ->whereDate('timestamp', '<=', $endDate);
-
-        if ($selectedYearId) {
-            $query->whereHas('schedule', function ($q) use ($selectedYearId) {
-                $q->where('academic_year_id', $selectedYearId);
-            });
-        }
-
-        if ($classId) {
-            $query->whereHas('schedule', function ($q) use ($classId) { $q->where('class_id', $classId); });
-        }
-        if ($subjectId) {
-            $query->whereHas('schedule', function ($q) use ($subjectId) { $q->where('subject_id', $subjectId); });
-        }
-
-        $attendances = $query->orderBy('timestamp', 'desc')->get();
+        $attendances = AttendanceReport::query($filters)->orderByDesc('timestamp')->orderByDesc('id')->paginate(50)->withQueryString();
 
         return view('reports.index', compact('attendances', 'startDate', 'endDate', 'classes', 'subjects', 'classId', 'subjectId', 'academicYears', 'selectedYearId'));
     }
 
-    public function exportCustomPDF(Request $request)
+    public function exportCustomPDF(ReportFilterRequest $request)
     {
-        $startDate = $request->input('start_date', Carbon::today()->toDateString());
-        $endDate = $request->input('end_date', Carbon::today()->toDateString());
-        $classId = $request->input('class_id');
-        $subjectId = $request->input('subject_id');
-        $activeYear = AcademicYear::active()->first();
-        $selectedYearId = $request->has('academic_year_id') ? $request->input('academic_year_id') : $activeYear?->id;
-
-        $query = Attendance::with(['student.user', 'schedule.subject', 'schedule.teacher', 'schedule.academicYear'])
-            ->whereDate('timestamp', '>=', $startDate)
-            ->whereDate('timestamp', '<=', $endDate);
-
-        if ($selectedYearId) {
-            $query->whereHas('schedule', function ($q) use ($selectedYearId) { $q->where('academic_year_id', $selectedYearId); });
+        $filters = $request->validated();
+        $query = AttendanceReport::query($filters);
+        if ((clone $query)->limit(1001)->count() > 1000) {
+            throw ValidationException::withMessages(['report' => 'PDF dibatasi 1000 baris. Persempit filter atau gunakan Excel.']);
         }
+        $data = AttendanceReport::metadata($filters);
+        $data['attendances'] = $query->orderBy('timestamp')->orderBy('id')->get();
 
-        if ($classId) $query->whereHas('schedule', function ($q) use ($classId) { $q->where('class_id', $classId); });
-        if ($subjectId) $query->whereHas('schedule', function ($q) use ($subjectId) { $q->where('subject_id', $subjectId); });
-
-        $attendances = $query->orderBy('timestamp', 'asc')->get();
-        $subjectName = $subjectId ? Subject::find($subjectId)?->name ?? 'Mata Pelajaran Terhapus' : 'Semua Mata Pelajaran';
-        $className = $classId ? $classId : 'Semua Kelas';
-
-        // Get academic year name
-        $academicYearName = 'Semua Tahun Ajaran';
-        if ($selectedYearId) {
-            $year = AcademicYear::find($selectedYearId);
-            $academicYearName = $year ? $year->name : 'Semua Tahun Ajaran';
-        } else {
-            $activeYear = AcademicYear::active()->first();
-            $academicYearName = $activeYear ? $activeYear->name : 'Semua Tahun Ajaran';
-        }
-
-        $dateRange = Carbon::parse($startDate)->translatedFormat('d M Y') . ' s/d ' . Carbon::parse($endDate)->translatedFormat('d M Y');
-        $printDate = Carbon::now()->locale('id')->translatedFormat('l, d F Y - H:i');
-
-        $pdf = Pdf::loadView('reports.custom_pdf', compact('attendances', 'dateRange', 'printDate', 'subjectName', 'className', 'academicYearName'));
-
-        return $pdf->stream('Laporan_Absensi_'.$startDate.'_sd_'.$endDate.'.pdf');
+        return Pdf::loadView('reports.custom_pdf', $data)->stream('Laporan_Absensi_'.$filters['start_date'].'_sd_'.$filters['end_date'].'.pdf');
     }
 
-    public function exportCustomExcel(Request $request)
+    public function exportCustomExcel(ReportFilterRequest $request)
     {
-        $startDate = $request->input('start_date', Carbon::today()->toDateString());
-        $endDate = $request->input('end_date', Carbon::today()->toDateString());
-        $classId = $request->input('class_id');
-        $subjectId = $request->input('subject_id');
-        $selectedYearId = $request->input('academic_year_id');
-
-        $query = Attendance::with(['student.user', 'schedule.subject', 'schedule.academicYear'])
-            ->whereDate('timestamp', '>=', $startDate)
-            ->whereDate('timestamp', '<=', $endDate);
-
-        if ($selectedYearId) {
-            $query->whereHas('schedule', function ($q) use ($selectedYearId) { $q->where('academic_year_id', $selectedYearId); });
+        $filters = $request->validated();
+        $query = AttendanceReport::query($filters);
+        if ((clone $query)->count() > 50000) {
+            throw ValidationException::withMessages(['report' => 'Excel dibatasi 50000 baris. Persempit rentang tanggal atau filter kelas.']);
         }
 
-        if ($classId) $query->whereHas('schedule', function ($q) use ($classId) { $q->where('class_id', $classId); });
-        if ($subjectId) $query->whereHas('schedule', function ($q) use ($subjectId) { $q->where('subject_id', $subjectId); });
-
-        $attendances = $query->orderBy('timestamp', 'asc')->get();
-
-        $subjectName = $subjectId ? \App\Models\Subject::find($subjectId)?->name ?? 'Mata Pelajaran Terhapus' : 'Semua Mata Pelajaran';
-        $className = $classId ? $classId : 'Semua Kelas';
-
-        // Get academic year name
-        $academicYearName = 'Semua Tahun Ajaran';
-        if ($selectedYearId) {
-            $year = AcademicYear::find($selectedYearId);
-            $academicYearName = $year ? $year->name : 'Semua Tahun Ajaran';
-        } else {
-            $activeYear = AcademicYear::active()->first();
-            $academicYearName = $activeYear ? $activeYear->name : 'Semua Tahun Ajaran';
-        }
-
-        $dateRange = Carbon::parse($startDate)->translatedFormat('d M Y') . ' s/d ' . Carbon::parse($endDate)->translatedFormat('d M Y');
-        $printDate = Carbon::now()->locale('id')->translatedFormat('d F Y - H:i');
-        $printerName = auth()->user()->name;
-
-        $fileName = 'Rekap_Absensi_'.$startDate.'_sd_'.$endDate.'.xlsx';
-
-        return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\AttendancesExport($attendances, $dateRange, $className, $subjectName, $printDate, $printerName, $academicYearName),
-            $fileName
-        );
+        return Excel::download(new AttendancesExport($query->orderBy('id'), AttendanceReport::metadata($filters)), 'Rekap_Absensi_'.$filters['start_date'].'_sd_'.$filters['end_date'].'.xlsx');
     }
 
-    public function exportSessionPDF($schedule_id)
+    public function exportSessionPDF(Request $request, $schedule_id)
     {
+        $request->validate(['date' => 'nullable|date_format:Y-m-d|before_or_equal:today']);
         $schedule = Schedule::with(['subject', 'teacher', 'academicYear'])->findOrFail($schedule_id);
-
-        // Keamanan (IDOR Fix): Jika yang login adalah guru, pastikan jadwal ini adalah miliknya
-        if (auth()->user()->hasRole('guru') && $schedule->teacher_id != auth()->id()) {
-            abort(403, 'Akses ditolak. Anda tidak berhak mencetak absensi jadwal guru lain.');
+        $sessionDate = $request->input('date', today()->toDateString());
+        $session = AttendanceSession::with('teacher')->where('schedule_id', $schedule->id)->whereDate('lesson_date', $sessionDate)->first();
+        Gate::authorize('view', $session ?? $schedule);
+        if ($session) {
+            $schedule->setRelation('teacher', $session->teacher);
+            $schedule->class_id = $session->class_id;
+            $schedule->start_time = $session->start_time;
+            $schedule->end_time = $session->end_time;
+            $schedule->day = $session->lesson_date->locale('id')->dayName;
         }
+        $attendances = Attendance::with('student.user')->where('schedule_id', $schedule->id)->where('attendance_date', $sessionDate)->orderBy('timestamp')->get();
+        $presentCount = $attendances->where('status', 'hadir')->count();
+        $date = now()->translatedFormat('l, d F Y - H:i');
 
-        $attendances = Attendance::with(['student.user'])->where('schedule_id', $schedule_id)->orderBy('timestamp', 'asc')->get();
-        $date = Carbon::now()->locale('id')->translatedFormat('l, d F Y - H:i');
-        $pdf = Pdf::loadView('reports.attendance', compact('schedule', 'attendances', 'date'));
-        $safeSubjectName = preg_replace('/[^A-Za-z0-9\-]/', '_', $schedule->subject->name ?? 'Mapel');
-
-        return $pdf->stream('Laporan_Sesi_'.$safeSubjectName.'_'.$schedule->class_id.'.pdf');
+        return Pdf::loadView('reports.attendance', compact('schedule', 'attendances', 'date', 'sessionDate', 'presentCount'))->stream('Laporan_Sesi_'.$schedule->id.'_'.$sessionDate.'.pdf');
     }
 
-    /**
-     * FUNGSI BARU: Kosongkan Seluruh Riwayat Absensi
-     */
-    public function truncate()
+    public function truncate(ReportFilterRequest $request)
     {
-        // Fitur ini hanya bisa diakses via Rute Admin
-        \App\Models\Attendance::truncate();
-        
-        return redirect()->back()->with('success', 'Berhasil! Seluruh riwayat absensi telah dihapus secara permanen.');
+        $filters = $request->validated();
+        if (empty($filters['academic_year_id'])) {
+            throw ValidationException::withMessages(['academic_year_id' => 'Pilih satu tahun ajaran untuk penghapusan.']);
+        }
+        $query = AttendanceReport::query($filters);
+        if ((clone $query)->whereNotNull('attendance_session_id')->exists()) {
+            throw ValidationException::withMessages(['report' => 'Presensi yang terhubung sesi dipertahankan bersama riwayatnya. Gunakan koreksi dengan alasan.']);
+        }
+        $query->whereNull('attendance_session_id')->delete();
+
+        return back()->with('success', 'Absensi pada rentang dan tahun yang dipilih berhasil dihapus.');
     }
 }

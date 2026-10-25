@@ -3,6 +3,7 @@
 @section('title', 'Pengaturan Akun')
 
 @section('content')
+@if(auth()->user()->must_change_password)<p class="mb-4 rounded-lg bg-blue-50 text-blue-900 p-4" role="status">Ganti sandi awal untuk mengaktifkan akses akun.</p>@endif
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Kolom Kiri: Menu Pengaturan -->
         <div class="space-y-4">
@@ -42,8 +43,8 @@
                     <form action="{{ route('student.email.update') }}" method="POST" class="space-y-4">
                         @csrf
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Pribadi</label>
-                            <input type="email" name="personal_email" value="{{ old('personal_email', $student->personal_email) }}" required placeholder="contoh: namamu@gmail.com"
+                            <label for="field-student-settings-1" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Pribadi</label>
+                            <input id="field-student-settings-1" type="email" name="personal_email" value="{{ old('personal_email', $student->personal_email) }}" required placeholder="contoh: namamu@gmail.com"
                                 class="w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 transition-all">
                         </div>
                         @if($student->personal_email)
@@ -71,18 +72,18 @@
                     <form action="{{ route('student.password.update') }}" method="POST" class="space-y-4">
                         @csrf
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sandi Saat Ini</label>
-                            <input type="password" name="current_password" required placeholder="Sandi saat ini (Default: NISN)"
+                            <label for="field-student-settings-2" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sandi Saat Ini</label>
+                            <input id="field-student-settings-2" type="password" name="current_password" required placeholder="Sandi saat ini (Default: NISN)"
                                 class="w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sandi Baru</label>
-                            <input type="password" name="new_password" required placeholder="Minimal 8 karakter"
+                            <label for="field-student-settings-3" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sandi Baru</label>
+                            <input id="field-student-settings-3" type="password" name="new_password" required placeholder="Minimal 8 karakter"
                                 class="w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Konfirmasi Sandi Baru</label>
-                            <input type="password" name="new_password_confirmation" required placeholder="Ulangi sandi baru"
+                            <label for="field-student-settings-4" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Konfirmasi Sandi Baru</label>
+                            <input id="field-student-settings-4" type="password" name="new_password_confirmation" required placeholder="Ulangi sandi baru"
                                 class="w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3 transition-all">
                         </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-sm hover:shadow-md">

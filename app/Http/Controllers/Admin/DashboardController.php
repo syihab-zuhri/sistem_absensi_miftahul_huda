@@ -3,81 +3,45 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Attendance;
 use App\Models\AcademicYear;
-use App\Models\Student;
+use App\Models\Attendance;
 use App\Models\Schedule;
-use Carbon\Carbon;
+use App\Models\Student;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. Data untuk Tabel Recent Attendances
-        $recentAttendances = Attendance::with(['student.user', 'schedule.subject'])
-            ->orderBy('timestamp', 'desc')
-            ->take(5)
-            ->get();
-
-        // 2. Statistik Hari Ini (Pie/Doughnut Chart)
-        $today = Carbon::today()->toDateString();
-        $todayStats = [
-            'hadir' => Attendance::whereDate('timestamp', $today)->where('status', 'hadir')->count(),
-            'sakit' => Attendance::whereDate('timestamp', $today)->where('status', 'sakit')->count(),
-            'izin' => Attendance::whereDate('timestamp', $today)->where('status', 'izin')->count(),
-            'alfa' => Attendance::whereDate('timestamp', $today)->where('status', 'alfa')->count(),
-        ];
-
-        // 3. Statistik 7 Hari Terakhir (Bar/Line Chart)
-        $last7Days = [];
-        $weeklyStats = [
-            'hadir' => [],
-            'sakit' => [],
-            'izin' => [],
-            'alfa' => []
-        ];
-
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::today()->subDays($i)->toDateString();
-            $label = Carbon::today()->subDays($i)->locale('id')->translatedFormat('D, d M');
-
-            $last7Days[] = $label;
-
-            $weeklyStats['hadir'][] = Attendance::whereDate('timestamp', $date)->where('status', 'hadir')->count();
-            $weeklyStats['sakit'][] = Attendance::whereDate('timestamp', $date)->where('status', 'sakit')->count();
-            $weeklyStats['izin'][] = Attendance::whereDate('timestamp', $date)->where('status', 'izin')->count();
-            $weeklyStats['alfa'][] = Attendance::whereDate('timestamp', $date)->where('status', 'alfa')->count();
-        }
-
-        // 4. Tahun Ajaran Aktif
         $activeAcademicYear = AcademicYear::active()->first();
-        $academicYearStats = null;
-
-        if ($activeAcademicYear) {
-            $academicYearStats = [
-                'name' => $activeAcademicYear->name,
-                'students_count' => Student::where('status', 'aktif')->count(),
-                'schedules_count' => Schedule::where('academic_year_id', $activeAcademicYear->id)->count(),
-                'total_students_in_history' => $activeAcademicYear->studentClassHistories()->count(),
-            ];
+        $query = Attendance::query()->when($activeAcademicYear, fn ($q) => $q->whereHas('schedule', fn ($s) => $s->where('academic_year_id', $activeAcademicYear->id)));
+        $recentAttendances = (clone $query)->with(['student.user', 'schedule.subject'])->orderByDesc('timestamp')->limit(5)->get();
+        $summary = (clone $query)->selectRaw('attendance_date, status, COUNT(*) AS total')
+            ->whereBetween('attendance_date', [today()->subDays(6)->toDateString(), today()->toDateString()])
+            ->groupBy('attendance_date', 'status')->get()->groupBy('attendance_date');
+        $todayStats = array_fill_keys(Attendance::STATUSES, 0);
+        $weeklyStats = array_fill_keys(Attendance::STATUSES, []);
+        $last7Days = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $day = today()->subDays($i);
+            $last7Days[] = $day->copy()->locale('id')->translatedFormat('D, d M');
+            $counts = $summary->get($day->toDateString(), collect())->pluck('total', 'status');
+            foreach (Attendance::STATUSES as $status) {
+                $count = (int) ($counts[$status] ?? 0);
+                $weeklyStats[$status][] = $count;
+                if ($i === 0) {
+                    $todayStats[$status] = $count;
+                }
+            }
         }
-
-        // 5. Total Data
+        $academicYearStats = $activeAcademicYear ? [
+            'name' => $activeAcademicYear->name, 'students_count' => Student::where('status', 'aktif')->count(),
+            'schedules_count' => $activeAcademicYear->schedules()->count(), 'total_students_in_history' => $activeAcademicYear->studentClassHistories()->count(),
+        ] : null;
         $totalStudents = Student::count();
-        $totalTeachers = \App\Models\User::role('guru')->count();
+        $totalTeachers = User::role('guru')->count();
         $totalSchedules = Schedule::count();
 
-        return view('admin.dashboard', compact(
-            'recentAttendances',
-            'todayStats',
-            'last7Days',
-            'weeklyStats',
-            'activeAcademicYear',
-            'academicYearStats',
-            'totalStudents',
-            'totalTeachers',
-            'totalSchedules'
-        ));
+        return view('admin.dashboard', compact('recentAttendances', 'todayStats', 'last7Days', 'weeklyStats', 'activeAcademicYear', 'academicYearStats', 'totalStudents', 'totalTeachers', 'totalSchedules'));
     }
 }
