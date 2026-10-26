@@ -1,0 +1,1303 @@
+{
+  "url": "https://absensi.zuhri.my.id/login",
+  "applicationCommit": "84c5a001ad6650937844645351dbecb3bd9c304b",
+  "identicalLighthouseSettings": true,
+  "notes": [
+    "The user-reported score 78 is within the observed fresh-profile range of 73–100. Initial scores were 99, 99, 87; the 87 run rendered without its stylesheet and is invalid as a styled-page comparison.",
+    "Initial baseline run 2 reused CSS/JS cache. Only baseline run 1 is a complete cold baseline; do not claim a three-run cold before/after median comparison.",
+    "All four fresh-profile runs are counted, including the valid first run whose browser-profile cleanup failed after the audit. Settings, throttling and page resources were unchanged.",
+    "Asset byte comparisons include first-party Vite CSS/JS/fonts. Whole-page transfer also includes HTML and Cloudflare analytics; inline SVG increases HTML slightly."
+  ],
+  "finalFreshProfileRuns": 4,
+  "finalFreshAllCompleteAndCold": true,
+  "finalScoreRange": [
+    73,
+    100
+  ],
+  "finalScoreMedian": 95.5,
+  "finalMedianMetrics": {
+    "first-contentful-paint": 873.5895,
+    "largest-contentful-paint": 997.9390000000001,
+    "total-blocking-time": 0,
+    "cumulative-layout-shift": 0,
+    "speed-index": 1121.3975889578478
+  },
+  "coldBeforeSnapshot": {
+    "score": 99,
+    "metrics": {
+      "first-contentful-paint": 774.3599999999998,
+      "largest-contentful-paint": 774.3599999999998,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0.00817641610483612,
+      "speed-index": 775.2897402499561
+    },
+    "decodedAssetBytes": 455967,
+    "transferredAssetBytes": 250972,
+    "totalPageTransferredBytes": 266585
+  },
+  "finalMedianDecodedAssetBytes": 57338,
+  "finalMedianTransferredAssetBytes": 35641.5,
+  "finalMedianTotalPageTransferredBytes": 52449,
+  "decodedAssetReductionPercent": 87.42496715771098,
+  "reports": [
+    {
+      "file": "after-desktop-1.json",
+      "fetchedAt": "2026-10-26T12:19:04.816Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 97,
+      "metrics": {
+        "first-contentful-paint": 300,
+        "largest-contentful-paint": 300,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.0000715894696903365,
+        "speed-index": 1808.5638064995737
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 3,
+      "assetDecodedBytes": 57338,
+      "assetTransferredBytes": 35645,
+      "totalPageTransferredBytes": 52405,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2",
+          "cache": "none",
+          "decodedBytes": 27348,
+          "transferredBytes": 27913,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-77KgbaE-.css",
+          "cache": "none",
+          "decodedBytes": 29584,
+          "transferredBytes": 6914,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-CHjkr85u.js",
+          "cache": "none",
+          "decodedBytes": 406,
+          "transferredBytes": 818,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 50 ms",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "after-desktop-2.json",
+      "fetchedAt": "2026-10-26T12:19:19.051Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 100,
+      "metrics": {
+        "first-contentful-paint": 476.8989,
+        "largest-contentful-paint": 499.84270000000004,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 476.8989
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 3,
+      "assetDecodedBytes": 57338,
+      "assetTransferredBytes": 35647,
+      "totalPageTransferredBytes": 52287,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2",
+          "cache": "none",
+          "decodedBytes": 27348,
+          "transferredBytes": 27903,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-77KgbaE-.css",
+          "cache": "none",
+          "decodedBytes": 29584,
+          "transferredBytes": 6916,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-CHjkr85u.js",
+          "cache": "none",
+          "decodedBytes": 406,
+          "transferredBytes": 828,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0.5,
+          "displayValue": "",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "after-desktop-3.json",
+      "fetchedAt": "2026-10-26T12:19:28.746Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 98,
+      "metrics": {
+        "first-contentful-paint": 873.0398,
+        "largest-contentful-paint": 913.0398,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 873.0398
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 3,
+      "assetDecodedBytes": 57338,
+      "assetTransferredBytes": 35638,
+      "totalPageTransferredBytes": 52403,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2",
+          "cache": "none",
+          "decodedBytes": 27348,
+          "transferredBytes": 27909,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-77KgbaE-.css",
+          "cache": "none",
+          "decodedBytes": 29584,
+          "transferredBytes": 6912,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-CHjkr85u.js",
+          "cache": "none",
+          "decodedBytes": 406,
+          "transferredBytes": 817,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 80 ms",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "after-fresh-desktop-1.json",
+      "fetchedAt": "2026-10-26T12:23:17.193Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 73,
+      "metrics": {
+        "first-contentful-paint": 2422.739,
+        "largest-contentful-paint": 2422.739,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.0000715894696903365,
+        "speed-index": 2422.739
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 3,
+      "assetDecodedBytes": 57338,
+      "assetTransferredBytes": 35641,
+      "totalPageTransferredBytes": 52449,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2",
+          "cache": "none",
+          "decodedBytes": 27348,
+          "transferredBytes": 27906,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-77KgbaE-.css",
+          "cache": "none",
+          "decodedBytes": 29584,
+          "transferredBytes": 6909,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-CHjkr85u.js",
+          "cache": "none",
+          "decodedBytes": 406,
+          "transferredBytes": 826,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 700 ms",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "after-fresh-desktop-2.json",
+      "fetchedAt": "2026-10-26T12:23:29.628Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 100,
+      "metrics": {
+        "first-contentful-paint": 286.97400000000005,
+        "largest-contentful-paint": 406.97400000000005,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 915.3430607493382
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 3,
+      "assetDecodedBytes": 57338,
+      "assetTransferredBytes": 35642,
+      "totalPageTransferredBytes": 52449,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2",
+          "cache": "none",
+          "decodedBytes": 27348,
+          "transferredBytes": 27904,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-77KgbaE-.css",
+          "cache": "none",
+          "decodedBytes": 29584,
+          "transferredBytes": 6911,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-CHjkr85u.js",
+          "cache": "none",
+          "decodedBytes": 406,
+          "transferredBytes": 827,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 60 ms",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "after-fresh-desktop-3.json",
+      "fetchedAt": "2026-10-26T12:23:43.861Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 91,
+      "metrics": {
+        "first-contentful-paint": 1319.1100000000001,
+        "largest-contentful-paint": 1514.7240000000002,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 1327.4521171663573
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 3,
+      "assetDecodedBytes": 57338,
+      "assetTransferredBytes": 35636,
+      "totalPageTransferredBytes": 52444,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2",
+          "cache": "none",
+          "decodedBytes": 27348,
+          "transferredBytes": 27905,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-77KgbaE-.css",
+          "cache": "none",
+          "decodedBytes": 29584,
+          "transferredBytes": 6911,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-CHjkr85u.js",
+          "cache": "none",
+          "decodedBytes": 406,
+          "transferredBytes": 820,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 390 ms",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "after-fresh-preliminary-desktop-1.json",
+      "fetchedAt": "2026-10-26T12:22:32.136Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 100,
+      "metrics": {
+        "first-contentful-paint": 428.06899999999996,
+        "largest-contentful-paint": 481.15399999999994,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 582.1960068331732
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 3,
+      "assetDecodedBytes": 57338,
+      "assetTransferredBytes": 35642,
+      "totalPageTransferredBytes": 52449,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2",
+          "cache": "none",
+          "decodedBytes": 27348,
+          "transferredBytes": 27904,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-77KgbaE-.css",
+          "cache": "none",
+          "decodedBytes": 29584,
+          "transferredBytes": 6916,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/guest-CHjkr85u.js",
+          "cache": "none",
+          "decodedBytes": 406,
+          "transferredBytes": 822,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 110 ms",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "before-desktop-1.json",
+      "fetchedAt": "2026-10-26T12:06:39.710Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 99,
+      "metrics": {
+        "first-contentful-paint": 774.3599999999998,
+        "largest-contentful-paint": 774.3599999999998,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.00817641610483612,
+        "speed-index": 775.2897402499561
+      },
+      "assetLoadComplete": true,
+      "assetsCold": true,
+      "assetCount": 7,
+      "assetDecodedBytes": 455967,
+      "assetTransferredBytes": 250972,
+      "totalPageTransferredBytes": 266585,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/app-xzqXtCHd.css",
+          "cache": "none",
+          "decodedBytes": 152334,
+          "transferredBytes": 36640,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/app-1AbfQ1T2.js",
+          "cache": "none",
+          "decodedBytes": 135877,
+          "transferredBytes": 43790,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/fa-solid-900-IAB4Droh.woff2",
+          "cache": "none",
+          "decodedBytes": 119488,
+          "transferredBytes": 120064,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-800-normal-CusIZhrK.woff2",
+          "cache": "none",
+          "decodedBytes": 11896,
+          "transferredBytes": 12450,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-500-normal-Bf-nb4oT.woff2",
+          "cache": "none",
+          "decodedBytes": 12312,
+          "transferredBytes": 12864,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-700-normal-CfpNZvy6.woff2",
+          "cache": "none",
+          "decodedBytes": 12244,
+          "transferredBytes": 12796,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-400-normal-Dhut76fR.woff2",
+          "cache": "none",
+          "decodedBytes": 11816,
+          "transferredBytes": 12368,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 0.5,
+          "displayValue": "Est savings of 32 KiB",
+          "savingsBytes": 32902
+        },
+        "unused-javascript": {
+          "score": 0.5,
+          "displayValue": "Est savings of 28 KiB",
+          "savingsBytes": 28791
+        },
+        "font-display-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 160 ms",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 190 ms",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "before-desktop-2.json",
+      "fetchedAt": "2026-10-26T12:06:50.476Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 99,
+      "metrics": {
+        "first-contentful-paint": 749.8421404663086,
+        "largest-contentful-paint": 749.8421404663086,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.0000640336514607594,
+        "speed-index": 749.8421404663086
+      },
+      "assetLoadComplete": true,
+      "assetsCold": false,
+      "assetCount": 7,
+      "assetDecodedBytes": 455967,
+      "assetTransferredBytes": 170550,
+      "totalPageTransferredBytes": 185995,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/app-xzqXtCHd.css",
+          "cache": "disk",
+          "decodedBytes": 152334,
+          "transferredBytes": 0,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/app-1AbfQ1T2.js",
+          "cache": "prefetch",
+          "decodedBytes": 135877,
+          "transferredBytes": 0,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/fa-solid-900-IAB4Droh.woff2",
+          "cache": "none",
+          "decodedBytes": 119488,
+          "transferredBytes": 120061,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-800-normal-CusIZhrK.woff2",
+          "cache": "none",
+          "decodedBytes": 11896,
+          "transferredBytes": 12450,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-500-normal-Bf-nb4oT.woff2",
+          "cache": "none",
+          "decodedBytes": 12312,
+          "transferredBytes": 12867,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-700-normal-CfpNZvy6.woff2",
+          "cache": "none",
+          "decodedBytes": 12244,
+          "transferredBytes": 12798,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/plus-jakarta-sans-latin-400-normal-Dhut76fR.woff2",
+          "cache": "none",
+          "decodedBytes": 11816,
+          "transferredBytes": 12374,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "font-display-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 980 ms",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0.5,
+          "displayValue": "",
+          "savingsBytes": 0
+        }
+      }
+    },
+    {
+      "file": "before-desktop-3.json",
+      "fetchedAt": "2026-10-26T12:07:02.562Z",
+      "lighthouseVersion": "13.5.0",
+      "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "settings": {
+        "output": [
+          "json"
+        ],
+        "maxWaitForFcp": 30000,
+        "maxWaitForLoad": 45000,
+        "pauseAfterFcpMs": 1000,
+        "pauseAfterLoadMs": 1000,
+        "networkQuietThresholdMs": 1000,
+        "cpuQuietThresholdMs": 1000,
+        "formFactor": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "emulatedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+        "auditMode": false,
+        "gatherMode": false,
+        "clearStorageTypes": [
+          "file_systems",
+          "shader_cache",
+          "service_workers",
+          "cache_storage"
+        ],
+        "disableStorageReset": false,
+        "debugNavigation": false,
+        "channel": "cli",
+        "usePassiveGathering": false,
+        "disableFullPageScreenshot": false,
+        "skipAboutBlank": false,
+        "blankPage": "about:blank",
+        "ignoreStatusCode": false,
+        "locale": "en-US",
+        "blockedUrlPatterns": null,
+        "additionalTraceCategories": null,
+        "extraHeaders": null,
+        "precomputedLanternData": null,
+        "onlyAudits": null,
+        "onlyCategories": [
+          "performance"
+        ],
+        "skipAudits": null
+      },
+      "warnings": [],
+      "score": 87,
+      "metrics": {
+        "first-contentful-paint": 1471.4748,
+        "largest-contentful-paint": 1471.4748,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0,
+        "speed-index": 2002.2679167501378
+      },
+      "assetLoadComplete": false,
+      "assetsCold": false,
+      "assetCount": 2,
+      "assetDecodedBytes": 135877,
+      "assetTransferredBytes": 44355,
+      "totalPageTransferredBytes": 48792,
+      "assets": [
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/app-xzqXtCHd.css",
+          "cache": "none",
+          "decodedBytes": 0,
+          "transferredBytes": 549,
+          "status": 200
+        },
+        {
+          "url": "https://absensi.zuhri.my.id/build/assets/app-1AbfQ1T2.js",
+          "cache": "none",
+          "decodedBytes": 135877,
+          "transferredBytes": 43806,
+          "status": 200
+        }
+      ],
+      "diagnostics": {
+        "unused-css-rules": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "unused-javascript": {
+          "score": 0.5,
+          "displayValue": "Est savings of 28 KiB",
+          "savingsBytes": 28807
+        },
+        "font-display-insight": {
+          "score": 1,
+          "displayValue": "",
+          "savingsBytes": 0
+        },
+        "render-blocking-insight": {
+          "score": 0,
+          "displayValue": "Est savings of 430 ms",
+          "savingsBytes": 0
+        }
+      }
+    }
+  ]
+}

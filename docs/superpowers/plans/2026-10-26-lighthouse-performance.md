@@ -36,6 +36,6 @@
 
 - [x] Inspect a desktop/mobile preview and exercise password visibility and password recovery. Verify all Vite manifest dependencies exist and the login requests only its own entries.
 - [x] Run application PHP tests in an isolated environment. Review `git diff --check` and the change scope before committing.
-- [ ] Commit and push the dedicated branch. Back up changed production files privately, upload hashed assets first, update views/manifest, rebuild the view cache, and verify public health/login. Roll back targeted files on failure; do not alter the database.
-- [ ] Run three sequential public Lighthouse desktop audits with the original flags. Compare median scores, FCP/LCP, layout shift, request counts, and transferred asset bytes. Record variability honestly, including the unreproduced score 78.
-- [ ] Publish sanitized evidence and deployment commit on the branch, then report measured results in Indonesian.
+- [x] Commit and push the dedicated branch. Back up changed production files privately, upload hashed assets first, update views/manifest, rebuild the view cache, and verify public health/login. Roll back targeted files on failure; do not alter the database.
+- [x] Run sequential public Lighthouse desktop audits with fresh Chrome profiles. One initial document cache cold comparison and four final verified runs are recorded, with flawed/warm initial runs identified. Compare median scores, FCP/LCP, layout shift, request counts, and transferred asset bytes; record that cold scores ranged from 73 to 100.
+- [x] Publish sanitized metrics and deployment verification in `docs/lighthouse-2026-10-26/README.md` and `measurements.json`; report measured results in Indonesian.
