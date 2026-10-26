@@ -26,20 +26,22 @@
 
 **Files:** Existing staged application/tests and this deployment record.
 
-- [ ] Inspect remote write permissions, PHP-FPM routing, database driver, counts, migration state, storage size, and available backup tools.
-- [ ] Review staged recording-grace, email-routing, and restartable migration changes.
-- [ ] Run `php82 artisan test --compact`, `npm test`, `npm run build`, Composer validation, and Pint checks. Record the results without production credentials.
-- [ ] Commit the verified application changes on the feature branch and identify the exact release commit.
+- [x] Inspect remote write permissions, PHP-FPM routing, database driver, counts, migration state, storage size, and available backup tools.
+- [x] Review staged recording-grace, email-routing, and restartable migration changes.
+- [x] Run `php82 artisan test --compact`, `npm test`, `npm run build`, Composer validation, and Pint checks. Record the results without production credentials.
+- [x] Commit the verified application changes on the feature branch and identify the exact release commit.
 
 ### Task 2: Prepare and rehearse privately
 
 **Files:** A private timestamped directory under `/home/codex/absensi-deployments/`, outside the web root.
 
-- [ ] Transfer a clean source archive without `.env`, keys, database files, or uploads.
-- [ ] Install dependencies privately, verify the PHP suite under the server's PHP 8.3 with an explicitly isolated in-memory database, then run `composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts`; transfer the verified Vite build.
-- [ ] Create a consistent online SQLite backup through the SQLite backup API and check `PRAGMA integrity_check`.
-- [ ] Point the private release at a separate copy of that backup; disable real mail/queue processing and use isolated cache/session settings.
-- [ ] Run production migrations on that copy and verify original account, student, schedule, and attendance fingerprints, accounting for archived duplicates and explicitly assigned academic years.
+- [x] Transfer a clean source archive without `.env`, keys, database files, or uploads.
+- [x] Install dependencies privately, verify the PHP suite under the server's PHP 8.3 with an explicitly isolated in-memory database, then run `composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts`; transfer the verified Vite build.
+- [x] Create a consistent online SQLite backup through the SQLite backup API and check `PRAGMA integrity_check`.
+- [x] Point the private release at a separate copy of that backup; disable real mail/queue processing and use isolated cache/session settings.
+- [x] Run production migrations on that copy and verify original account, student, schedule, and attendance fingerprints, accounting for archived duplicates and explicitly assigned academic years.
+
+Rehearsal also found an empty classroom catalog with an existing `10-A` reference. A tested migration adds the existing name without changing student/schedule/history references. PHP 8.3 validation: 106 tests, 559 assertions. Local PHP 8.2: 104 original tests plus both catalog migration tests pass. JavaScript: 4 tests pass; Vite build and Pint checks pass.
 
 ### Task 3: Deploy with a recoverable maintenance window
 

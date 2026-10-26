@@ -33,6 +33,8 @@ Migrasi `2026_10_25_000003_add_attendance_workflows` menambahkan sesi, peserta, 
 
 Migrasi `2026_10_25_000000_attach_schedules_to_academic_years` mengisi tahun ajaran jadwal lama yang tersimpan tanpa tahun (formulir jadwal sebelumnya tidak mengirim tahun). Jadwal ditautkan ke tahun yang rentang tanggalnya memuat presensi terakhir jadwal tersebut, atau tanggal pembuatannya; bila tidak ada yang cocok, ke tahun aktif. Tanpa langkah ini jadwal tersebut tidak muncul di scanner, daftar jadwal, dan laporan. Jika belum ada tahun ajaran sama sekali, jadwal dibiarkan dan peringatan ditulis ke log; jalankan `php artisan academic:backfill` setelah membuat tahun ajaran.
 
+Migrasi `2026_10_26_000001_backfill_classroom_catalog` menambahkan nama kelas yang sudah dipakai siswa, jadwal, atau riwayat ke tabel master kelas bila belum tersedia. Referensi lama dan kelas yang sudah ada dipertahankan; nama kosong/tidak valid ditinggalkan untuk pemeriksaan admin. Pengisian ini aman dijalankan ulang. Rollback tidak menghapus kelas yang mungkin sudah digunakan admin.
+
 MySQL/MariaDB melakukan commit untuk setiap perintah DDL, sehingga migrasi 2026_10_25 dibuat aman dijalankan ulang bila prosesnya terputus (koneksi SSH putus, timeout, server restart):
 
 - `000001` melanjutkan dari langkah terakhir. Pengisian tanggal dan pengarsipan duplikat berada dalam satu transaksi, sehingga baris tidak pernah setengah diarsipkan.
