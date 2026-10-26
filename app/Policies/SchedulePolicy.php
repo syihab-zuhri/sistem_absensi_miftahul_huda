@@ -20,7 +20,7 @@ class SchedulePolicy
             $policy = new AttendanceSessionPolicy;
 
             return $policy->view($user, $session) && in_array($session->status, ['planned', 'open'], true)
-                && $session->isCurrentTerm() && $session->start_time <= now()->format('H:i:s') && $session->end_time > now()->format('H:i:s');
+                && $session->isCurrentTerm() && $session->hasStarted();
         }
         if ($schedule->sessionMoves()->whereDate('original_date', today())->exists()) {
             return false;
@@ -31,7 +31,7 @@ class SchedulePolicy
         return $this->view($user, $schedule) && $year && $year->is_active
             && $schedule->semester === $year->active_semester
             && $schedule->day === $now->copy()->locale('id')->dayName
-            && $schedule->start_time <= $now->format('H:i:s') && $schedule->end_time > $now->format('H:i:s')
+            && $schedule->start_time <= $now->format('H:i:s')
             && (! $year->start_date || $year->start_date->startOfDay()->lte($now))
             && (! $year->end_date || $year->end_date->endOfDay()->gte($now));
     }

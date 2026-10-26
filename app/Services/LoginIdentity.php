@@ -7,6 +7,19 @@ use App\Models\User;
 
 class LoginIdentity
 {
+    // Generated student logins are identifiers only: siswa.com is a third-party domain, never a school mailbox.
+    public const STUDENT_EMAIL_DOMAIN = 'siswa.com';
+
+    public static function studentLoginEmail(string $nisn): string
+    {
+        return $nisn.'@'.self::STUDENT_EMAIL_DOMAIN;
+    }
+
+    public static function isStudentLoginEmail(string $email): bool
+    {
+        return str_ends_with(mb_strtolower(trim($email)), '@'.self::STUDENT_EMAIL_DOMAIN);
+    }
+
     public static function emailAvailable(string $email, ?int $ignoreUserId = null, ?int $ignoreStudentId = null): bool
     {
         $email = mb_strtolower(trim($email));

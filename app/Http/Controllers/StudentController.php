@@ -77,8 +77,8 @@ class StudentController extends Controller
             'nisn' => ['required', 'regex:/^\\d{1,20}$/', 'unique:students,nisn,'.$student->id],
         ]);
 
-        if ($student->nisn !== $request->nisn && $student->user->email === $student->nisn.'@siswa.com'
-            && ! LoginIdentity::emailAvailable($request->nisn.'@siswa.com', $student->user_id, $student->id)) {
+        if ($student->nisn !== $request->nisn && $student->user->email === LoginIdentity::studentLoginEmail($student->nisn)
+            && ! LoginIdentity::emailAvailable(LoginIdentity::studentLoginEmail($request->nisn), $student->user_id, $student->id)) {
             throw ValidationException::withMessages(['nisn' => 'Alamat login untuk NISN baru sudah digunakan.']);
         }
         $oldPath = $student->qr_code_path;
@@ -95,7 +95,7 @@ class StudentController extends Controller
                 // 1. Update User
                 $student->user->update([
                     'name' => $request->name,
-                    'email' => $nisnChanged && $student->user->email === $student->nisn.'@siswa.com' ? $request->nisn.'@siswa.com' : $student->user->email,
+                    'email' => $nisnChanged && $student->user->email === LoginIdentity::studentLoginEmail($student->nisn) ? LoginIdentity::studentLoginEmail($request->nisn) : $student->user->email,
                 ]);
 
                 // 2. Update Student

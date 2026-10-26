@@ -36,6 +36,19 @@ test('saving sends only changed students together with their previous saved stat
     assert.deepEqual(scannerTable.attendanceChanges(selects), []);
 });
 
+test('a reason is required for late recording and for changing saved statuses', () => {
+    const lateAfter = '2026-10-26T10:00:00+07:00';
+    const before = Date.parse('2026-10-26T09:59:00+07:00');
+    const after = Date.parse('2026-10-26T10:00:00+07:00');
+    const first = [{ student_id: '1', status: 'hadir', expected_status: null }];
+    const change = [{ student_id: '1', status: 'izin', expected_status: 'alpa' }];
+    assert.equal(scannerTable.reasonRequirement(first, '', lateAfter, before), null);
+    assert.match(scannerTable.reasonRequirement(first, '', lateAfter, after).title, /susulan/);
+    assert.match(scannerTable.reasonRequirement(change, 'singkat', lateAfter, before).title, /koreksi/);
+    assert.equal(scannerTable.reasonRequirement(first, 'Lupa menyimpan saat jam pelajaran.', lateAfter, after), null);
+    assert.equal(scannerTable.reasonRequirement(first, '', '', after), null);
+});
+
 test('manual changes identify the student and trigger the unsaved-state callback', () => {
     const dom = new JSDOM('<table><tbody></tbody></table>');
     const body = dom.window.document.querySelector('tbody');

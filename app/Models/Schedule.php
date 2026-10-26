@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,5 +54,10 @@ class Schedule extends Model
     public function sessionMoves()
     {
         return $this->hasMany(AttendanceSessionMove::class);
+    }
+
+    public function lateAfter(Carbon $date): Carbon
+    {
+        return $date->copy()->setTimeFromTimeString($this->end_time)->addMinutes(config('attendance.grace_minutes'));
     }
 }

@@ -166,9 +166,65 @@ class AttendanceWorkflowTest extends TestCase
         $this->actingAs($this->teacher)->post('/attendance-sessions/'.$session->id.'/open')->assertSessionHasNoErrors();
         $this->recordAttendance($session)->assertForbidden();
         $this->actingAs($this->teacher)->post('/attendance-sessions/'.$session->id.'/close', ['mark_unrecorded_absent' => true])->assertSessionHasErrors('session');
-        Carbon::setTestNow('2026-10-26 11:00:00');
-        $this->recordAttendance($session)->assertForbidden();
         $this->assertDatabaseCount('attendances', 0);
+    }
+
+    public function test_saving_after_the_bell_is_allowed_within_grace_period_and_later_requires_reason(): void
+    {
+        $second = $this->schoolStudent();
+        $session = $this->openSession();
+        Carbon::setTestNow('2026-10-26 09:59:00');
+        $this->recordAttendance($session)->assertOk();
+        Carbon::setTestNow('2026-10-26 10:00:00');
+        $payload = ['attendances' => [['student_id' => $second->id, 'status' => 'hadir']]];
+        $this->actingAs($this->teacher)->postJson('/attendance-sessions/'.$session->id.'/attendances', $payload)->assertUnprocessable()->assertJsonValidationErrors('reason');
+        $this->assertDatabaseMissing('attendances', ['student_id' => $second->id]);
+        $this->actingAs($this->teacher)->postJson('/attendance-sessions/'.$session->id.'/attendances', $payload + ['reason' => 'Lupa menyimpan saat jam pelajaran.'])->assertOk();
+        $this->assertDatabaseHas('attendance_audits', ['student_id' => $second->id, 'new_status' => 'hadir', 'reason' => 'Pencatatan susulan: Lupa menyimpan saat jam pelajaran.']);
+        $this->actingAs($this->teacher)->get('/attendance-sessions/'.$session->id.'/scanner')->assertOk()->assertSee('sudah lewat');
+    }
+
+    public function test_grace_period_is_configurable(): void
+    {
+        config(['attendance.grace_minutes' => 0]);
+        $session = $this->openSession();
+        Carbon::setTestNow('2026-10-26 09:00:00');
+        $this->recordAttendance($session)->assertUnprocessable()->assertJsonValidationErrors('reason');
+    }
+
+    public function test_session_not_opened_on_its_day_can_be_opened_and_recorded_late(): void
+    {
+        $session = $this->plannedSession();
+        $future = $this->plannedSession(['lesson_date' => '2026-11-02']);
+        Carbon::setTestNow('2026-10-27 13:00:00');
+        $this->actingAs($this->teacher)->post('/attendance-sessions/'.$future->id.'/open')->assertSessionHasErrors('session');
+        $this->actingAs($this->teacher)->post('/attendance-sessions/'.$session->id.'/open')->assertSessionHasNoErrors();
+        $this->recordAttendance($session)->assertUnprocessable();
+        $this->recordAttendance($session, 'hadir', ['reason' => 'Presensi kertas dimasukkan susulan.'])->assertOk();
+        $this->assertDatabaseHas('attendances', ['attendance_session_id' => $session->id, 'attendance_date' => '2026-10-26', 'status' => 'hadir']);
+        $this->actingAs($this->teacher)->post('/attendance-sessions/'.$session->id.'/close')->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('attendance_sessions', ['id' => $session->id, 'status' => 'closed']);
+    }
+
+    public function test_legacy_scanner_save_after_the_bell_creates_the_session(): void
+    {
+        Carbon::setTestNow('2026-10-26 09:01:00');
+        $this->actingAs($this->teacher)->postJson('/absensi/save-session/'.$this->schedule->id, ['attendances' => [['student_id' => $this->student->id, 'status' => 'hadir']]])->assertOk();
+        $this->assertDatabaseHas('attendance_sessions', ['schedule_id' => $this->schedule->id, 'lesson_date' => '2026-10-26', 'status' => 'open']);
+        $this->assertDatabaseHas('attendances', ['student_id' => $this->student->id, 'status' => 'hadir']);
+    }
+
+    public function test_scanner_prefers_the_running_lesson_over_one_in_its_grace_period(): void
+    {
+        $next = Schedule::create(['subject_id' => $this->schedule->subject_id, 'teacher_id' => $this->teacher->id, 'class_id' => '11-A',
+            'day' => 'Senin', 'start_time' => '09:00:00', 'end_time' => '10:00:00', 'semester' => 'Ganjil', 'academic_year_id' => $this->year->id]);
+        $this->openSession();
+        Carbon::setTestNow('2026-10-26 09:30:00');
+        $this->actingAs($this->teacher)->get('/scanner')->assertOk()->assertViewHas('activeSchedule', fn ($schedule) => $schedule->id === $next->id);
+        Carbon::setTestNow('2026-10-26 10:30:00');
+        $this->actingAs($this->teacher)->get('/scanner')->assertOk()->assertViewHas('activeSchedule', fn ($schedule) => $schedule->id === $next->id);
+        Carbon::setTestNow('2026-10-26 11:00:00');
+        $this->actingAs($this->teacher)->get('/scanner')->assertOk()->assertViewHas('activeSchedule', fn ($schedule) => $schedule === null)->assertSee('Akses Scanner Ditutup');
     }
 
     public function test_rescheduled_meeting_cannot_overlap_an_unmaterialized_weekly_class(): void

@@ -8,8 +8,10 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Database\QueryException;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class AttendanceMigrationTest extends TestCase
@@ -54,6 +56,21 @@ class AttendanceMigrationTest extends TestCase
         $this->assertDatabaseCount('attendances', 2);
         $this->assertDatabaseHas('attendances', ['id' => 901, 'status' => 'alpa']);
         $migration->up();
+    }
+
+    public function test_interrupted_protection_migration_resumes_without_losing_archived_rows(): void
+    {
+        [$migration] = $this->legacyDuplicates();
+        // Simulate a run that stopped after archiving duplicates but before the final constraints.
+        Schema::table('attendances', fn (Blueprint $table) => $table->dropUnique('attendances_daily_unique'));
+        $migration->up();
+        $migration->up();
+        $this->assertTrue(Schema::hasIndex('attendances', 'attendances_daily_unique'));
+        $this->assertDatabaseCount('attendance_duplicate_archives', 1);
+        $this->assertDatabaseCount('attendances', 1);
+        foreach (['schedule_id', 'student_id'] as $column) {
+            $this->assertSame('restrict', collect(Schema::getForeignKeys('attendances'))->firstWhere('columns', [$column])['on_delete']);
+        }
     }
 
     public function test_archived_duplicates_protect_the_schedule_after_active_records_are_deleted(): void

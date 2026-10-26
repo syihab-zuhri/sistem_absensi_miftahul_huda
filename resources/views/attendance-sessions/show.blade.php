@@ -18,7 +18,7 @@
             @if($session->lesson_date->lte(today()))<a class="workflow-secondary" target="_blank" rel="noopener" href="{{ route('reports.session', ['schedule_id' => $session->schedule_id, 'date' => $session->lesson_date->toDateString()]) }}">Laporan PDF pertemuan</a>@endif
             <a class="workflow-secondary" href="{{ route('leave-requests.index') }}">Pengajuan izin/sakit ({{ $pendingCount }} menunggu)</a>
         </div>
-        @if($session->status === 'planned')<p class="text-sm text-gray-700">Sesi dapat dibuka pada hari pertemuan sebelum jam selesai. Pencatatan dimulai sesuai jam pertemuan.</p>@endif
+        @if(in_array($session->status, ['planned', 'open']))<p class="text-sm text-gray-700">@if($session->status === 'planned')Sesi dapat dibuka mulai hari pertemuan. @endif Pencatatan dimulai sesuai jam pertemuan; setelah {{ $session->lateAfter()->format('d-m-Y H:i') }} pencatatan susulan wajib disertai alasan.</p>@endif
         @if($session->status === 'open')
         <form method="POST" action="{{ route('attendance-sessions.close', $session) }}" class="space-y-4 border-t border-gray-200 pt-4">
             @csrf

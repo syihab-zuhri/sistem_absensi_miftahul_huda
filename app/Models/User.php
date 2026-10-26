@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Services\LoginIdentity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -53,9 +54,12 @@ class User extends Authenticatable
         return $this->student?->personal_email ?: $this->email;
     }
 
-    public function routeNotificationForMail($notification): string
+    // Null makes Laravel skip mail entirely, so generated student addresses never receive reset links.
+    public function routeNotificationForMail($notification): ?string
     {
-        return $this->getEmailForPasswordReset();
+        $email = $this->getEmailForPasswordReset();
+
+        return LoginIdentity::isStudentLoginEmail($email) ? null : $email;
     }
 
     public function student()

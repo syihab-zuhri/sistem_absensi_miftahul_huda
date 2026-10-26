@@ -19,8 +19,8 @@ class AttendanceSessionPolicy
 
     public function record(User $user, AttendanceSession $session): bool
     {
-        return $this->view($user, $session) && $session->status === 'open' && $session->isCurrentTerm()
-            && $session->lesson_date->isToday() && $session->start_time <= now()->format('H:i:s') && $session->end_time > now()->format('H:i:s');
+        // Recording after the grace period stays possible but requires a reason (see AttendanceSession::isLate).
+        return $this->view($user, $session) && $session->status === 'open' && $session->isCurrentTerm() && $session->hasStarted();
     }
 
     public function correct(User $user, AttendanceSession $session): bool

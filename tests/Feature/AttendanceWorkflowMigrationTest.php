@@ -32,4 +32,32 @@ class AttendanceWorkflowMigrationTest extends TestCase
         $this->assertSame($original, (array) DB::table('attendances')->find($attendance->id));
         $migration->up();
     }
+
+    public function test_interrupted_upgrade_is_rebuilt_when_run_again(): void
+    {
+        $migration = require database_path('migrations/2026_10_25_000003_add_attendance_workflows.php');
+        $migration->down();
+        $second = $this->schoolStudent();
+        foreach ([$this->student, $second] as $student) {
+            Attendance::create(['schedule_id' => $this->schedule->id, 'student_id' => $student->id, 'status' => 'hadir', 'timestamp' => '2026-10-19 08:15:00']);
+        }
+        Attendance::create(['schedule_id' => $this->schedule->id, 'student_id' => $this->student->id, 'status' => 'alpa', 'timestamp' => '2026-10-12 08:15:00']);
+        // A completed run that was never recorded looks the same as one interrupted after its last batch.
+        $migration->up();
+        $migration->up();
+        $this->assertDatabaseCount('attendance_sessions', 2);
+        $this->assertDatabaseCount('attendance_session_students', 3);
+        $this->assertSame(0, Attendance::whereNull('attendance_session_id')->count());
+        $session = DB::table('attendance_sessions')->where('lesson_date', '2026-10-19')->first();
+        $this->assertSame(['opened_at' => '2026-10-19 08:15:00', 'closed_at' => '2026-10-19 08:15:00'], ['opened_at' => $session->opened_at, 'closed_at' => $session->closed_at]);
+    }
+
+    public function test_rerun_refuses_to_discard_data_recorded_by_the_application(): void
+    {
+        $session = $this->openSession();
+        $this->recordAttendance($session)->assertOk();
+        $migration = require database_path('migrations/2026_10_25_000003_add_attendance_workflows.php');
+        $this->expectException(\RuntimeException::class);
+        $migration->up();
+    }
 }

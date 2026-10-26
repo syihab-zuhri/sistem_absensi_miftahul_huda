@@ -35,6 +35,9 @@ class PasswordResetLinkController extends Controller
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.
         $user = LoginIdentity::resolve($request->string('email')->toString());
+        if ($user && ! $user->routeNotificationForMail(null)) {
+            return back()->withInput($request->only('email'))->withErrors(['email' => 'Akun ini belum memiliki email pribadi untuk menerima tautan reset. Minta admin menerbitkan sandi baru, lalu tambahkan email pribadi di Pengaturan.']);
+        }
         $status = $user ? Password::sendResetLink(['email' => $user->email]) : Password::INVALID_USER;
 
         return $status == Password::RESET_LINK_SENT

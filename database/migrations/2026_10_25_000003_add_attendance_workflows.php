@@ -9,6 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // MySQL commits every DDL statement, so an interrupted run leaves partial tables behind.
+        // They only hold data derived from attendances, so they are discarded and rebuilt from scratch.
+        $this->discardInterruptedRun();
         Schema::create('attendance_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('schedule_id')->constrained()->restrictOnDelete();
@@ -69,25 +72,38 @@ return new class extends Migration
             $table->timestamp('created_at');
             $table->index(['attendance_session_id', 'created_at']);
         });
+        $this->linkHistoricalAttendance();
+    }
 
-        // Preserve original attendance values; historical rosters contain only known participants.
-        DB::table('attendances')->select('schedule_id', 'attendance_date')->distinct()->orderBy('schedule_id')->orderBy('attendance_date')
-            ->chunk(500, function ($groups) {
-                foreach ($groups as $group) {
-                    $schedule = DB::table('schedules')->find($group->schedule_id);
-                    $query = DB::table('attendances')->where('schedule_id', $group->schedule_id)->where('attendance_date', $group->attendance_date);
-                    $sessionId = DB::table('attendance_sessions')->insertGetId([
-                        'schedule_id' => $schedule->id, 'teacher_id' => $schedule->teacher_id, 'class_id' => $schedule->class_id,
-                        'lesson_date' => $group->attendance_date, 'start_time' => $schedule->start_time, 'end_time' => $schedule->end_time,
-                        'status' => 'closed', 'opened_at' => (clone $query)->min('timestamp'), 'closed_at' => (clone $query)->max('timestamp'),
-                        'created_at' => now(), 'updated_at' => now(),
-                    ]);
-                    foreach ((clone $query)->pluck('student_id')->unique() as $studentId) {
-                        DB::table('attendance_session_students')->insert(['attendance_session_id' => $sessionId, 'student_id' => $studentId]);
-                    }
-                    $query->update(['attendance_session_id' => $sessionId]);
-                }
+    // Preserve original attendance values; historical rosters contain only known participants.
+    // Set-based statements per batch of schedules keep large histories to a few queries each.
+    private function linkHistoricalAttendance(): void
+    {
+        $now = now();
+        DB::table('schedules')->select('id')->orderBy('id')->chunkById(100, function ($schedules) use ($now) {
+            $ids = $schedules->pluck('id');
+            DB::transaction(function () use ($ids, $now) {
+                DB::table('attendance_sessions')->insertUsing(
+                    ['schedule_id', 'teacher_id', 'class_id', 'lesson_date', 'start_time', 'end_time', 'status', 'opened_at', 'closed_at', 'created_at', 'updated_at'],
+                    DB::table('attendances')->join('schedules', 'schedules.id', '=', 'attendances.schedule_id')->whereIn('attendances.schedule_id', $ids)
+                        ->selectRaw('attendances.schedule_id, schedules.teacher_id, schedules.class_id, attendances.attendance_date, schedules.start_time, schedules.end_time, ?, MIN(attendances.timestamp), MAX(attendances.timestamp), ?, ?', ['closed', $now, $now])
+                        ->groupBy('attendances.schedule_id', 'attendances.attendance_date', 'schedules.teacher_id', 'schedules.class_id', 'schedules.start_time', 'schedules.end_time'));
+                DB::table('attendances')->whereIn('schedule_id', $ids)->update(['attendance_session_id' => DB::raw(
+                    '(select id from attendance_sessions where attendance_sessions.schedule_id = attendances.schedule_id and attendance_sessions.lesson_date = attendances.attendance_date)')]);
+                DB::table('attendance_session_students')->insertUsing(['attendance_session_id', 'student_id'],
+                    DB::table('attendances')->whereIn('schedule_id', $ids)->select('attendance_session_id', 'student_id'));
             });
+        });
+    }
+
+    private function discardInterruptedRun(): void
+    {
+        foreach (['leave_requests', 'attendance_audits', 'attendance_session_moves'] as $table) {
+            if (Schema::hasTable($table) && DB::table($table)->exists()) {
+                throw new RuntimeException("Tabel {$table} sudah berisi data dari aplikasi. Pulihkan backup database sebelum menjalankan ulang migrasi ini.");
+            }
+        }
+        $this->down();
     }
 
     public function down(): void
@@ -96,10 +112,15 @@ return new class extends Migration
         Schema::dropIfExists('leave_requests');
         Schema::dropIfExists('attendance_session_students');
         Schema::dropIfExists('attendance_session_moves');
-        Schema::table('attendances', function (Blueprint $table) {
-            $table->dropForeign(['attendance_session_id']);
-            $table->dropColumn('attendance_session_id');
-        });
+        if (Schema::hasColumn('attendances', 'attendance_session_id')) {
+            $foreign = collect(Schema::getForeignKeys('attendances'))->contains(fn ($key) => $key['columns'] === ['attendance_session_id']);
+            Schema::table('attendances', function (Blueprint $table) use ($foreign) {
+                if ($foreign) {
+                    $table->dropForeign(['attendance_session_id']);
+                }
+                $table->dropColumn('attendance_session_id');
+            });
+        }
         Schema::dropIfExists('attendance_sessions');
     }
 };

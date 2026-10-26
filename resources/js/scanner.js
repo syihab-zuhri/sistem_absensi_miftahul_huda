@@ -1,5 +1,5 @@
 import { Html5Qrcode } from 'html5-qrcode';
-import { attendanceChanges, colorStatus, renderStudents } from './scanner-table';
+import { attendanceChanges, colorStatus, reasonRequirement, renderStudents } from './scanner-table';
 
 export function initializeScanner(container) {
     const tbody = document.getElementById('studentTableBody');
@@ -62,9 +62,10 @@ export function initializeScanner(container) {
         const attendances = attendanceChanges(selects);
         if (!attendances.length) return Swal.fire({ icon: 'info', titleText: 'Belum ada data', text: 'Pilih status kehadiran siswa sebelum menyimpan.' });
         const reason = correctionReason.value.trim();
-        if (attendances.some(row => row.expected_status !== null) && reason.length < 10) {
+        const requirement = reasonRequirement(attendances, reason, container.dataset.lateAfter, Date.now());
+        if (requirement) {
             correctionReason.focus();
-            return Swal.fire({ icon: 'warning', titleText: 'Alasan koreksi diperlukan', text: 'Isi alasan minimal 10 karakter untuk mengubah status yang sudah tersimpan.' });
+            return Swal.fire({ icon: 'warning', titleText: requirement.title, text: requirement.text });
         }
         saving = true;
         saveButton.disabled = true;

@@ -107,9 +107,21 @@ class AuditRegressionTest extends TestCase
         $this->assertDatabaseCount('attendances', 0);
     }
 
-    public function test_closed_sessions_cannot_be_saved(): void
+    public function test_saving_after_the_grace_period_requires_a_late_reason(): void
     {
-        $schedule = $this->schedule(['end_time' => '08:30:00']);
+        $schedule = $this->schedule(['start_time' => '07:00:00', 'end_time' => '07:15:00']);
+        $url = '/absensi/save-session/'.$schedule->id;
+        $payload = ['attendances' => [['student_id' => $this->student->id, 'status' => 'hadir']]];
+        $this->actingAs($this->teacher)->postJson($url, $payload)->assertUnprocessable()->assertJsonValidationErrors('reason');
+        $this->assertDatabaseCount('attendances', 0);
+        $this->assertDatabaseCount('attendance_sessions', 0);
+        $this->actingAs($this->teacher)->postJson($url, $payload + ['reason' => 'Jaringan sekolah terputus saat pelajaran.'])->assertOk();
+        $this->assertDatabaseCount('attendances', 1);
+    }
+
+    public function test_lessons_that_have_not_started_cannot_be_saved(): void
+    {
+        $schedule = $this->schedule(['start_time' => '09:00:00', 'end_time' => '10:00:00']);
         $this->actingAs($this->teacher)->postJson('/absensi/save-session/'.$schedule->id, ['attendances' => [['student_id' => $this->student->id, 'status' => 'hadir']]])->assertForbidden();
     }
 
@@ -269,6 +281,21 @@ class AuditRegressionTest extends TestCase
             return true;
         });
         $this->assertTrue(Hash::check('NewSecret123!', $this->student->user->fresh()->password));
+    }
+
+    public function test_reset_link_is_never_sent_to_generated_student_address(): void
+    {
+        Notification::fake();
+        $user = $this->student->user;
+        $user->update(['email' => '1234567890@siswa.com']);
+        $this->post('/forgot-password', ['email' => '1234567890@SISWA.com'])->assertSessionHasErrors('email');
+        Notification::assertNothingSent();
+        $this->assertDatabaseCount('password_reset_tokens', 0);
+        $this->assertNull($user->fresh()->routeNotificationForMail(null));
+        $this->student->update(['personal_email' => 'pribadi@example.test']);
+        $this->assertSame('pribadi@example.test', $user->fresh()->routeNotificationForMail(null));
+        $this->post('/forgot-password', ['email' => '1234567890@siswa.com'])->assertSessionHasNoErrors();
+        Notification::assertSentTo($user, ResetPassword::class);
     }
 
     public function test_duplicate_attendance_for_same_day_is_rejected_by_database(): void

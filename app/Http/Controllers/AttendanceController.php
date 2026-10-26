@@ -19,15 +19,24 @@ class AttendanceController extends Controller
     {
         $year = AcademicYear::active()->first();
         $activeSemester = $year?->active_semester ?? 'Ganjil';
-        $activeSession = AttendanceSession::with('schedule.subject')->visibleTo(auth()->user())->whereDate('lesson_date', today())
-            ->where('status', 'open')->get()->first(fn ($session) => Gate::allows('record', $session));
-        $activeSchedule = $activeSession?->schedule ?? ($year ? Schedule::with(['subject', 'academicYear'])
+        $time = now()->format('H:i:s');
+        // Only lessons inside their recording window are offered here; late recording starts from the session page.
+        $sessions = AttendanceSession::with('schedule.subject')->visibleTo(auth()->user())->whereDate('lesson_date', today())
+            ->where('status', 'open')->get()->filter(fn ($session) => ! $session->isLate() && Gate::allows('record', $session));
+        $schedules = $year ? Schedule::with(['subject', 'academicYear'])
             ->where('academic_year_id', $year->id)->where('teacher_id', auth()->id())
-            ->where('day', now()->locale('id')->dayName)->where('start_time', '<=', now()->format('H:i:s'))
-            ->where('end_time', '>', now()->format('H:i:s'))->where('semester', $activeSemester)
-            ->get()->first(fn ($schedule) => Gate::allows('record', $schedule)) : null);
+            ->where('day', now()->locale('id')->dayName)->where('start_time', '<=', $time)->where('semester', $activeSemester)
+            ->get()->filter(fn ($schedule) => now()->lt($schedule->lateAfter(today())) && Gate::allows('record', $schedule)) : collect();
+        // Prefer the lesson that is still running over one that only remains within its grace period.
+        $activeSession = $sessions->first(fn ($session) => $session->end_time > $time);
+        $activeSchedule = $activeSession?->schedule ?? $schedules->first(fn ($schedule) => $schedule->end_time > $time);
+        if (! $activeSchedule) {
+            $activeSession = $sessions->first();
+            $activeSchedule = $activeSession?->schedule ?? $schedules->first();
+        }
+        $lateAfter = $activeSession?->lateAfter() ?? $activeSchedule?->lateAfter(today());
 
-        return view('scanner', compact('activeSchedule', 'activeSemester', 'activeSession'));
+        return view('scanner', compact('activeSchedule', 'activeSemester', 'activeSession', 'lateAfter'));
     }
 
     public function getSessionData($schedule_id)

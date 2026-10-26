@@ -64,6 +64,22 @@ class AttendanceSession extends Model
             && (! $year->end_date || $year->end_date->gte($this->lesson_date));
     }
 
+    public function hasStarted(): bool
+    {
+        return $this->lesson_date->copy()->setTimeFromTimeString($this->start_time)->lte(now());
+    }
+
+    // Saving after this moment is a late recording that requires a reason.
+    public function lateAfter(): Carbon
+    {
+        return $this->lesson_date->copy()->setTimeFromTimeString($this->end_time)->addMinutes(config('attendance.grace_minutes'));
+    }
+
+    public function isLate(): bool
+    {
+        return now()->gte($this->lateAfter());
+    }
+
     public function accepts(Student $student): bool
     {
         return $this->opened_at

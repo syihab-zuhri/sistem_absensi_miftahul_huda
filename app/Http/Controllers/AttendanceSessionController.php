@@ -96,7 +96,7 @@ class AttendanceSessionController extends Controller
         Gate::authorize('record', $session);
         $activeSchedule = $session->schedule()->with('subject')->firstOrFail();
 
-        return view('scanner', ['activeSchedule' => $activeSchedule, 'activeSession' => $session, 'activeSemester' => $activeSchedule->semester]);
+        return view('scanner', ['activeSchedule' => $activeSchedule, 'activeSession' => $session, 'activeSemester' => $activeSchedule->semester, 'lateAfter' => $session->lateAfter()]);
     }
 
     public function roster(AttendanceSession $session)
@@ -117,8 +117,15 @@ class AttendanceSessionController extends Controller
         DB::transaction(function () use ($session, $data, $request, $recorder) {
             $session = AttendanceSession::with('schedule.academicYear')->lockForUpdate()->findOrFail($session->id);
             Gate::authorize('record', $session);
+            $reason = $data['reason'] ?? null;
+            if ($session->isLate()) {
+                if (mb_strlen(trim($reason ?? '')) < 10) {
+                    throw ValidationException::withMessages(['reason' => 'Batas waktu pencatatan sudah lewat. Pencatatan susulan wajib disertai alasan minimal 10 karakter.']);
+                }
+                $reason = 'Pencatatan susulan: '.$reason;
+            }
             foreach ($data['attendances'] as $row) {
-                $recorder->record($session, Student::findOrFail($row['student_id']), $row['status'], $request->user(), $data['reason'] ?? null, $row['expected_status'] ?? null, array_key_exists('expected_status', $row));
+                $recorder->record($session, Student::findOrFail($row['student_id']), $row['status'], $request->user(), $reason, $row['expected_status'] ?? null, array_key_exists('expected_status', $row));
             }
         }, 3);
 

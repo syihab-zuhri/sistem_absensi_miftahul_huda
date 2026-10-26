@@ -15,6 +15,15 @@ export function attendanceChanges(selects) {
         .map(select => ({ student_id: select.dataset.id, status: select.value, expected_status: select.dataset.savedStatus || null }));
 }
 
+// The server remains authoritative; this only spares the teacher a rejected save.
+export function reasonRequirement(attendances, reason, lateAfter, now) {
+    if (reason.length >= 10) return null;
+    const late = Boolean(lateAfter) && now >= Date.parse(lateAfter);
+    if (late) return { title: 'Alasan pencatatan susulan diperlukan', text: 'Batas waktu pencatatan sudah lewat. Isi alasan minimal 10 karakter untuk menyimpan presensi.' };
+    if (attendances.some(row => row.expected_status !== null)) return { title: 'Alasan koreksi diperlukan', text: 'Isi alasan minimal 10 karakter untuk mengubah status yang sudah tersimpan.' };
+    return null;
+}
+
 export function renderStudents(tbody, students, onChange) {
     const document = tbody.ownerDocument;
     const selects = new Map();

@@ -20,7 +20,7 @@ class StudentProvisioner
         if (! $year) {
             throw ValidationException::withMessages(['academic_year_id' => 'Aktifkan tahun ajaran terlebih dahulu.']);
         }
-        $email = $data['nisn'].'@siswa.com';
+        $email = LoginIdentity::studentLoginEmail($data['nisn']);
         if (! LoginIdentity::emailAvailable($email)) {
             throw ValidationException::withMessages(['nisn' => 'Alamat akun untuk NISN ini sudah digunakan.']);
         }
@@ -28,8 +28,8 @@ class StudentProvisioner
         $path = 'qrcodes/'.$data['nisn'].'.svg';
         $existed = Storage::disk('public')->exists($path);
         try {
-            $student = DB::transaction(function () use ($data, $year, $password, $path) {
-                $user = User::create(['name' => $data['name'], 'email' => $data['nisn'].'@siswa.com', 'password' => $password, 'must_change_password' => true]);
+            $student = DB::transaction(function () use ($data, $year, $password, $path, $email) {
+                $user = User::create(['name' => $data['name'], 'email' => $email, 'password' => $password, 'must_change_password' => true]);
                 $user->assignRole('siswa');
                 $student = Student::create(['user_id' => $user->id, 'nisn' => $data['nisn'], 'class_id' => $data['class_id'], 'status' => 'aktif']);
                 StudentClassHistory::create(['student_id' => $student->id, 'academic_year_id' => $year->id, 'class_id' => $student->class_id, 'status' => 'aktif', 'started_at' => today()]);

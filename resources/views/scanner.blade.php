@@ -3,7 +3,7 @@
 @section('title', 'Scanner Absensi Kelas')
 
 @section('content')
-<div @if(isset($activeSchedule)) id="attendance-scanner" data-session-url="{{ isset($activeSession) ? route('attendance-sessions.roster', $activeSession) : url('/absensi/session-data/'.$activeSchedule->id) }}" data-save-url="{{ isset($activeSession) ? route('attendance-sessions.save', $activeSession) : url('/absensi/save-session/'.$activeSchedule->id) }}" @endif class="max-w-7xl mx-auto space-y-6">
+<div @if(isset($activeSchedule)) id="attendance-scanner" data-session-url="{{ isset($activeSession) ? route('attendance-sessions.roster', $activeSession) : url('/absensi/session-data/'.$activeSchedule->id) }}" data-save-url="{{ isset($activeSession) ? route('attendance-sessions.save', $activeSession) : url('/absensi/save-session/'.$activeSchedule->id) }}" data-late-after="{{ $lateAfter->toIso8601String() }}" @endif class="max-w-7xl mx-auto space-y-6">
     <a class="workflow-secondary" href="{{ isset($activeSession) ? route('attendance-sessions.show', $activeSession) : route('attendance-sessions.index') }}">Kelola sesi pertemuan</a>
 
     <!-- Status Sesi Aktif -->
@@ -25,6 +25,7 @@
                     <i class="fa-solid fa-user-lock text-5xl text-gray-300 mb-4"></i>
                     <h3 class="text-xl font-bold text-gray-700">Akses Scanner Ditutup</h3>
                     <p class="text-gray-500 mt-2 max-w-md mx-auto">Anda tidak dapat menggunakan Scanner karena Anda tidak memiliki jadwal mengajar di kelas manapun pada hari dan jam ini.</p>
+                    <p class="text-gray-700 mt-2 max-w-md mx-auto">Untuk pertemuan yang sudah lewat, buka <a class="font-semibold text-blue-700 underline" href="{{ route('attendance-sessions.index') }}">Sesi Presensi</a> lalu lakukan pencatatan susulan dengan alasan.</p>
                 </div>
             @endif
         </div>
@@ -80,10 +81,14 @@
                 </div>
             </div>
 
+            @php($lateLabel = $lateAfter->isToday() ? $lateAfter->format('H:i') : $lateAfter->format('d-m-Y H:i'))
             <div class="border-b border-gray-200 px-6 py-4">
-                <label for="correction-reason" class="workflow-label">Alasan perubahan presensi yang sudah tersimpan</label>
+                @if(now()->gte($lateAfter))
+                    <p class="mb-3 rounded-lg bg-amber-50 p-3 text-sm font-semibold text-amber-900" role="status">Batas waktu pencatatan ({{ $lateLabel }}) sudah lewat. Penyimpanan dicatat sebagai pencatatan susulan dan wajib disertai alasan.</p>
+                @endif
+                <label for="correction-reason" class="workflow-label">Alasan perubahan atau pencatatan susulan</label>
                 <textarea id="correction-reason" maxlength="1000" rows="2" class="workflow-input" aria-describedby="correction-help"></textarea>
-                <p id="correction-help" class="mt-2 text-sm text-gray-700">Wajib minimal 10 karakter bila mengubah status yang sudah tersimpan. Pencatatan pertama tidak memerlukan alasan.</p>
+                <p id="correction-help" class="mt-2 text-sm text-gray-700">Wajib minimal 10 karakter bila mengubah status yang sudah tersimpan atau menyimpan setelah {{ $lateLabel }}. Pencatatan pertama sebelum batas waktu tidak memerlukan alasan.</p>
             </div>
             <!-- Tabel Daftar Siswa yang dimuat secara dinamis -->
             <div class="flex-1 overflow-auto p-0">

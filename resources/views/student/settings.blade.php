@@ -39,7 +39,7 @@
                     </h3>
                 </div>
                 <div class="p-6">
-                    <p class="text-sm text-gray-500 mb-4">Tambahkan email pribadimu agar bisa login menggunakan email selain NISN. Email ini juga bisa digunakan untuk keperluan komunikasi dari sekolah.</p>
+                    <p class="text-sm text-gray-500 mb-4">Tambahkan email pribadimu agar bisa login menggunakan email selain NISN dan menerima tautan reset sandi bila lupa sandi. Tanpa email pribadi, reset sandi hanya dapat dilakukan oleh admin.</p>
                     <form action="{{ route('student.email.update') }}" method="POST" class="space-y-4">
                         @csrf
                         <div>

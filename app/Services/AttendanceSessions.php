@@ -83,8 +83,9 @@ class AttendanceSessions
         return DB::transaction(function () use ($session, $actor) {
             $session = AttendanceSession::with('schedule.academicYear')->lockForUpdate()->findOrFail($session->id);
             Gate::forUser($actor)->authorize('manage', $session);
-            if ($session->status !== 'planned' || ! $session->isCurrentTerm() || ! $session->lesson_date->isToday() || $session->end_time <= now()->format('H:i:s')) {
-                throw ValidationException::withMessages(['session' => 'Sesi hanya dapat dibuka pada hari pertemuan, sebelum waktu selesai, dan pada semester aktif.']);
+            // Past meetings may be opened late; recording them then requires a reason.
+            if ($session->status !== 'planned' || ! $session->isCurrentTerm() || $session->lesson_date->isFuture()) {
+                throw ValidationException::withMessages(['session' => 'Sesi hanya dapat dibuka mulai hari pertemuan dan pada semester aktif.']);
             }
             $ids = Student::where('class_id', $session->class_id)->active()->pluck('id')
                 ->merge(Attendance::where('schedule_id', $session->schedule_id)->whereDate('attendance_date', $session->lesson_date)->pluck('student_id'))->unique();
