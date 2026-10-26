@@ -1,0 +1,33 @@
+
+> build
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 38 modules transformed.
+rendering chunks...
+computing gzip size...
+public/build/assets/fa-v4compatibility-CErXDOsT.woff2                    4.17 kB
+public/build/manifest.json                                               5.34 kB │ gzip:   0.73 kB
+public/build/assets/figtree-latin-400-normal-g7Dtegnw.woff2             11.38 kB
+public/build/assets/figtree-latin-600-normal-Cv_xCTDl.woff2             11.54 kB
+public/build/assets/plus-jakarta-sans-latin-400-normal-Dhut76fR.woff2   11.82 kB
+public/build/assets/plus-jakarta-sans-latin-800-normal-CusIZhrK.woff2   11.90 kB
+public/build/assets/plus-jakarta-sans-latin-600-normal-DLTa1BUW.woff2   12.19 kB
+public/build/assets/plus-jakarta-sans-latin-700-normal-CfpNZvy6.woff2   12.24 kB
+public/build/assets/plus-jakarta-sans-latin-500-normal-Bf-nb4oT.woff2   12.31 kB
+public/build/assets/figtree-latin-400-normal-BD4aNku5.woff              15.04 kB
+public/build/assets/figtree-latin-600-normal-BM_oTo4n.woff              15.21 kB
+public/build/assets/plus-jakarta-sans-latin-400-normal-BDKaGhyp.woff    15.73 kB
+public/build/assets/plus-jakarta-sans-latin-800-normal-BRNHt2w0.woff    15.78 kB
+public/build/assets/plus-jakarta-sans-latin-600-normal-BR_Ojra4.woff    16.08 kB
+public/build/assets/plus-jakarta-sans-latin-500-normal-DYtqi0QS.woff    16.12 kB
+public/build/assets/plus-jakarta-sans-latin-700-normal-DqEcQeE5.woff    16.14 kB
+public/build/assets/fa-regular-400-DRN8N0d1.woff2                       19.51 kB
+public/build/assets/fa-brands-400-Bs6tcqqs.woff2                       115.42 kB
+public/build/assets/fa-solid-900-IAB4Droh.woff2                        119.49 kB
+public/build/assets/app-xzqXtCHd.css                                   152.33 kB │ gzip:  33.89 kB
+public/build/assets/app-1AbfQ1T2.js                                    135.88 kB │ gzip:  40.70 kB
+public/build/assets/auto-CTjm6eaf.js                                   209.15 kB │ gzip:  71.63 kB
+public/build/assets/scanner-CtTipF1b.js                                341.71 kB │ gzip: 102.78 kB
+✓ built in 30.41s

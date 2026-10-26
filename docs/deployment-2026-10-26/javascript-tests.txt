@@ -1,0 +1,16 @@
+
+> test
+> node --test tests/js/*.test.js
+
+✔ student names and NISN are literal text, including executable HTML (70.222705ms)
+✔ saving sends only changed students together with their previous saved status (14.598657ms)
+✔ a reason is required for late recording and for changing saved statuses (0.269848ms)
+✔ manual changes identify the student and trigger the unsaved-state callback (9.250664ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64170.185046

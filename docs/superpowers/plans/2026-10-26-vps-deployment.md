@@ -47,16 +47,18 @@ Rehearsal also found an empty classroom catalog with an existing `10-A` referenc
 
 **Files:** Production code/dependencies/assets; preserve `.env`, `database/*.sqlite`, and `storage/`.
 
-- [ ] Enable Laravel maintenance and create final code/environment/uploads/database backups in the private deployment directory.
-- [ ] Check backup integrity and fingerprint baselines before changing production code.
-- [ ] Synchronize verified code/dependencies/assets, preserve environment values, and regenerate Laravel package/cache files for the real production path.
-- [ ] Run `php artisan migrate --force`, verify fingerprints and required table counts, and check Laravel boot/routes.
-- [ ] Reopen the application only after checks pass; if they fail, restore the old code/database and verify recovery before reopening.
+- [x] Enable Laravel maintenance and create final code/environment/uploads/database backups in the private deployment directory.
+- [x] Check backup integrity and fingerprint baselines before changing production code.
+- [x] Synchronize verified code/dependencies/assets, preserve environment values, and regenerate Laravel package/cache files for the real production path.
+- [x] Run `php artisan migrate --force`, verify fingerprints and required table counts, and check Laravel boot/routes.
+- [x] Reopen the application only after checks pass; if they fail, restore the old code/database and verify recovery before reopening.
 
 ### Task 4: Verify delivery
 
 **Files:** Deployment report with safe metadata and backup locations; no private data.
 
-- [ ] Check public login, CSRF/session handling, protected feature routes, health endpoint, and built assets over HTTPS.
-- [ ] Inspect the login interface using a named browser session, without creating or changing real school accounts.
-- [ ] Verify the working branch is pushed to GitHub and record the deployed commit, backup location, test results, and any limitations.
+- [x] Check public login, CSRF/session handling, protected feature routes, health endpoint, and built assets over HTTPS.
+- [x] Inspect the login interface using a named browser session, without creating or changing real school accounts.
+- [x] Verify the working branch is pushed to GitHub and record the deployed commit, backup location, test results, and any limitations.
+
+Completed deployment report: `docs/deployment-2026-10-26/README.md`. Application commit: `6ac24a57370b532ab73c40cba8fb754693df4c99`. A certificate-check failure against the Cloudflare origin triggered successful recovery on the first attempt; verification through the public hostname succeeded on retry. Per-site PHP upload limits were adjusted to 5 MB and verified with a 4.5 MiB synthetic upload; the temporary protected probe was removed.

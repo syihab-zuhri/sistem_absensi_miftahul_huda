@@ -1,0 +1,7 @@
+
+   PASS  Tests\Feature\ClassroomCatalogMigrationTest
+  ✓ legacy class names are added without changing students or existing…  7.62s
+  ✓ blank or invalid legacy class names are not added to the catalog     0.31s
+
+  Tests:    2 passed (10 assertions)
+  Duration: 9.75s

@@ -1,0 +1,26 @@
+{
+    "php": "8.3.6",
+    "laravel": "12.70.1",
+    "environment": "production",
+    "debug": false,
+    "maintenance": false,
+    "config_cached": true,
+    "app_key_matches_env": true,
+    "active_semester": "Ganjil",
+    "storage_link": "/www/wwwroot/absensi.zuhri.my.id/storage/app/public",
+    "verification_sessions_removed": 3,
+    "counts": {
+        "users": 2,
+        "students": 1,
+        "schedules": 1,
+        "attendances": 0,
+        "academic_years": 2,
+        "classrooms": 1,
+        "student_class_histories": 1,
+        "attendance_sessions": 0,
+        "leave_requests": 0,
+        "attendance_audits": 0
+    },
+    "pending_migrations": [],
+    "release": "6ac24a57370b532ab73c40cba8fb754693df4c99"
+}

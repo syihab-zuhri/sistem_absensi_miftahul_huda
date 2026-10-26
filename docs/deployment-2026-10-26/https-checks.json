@@ -1,0 +1,10 @@
+{
+  "login": 200,
+  "/up": 200,
+  "/forgot-password": 200,
+  "/attendance-sessions": 302,
+  "/attendance-audits": 302,
+  "/leave-requests": 302,
+  "built_assets": 2,
+  "invalid_login": 422
+}

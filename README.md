@@ -167,3 +167,5 @@ Lihat [catatan perbaikan 25 Oktober 2026](docs/remediation-2026-10-25/README.md)
 ## Sesi presensi, riwayat perubahan, dan izin/sakit
 
 Lihat [panduan fitur dan pemasangan](docs/attendance-workflows-2026-10-25/README.md) untuk alur pengguna, aturan akses, migrasi, serta bukti pengujian. Menu **Sesi Presensi**, **Riwayat Perubahan**, dan **Pengajuan Izin/Sakit** tersedia sesuai peran pengguna.
+
+Rilis VPS dan hasil verifikasi terbaru dicatat pada [laporan deployment 26 Oktober 2026](docs/deployment-2026-10-26/README.md).
