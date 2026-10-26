@@ -12,6 +12,14 @@ Satu audit awal sebelum perubahan menjadi pembanding cache dingin yang lengkap: 
 
 Ada tiga audit awal tambahan: 99 dan 99, lalu 87. Pengukuran ketiga itu memuat halaman tanpa stylesheet (`resourceSize` CSS nol), jadi tidak menggambarkan tampilan login yang benar. Pengukuran kedua menggunakan cache disk untuk CSS dan prefetch JavaScript. Hasil awal tersebut tidak digabung sebagai pembanding tiga audit cache dingin.
 
+## Insight lanjutan
+
+Pengguna melaporkan CLS 0,243. Saya mengukur halaman live lagi pada empat profil Chrome baru: CLS **0,000072, 0, 0, dan 0**. Browser juga tidak mencatat entri layout shift dalam sesi pemeriksaan langsung. Nilai 0,243 belum bisa dipetakan ke penyebab tanpa baris elemen dan kontribusi yang ditampilkan pada “Layout shift culprits”; nilainya berbeda jauh dari hasil uji ulang.
+
+Insight render blocking mengarah ke stylesheet login `guest-77KgbaE-.css` (transfer sekitar 6,9 KB). Vite sudah mengirim stylesheet itu sebagai preload dan stylesheet, sementara aturan CSS diperlukan sebelum form tampil. Estimasi penghematan Lighthouse berubah antara sekitar 63 dan 471 ms selama audit, jadi angka 140 ms perlu dibaca sebagai estimasi lab, bukan waktu tetap. Memuat stylesheet secara asynchronous tanpa CSS kritis berisiko menampilkan form tanpa gaya pada render pertama.
+
+Insight efisiensi cache 4 KiB, JavaScript lama sekitar 10 KiB, dan pihak ketiga berasal dari beacon Cloudflare (`static.cloudflareinsights.com`), bukan bundel Laravel. Beacon dan permintaan RUM menambah rantai jaringan. Jika analitik pada halaman login tidak diperlukan, pengecualian khusus jalur `/login` dapat dibuat melalui Web Analytics > Manage site > Advanced options > Add rule; aturan Cloudflare mendukung pemilihan host dan jalur ([panduan aturan Web Analytics](https://developers.cloudflare.com/web-analytics/configuration-options/rules/)). Pengaturan zona Cloudflare tidak tersedia pada akses SSH VPS, jadi perubahan ini belum diterapkan. Browser Insights/Web Analytics yang dipasang otomatis dapat dikelola dari Manage site ([panduan Cloudflare](https://developers.cloudflare.com/web-analytics/get-started/)).
+
 ## Perubahan
 
 - Layout autentikasi memakai CSS dan JavaScript khusus. Aset dashboard dan fitur login tetap tersedia pada entry masing-masing.
