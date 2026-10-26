@@ -7,22 +7,8 @@
 
         <title>{{ config('app.name', 'Sistem Absensi') }} - Login</title>
 
-        <!-- Fonts & Icons -->
-
-        <style>
-            body {
-                font-family: 'Plus Jakarta Sans', sans-serif;
-            }
-            .bg-pattern {
-                background-color: #f8fafc;
-                background-image: radial-gradient(#e2e8f0 0.5px, transparent 0.5px), radial-gradient(#e2e8f0 0.5px, #f8fafc 0.5px);
-                background-size: 20px 20px;
-                background-position: 0 0, 10px 10px;
-            }
-        </style>
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link rel="preload" href="{{ Vite::asset('node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+        @vite(['resources/css/guest.css', 'resources/js/guest.js'])
     </head>
     <body class="antialiased bg-pattern">
         <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6">

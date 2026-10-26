@@ -10,7 +10,7 @@
             
             <div class="relative z-10">
                 <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/30">
-                    <i class="fa-solid fa-qrcode text-3xl"></i>
+                    <x-auth-icon name="qrcode" class="text-3xl" />
                 </div>
                 <h2 class="text-2xl font-extrabold tracking-tight">E-ABSENSI</h2>
                 <p class="text-blue-100 text-sm mt-1 font-medium italic opacity-90">Sistem Absensi Berbasis QR Code</p>
@@ -34,7 +34,7 @@
                     <label for="email" class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Email / NISN</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
-                            <i class="fa-solid fa-envelope text-sm"></i>
+                            <x-auth-icon name="envelope" class="text-sm" />
                         </div>
                         <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus
                             placeholder="Masukkan email atau NISN Anda"
@@ -55,13 +55,14 @@
                     </div>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
-                            <i class="fa-solid fa-lock text-sm"></i>
+                            <x-auth-icon name="lock" class="text-sm" />
                         </div>
                         <input id="password" type="password" name="password" required autocomplete="current-password"
                             placeholder="Masukkan kata sandi Anda"
                             class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 border-gray-200 border rounded-2xl text-sm transition-all focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white placeholder:text-gray-400">
-                        <button type="button" aria-label="Tampilkan atau sembunyikan sandi" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600 focus:outline-none transition-colors">
-                            <i id="togglePasswordIcon" class="fa-solid fa-eye text-sm"></i>
+                        <button type="button" data-password-toggle aria-controls="password" aria-pressed="false" aria-label="Tampilkan atau sembunyikan sandi" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 rounded-r-2xl transition-colors">
+                            <span data-password-hidden><x-auth-icon name="eye" class="text-sm" /></span>
+                            <span data-password-visible hidden><x-auth-icon name="eye-slash" class="text-sm" /></span>
                         </button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
@@ -78,7 +79,7 @@
                 <div class="pt-2">
                     <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold py-4 px-4 rounded-2xl transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform active:scale-[0.98] flex items-center justify-center gap-2">
                         <span>MASUK KE SISTEM</span>
-                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        <x-auth-icon name="arrow-right-to-bracket" />
                     </button>
                 </div>
             </form>
@@ -86,7 +87,7 @@
             <div class="mt-10 pt-8 border-t border-gray-100">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="flex items-center gap-3 text-gray-400 italic">
-                        <i class="fa-solid fa-shield-halved text-green-500"></i>
+                        <x-auth-icon name="shield-halved" class="text-green-500" />
                         <span class="text-xs font-medium">Sistem Terenkripsi & Aman</span>
                     </div>
                     <div class="text-xs font-bold text-gray-300 uppercase tracking-widest">v1.0.0</div>
@@ -95,20 +96,4 @@
         </div>
     </div>
 
-    <script>
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('togglePasswordIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        }
-    </script>
 </x-guest-layout>
